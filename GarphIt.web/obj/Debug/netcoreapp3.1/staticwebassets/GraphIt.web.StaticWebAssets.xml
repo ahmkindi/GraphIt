@@ -1,0 +1,4 @@
+﻿<StaticWebAssets Version="1.0">
+  <ContentRoot BasePath="_content/Blazor.Extensions.Canvas" Path="C:\Users\ahmki\.nuget\packages\blazor.extensions.canvas\1.0.0\build\..\staticwebassets\" />
+  <ContentRoot BasePath="_content/Syncfusion.Blazor" Path="C:\Users\ahmki\.nuget\packages\syncfusion.blazor\18.3.0.38\build\..\staticwebassets\" />
+</StaticWebAssets>

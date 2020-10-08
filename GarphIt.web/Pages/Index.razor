@@ -1,0 +1,59 @@
+﻿@page "/"
+@inherits IndexBase
+
+<NavBar OnChoice="UpdateChoice"></NavBar>
+
+@if (Choice != null)
+{
+    switch (Choice)
+    {
+        case NavChoice.File:
+            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+                <div class="collapse navbar-collapse mx-0" id="navbarNav">
+                    <ul class="navbar-nav mx-0">
+                        <li class="nav-item">
+                            <button type="button" class="btn">Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            break;
+        case NavChoice.Home:
+            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+                <div class="collapse navbar-collapse mx-0" id="navbarNav">
+                    <ul class="navbar-nav mx-0">
+                        <li class="nav-item">
+                            <button type="button" class="btn">Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            break;
+        case NavChoice.Insert:
+            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+                <div class="collapse navbar-collapse mx-0" id="navbarNav">
+                    <ul class="navbar-nav mx-0">
+                        <li class="nav-item">
+                            <button type="button" class="btn">Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            break;
+        case NavChoice.Design:
+            <Design DefaultDesign="DefaultDesign" OnDefaultDesign="UpdateDesign"></Design>
+            break;
+        case NavChoice.About:
+            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+                <div class="collapse navbar-collapse mx-0" id="navbarNav">
+                    <ul class="navbar-nav mx-0">
+                        <li class="nav-item">
+                            <button type="button" class="btn">Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            break;
+    }
+}
+<Canvas DefaultDesign="DefaultDesign"></Canvas>

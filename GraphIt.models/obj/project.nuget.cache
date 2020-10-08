@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Q73GYEBShyzuHVDV6KwEYBrCCEV/lyhUchtg59wz7pLAMQgnGw6Y6pXqJZEpx3qhi6nX/PAO5w2OMIb4UXzlBQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ahmki\\source\\repos\\GarphIt\\GraphIt.models\\GraphIt.models.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ahmki\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\ahmki\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\ahmki\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

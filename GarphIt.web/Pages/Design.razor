@@ -1,0 +1,17 @@
+﻿@inherits DesignBase
+ 
+<nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+    <div class="col">
+            <form class="form-inline">
+                <h3>Node:</h3>
+                <label for="radius">Radius</label>
+                <input type="number" class="short-input" id="radius" @bind="DefaultDesign.NodeRadius">
+                
+                <label for="nc">Color</label>
+                <SfColorPicker Value="@DefaultDesign.NodeColor" ValueChange='(args => OnColorChange(args, "node") )' ID="nc"></SfColorPicker>
+
+                <label for="lc">Label Color</label>
+                <SfColorPicker Value="@DefaultDesign.NodeLabelColor" ValueChange='(args => OnColorChange(args, "nodeLabel") )' ID="lc"></SfColorPicker>
+            </form>
+    </div>
+</nav>
