@@ -36,6 +36,9 @@ html, body {
     color: white;
 }
 
+.radius{
+    max-width:90px;
+}
 svg {
     position: fixed;
     top: 0;

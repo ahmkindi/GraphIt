@@ -25,29 +25,21 @@ namespace GraphIt.web.Pages
         public EventCallback<Node> ActiveNodeChanged { get; set; }
         [Parameter]
         public Node ActiveNode { get; set; }
-        public async Task OnColorChange(ColorPickerEventArgs args, string option)
+        public async Task OnDefNodeColorChange(ColorPickerEventArgs e)
         {
-            ColorValue = ((JObject)args.CurrentValue).ToObject<HexColorValue>();
-            if (option == "node")
-            {
-                DefaultDesign.NodeColor = ColorValue.Hex;
-            }
-            else if (option == "edge")
-            {
-                DefaultDesign.EdgeColor = ColorValue.Hex;
-            }
-            else if (option == "nodeLabel")
-            {
-                DefaultDesign.NodeLabelColor = ColorValue.Hex;
-            }
-            else if (option == "edgeLabel")
-            {
-                DefaultDesign.EdgeLabelColor = ColorValue.Hex;
-            }
-            else 
-            {
-                return;
-            }
+            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
+            DefaultDesign.NodeColor = ColorValue.Hex;
+            await DefaultDesignChanged.InvokeAsync(DefaultDesign);
+        }
+        public async Task OnDefNodeLabelColorChange(ColorPickerEventArgs e)
+        {
+            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
+            DefaultDesign.NodeLabelColor = ColorValue.Hex;
+            await DefaultDesignChanged.InvokeAsync(DefaultDesign);
+        }
+        public async Task OnDefRadiusChange(ChangeEventArgs e)
+        {
+            DefaultDesign.NodeRadius = int.Parse(e.Value.ToString());
             await DefaultDesignChanged.InvokeAsync(DefaultDesign);
         }
 
@@ -56,7 +48,7 @@ namespace GraphIt.web.Pages
             ActiveNode.Radius = int.Parse(e.Value.ToString());
             await ActiveNodeChanged.InvokeAsync(ActiveNode);
         }
-        public async Task OnNodeLabelChange(ChangeEventArgs e)
+        public async Task OnNodeLabelChange(ChangedEventArgs e)
         {
             ActiveNode.Label = e.Value.ToString();
             await ActiveNodeChanged.InvokeAsync(ActiveNode);
