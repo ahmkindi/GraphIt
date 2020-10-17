@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GraphIt.web.Shared
+namespace GraphIt.web.Pages
 {
     public class NavBarBase : ComponentBase
     {
@@ -30,7 +30,7 @@ namespace GraphIt.web.Shared
             {
                 NavElements[(int)this.Choice] = NavCss.NavNone;
             }
-            Choice = choice; 
+            Choice = choice;
             NavElements[(int)this.Choice] = NavCss.NavActive;
             await OnChoice.InvokeAsync(Choice);
         }

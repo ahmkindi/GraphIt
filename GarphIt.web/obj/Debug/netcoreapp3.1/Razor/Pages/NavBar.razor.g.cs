@@ -81,14 +81,21 @@ using GraphIt.models;
 #nullable disable
 #nullable restore
 #line 11 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
-using Blazor.Extensions.Canvas;
+using Syncfusion.Blazor.Inputs;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 12 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
-using Syncfusion.Blazor.Inputs;
+using Syncfusion.Blazor.Navigations;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 13 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
+using Syncfusion.Blazor.Navigations.Internal;
 
 #line default
 #line hidden

@@ -1,68 +1,136 @@
-﻿using Blazor.Extensions;
-using Blazor.Extensions.Canvas.Canvas2D;
-using GraphIt.models;
+﻿using GraphIt.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Syncfusion.Blazor.Data;
+using Syncfusion.Blazor.HeatMap;
+using Syncfusion.Blazor.Navigations;
+using Syncfusion.Blazor.SplitButtons;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace GraphIt.web.Pages
 {
     public class CanvasBase : ComponentBase
     {
-        public Canvas2DContext Context;
-        public BECanvasComponent CanvasReference;
-        public ElementReference divCanvas;
         [Parameter]
         public DefaultDesign DefaultDesign { get; set; }
-        public Offset Offset { get; set; }
-        public WindowSize windowSize = new WindowSize
+        [Parameter]
+        public EventCallback<Node> ActiveNodeDesign { get; set; }
+        [Parameter]
+        public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter]
+        public EventCallback<NavChoice?> ChangeMenu { get; set; }
+        public IEnumerable<Node> Nodes { get; set; }
+        public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>
         {
-            Height = 0,
-            Width = 0
+            new MenuItem{Text="Edit"},
+            new MenuItem{Text="Delete"},
+            new MenuItem{Text="Insert Edge"}
         };
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
+        [Parameter]
+        public Node ActiveNode { get; set; }
+        public ElementReference svgCanvas;
+        public SfContextMenu<MenuItem> ContextMenu;
+        private bool justClicked = false;
         [Inject]
         public INodeService NodeService { get; set; }
-
-        public IEnumerable<Node> Nodes { get; set; }
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
         protected override async Task OnInitializedAsync()
         {
-            Nodes = (await NodeService.GetNodes()).ToList();
+            Nodes = await NodeService.GetNodes();
         }
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnParametersSetAsync()
         {
-            if (firstRender)
+            if (ActiveNode != null)
             {
-                windowSize = await JSRuntime.InvokeAsync<WindowSize>("getWindowSize");
-                StateHasChanged();
+                await NodeService.UpdateNode(ActiveNode);
+            }
+        }
+
+        public async Task Select(MenuEventArgs<MenuItem> e)
+        {
+            if (e.Item.Text == "Delete")
+            {
+                await OnMenuDelete();
+            } 
+            else if (e.Item.Text == "Edit")
+            {
+                await OnMenuEdit();
+            }
+        }
+
+        public async Task OnKeyUp(KeyboardEventArgs e)
+        {
+            if (ActiveNode != null)
+            {
+                await JSRuntime.InvokeAsync<string>("console.log", e.Key);
+            }
+        }
+
+        public void OnRightClick()
+        {
+            return;
+        }
+
+        public void OnMouseUp(MouseEventArgs e)
+        {
+            if (ActiveNode != null && e.Button == 2)
+            {
+                ContextMenu.Open(e.ClientX, e.ClientY);
+            }
+        }
+        public async Task OnClick(MouseEventArgs e)
+        {
+            if (justClicked)
+            {
+                justClicked = false;
+                return;
+            }
+            if (ActiveNode == null)
+            {
+                Offset Offset = await JSRuntime.InvokeAsync<Offset>("getCanvasOffsets", svgCanvas);
+                Node newNode = new Node
+                {
+                    LabelColor = DefaultDesign.NodeLabelColor,
+                    NodeColor = DefaultDesign.NodeColor,
+                    Xaxis = e.ClientX - Offset.Left,
+                    Yaxis = e.ClientY - Offset.Top,
+                    Radius = DefaultDesign.NodeRadius
+                };
+                await NodeService.AddNode(newNode);
             }
             else
             {
-                Context = await CanvasReference.CreateCanvas2DAsync();
+                ActiveNode = null;
+                await ActiveNodeChanged.InvokeAsync(ActiveNode);
             }
+            Nodes = await NodeService.GetNodes();
+        }
+        public async Task OnNodeClick(Node node)
+        {
+            ActiveNode = node;
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            justClicked = true;
+        }
+        public async Task OnMenuDelete()
+        {
+            await NodeService.DeleteNode(ActiveNode.NodeId);
+            Nodes = await NodeService.GetNodes();
+            ActiveNode = null;
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            justClicked = false;
         }
 
-        public async Task Click(MouseEventArgs e)
+        public async Task OnMenuEdit()
         {
-            if (divCanvas.Id?.Length > 0) 
-            {
-                Offset = await JSRuntime.InvokeAsync<Offset>("getCanvasOffsets", divCanvas);
-                double mouseX = e.ClientX - Offset.Left;
-                double mouseY = e.ClientY - Offset.Top;
-                await Context.SetFillStyleAsync(DefaultDesign.NodeColor);
-                if (Context != null && CanvasReference != null)
-                {
-                    await Context.MoveToAsync(mouseX, mouseY);
-                    await Context.ArcAsync(mouseX, mouseY, DefaultDesign.NodeRadius, 0, Math.PI * 2, true);
-                    await Context.FillAsync();
-                }
-            }
+            await ChangeMenu.InvokeAsync(NavChoice.Design);
         }
     }
 }

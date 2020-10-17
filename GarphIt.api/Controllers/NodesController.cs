@@ -70,18 +70,15 @@ namespace GarphIt.api.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Node>> UpdateNode(int id, Node node)
+        [HttpPut]
+        public async Task<ActionResult<Node>> UpdateNode(Node node)
         {
             try
             {
-                if (id != node.NodeId)
-                    return BadRequest("Node ID mismatch");
-
-                var nodeToUpdate = await nodeRepository.GetNode(id);
+                var nodeToUpdate = await nodeRepository.GetNode(node.NodeId);
 
                 if (nodeToUpdate == null)
-                    return NotFound($"Node with Id = {id} not found");
+                    return NotFound($"Node with Id = {node.NodeId} not found");
 
                 return await nodeRepository.UpdateNode(node);
             }

@@ -24,7 +24,6 @@
     ".NETCoreApp,Version=v3.1": {
       "GraphIt.web/1.0.0": {
         "dependencies": {
-          "Blazor.Extensions.Canvas": "1.0.0",
           "GraphIt.models": "1.0.0",
           "Microsoft.AspNetCore.Blazor.HttpClient": "3.2.0-preview3.20168.3",
           "Syncfusion.Blazor": "18.3.0.38",
@@ -304,25 +303,6 @@
         },
         "compile": {
           "GraphIt.web.dll": {}
-        }
-      },
-      "Blazor.Extensions.Canvas/1.0.0": {
-        "dependencies": {
-          "Microsoft.AspNetCore.Components.Web": "3.1.8"
-        },
-        "runtime": {
-          "lib/netstandard2.0/Blazor.Extensions.Canvas.JS.dll": {
-            "assemblyVersion": "0.1.0.0",
-            "fileVersion": "0.1.0.0"
-          },
-          "lib/netstandard2.0/Blazor.Extensions.Canvas.dll": {
-            "assemblyVersion": "0.1.0.0",
-            "fileVersion": "0.1.0.0"
-          }
-        },
-        "compile": {
-          "lib/netstandard2.0/Blazor.Extensions.Canvas.JS.dll": {},
-          "lib/netstandard2.0/Blazor.Extensions.Canvas.dll": {}
         }
       },
       "Microsoft.AspNetCore.Authorization/3.1.8": {
@@ -2253,13 +2233,6 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
-    },
-    "Blazor.Extensions.Canvas/1.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-p7/T1oo8ct8kPNH7jIzZycPe15CJHhjW5P680RoJS2VRThqbnV0+Mgu+M2Ve3b1d47gOyvQeaZQ3zrL+zQArGg==",
-      "path": "blazor.extensions.canvas/1.0.0",
-      "hashPath": "blazor.extensions.canvas.1.0.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authorization/3.1.8": {
       "type": "package",

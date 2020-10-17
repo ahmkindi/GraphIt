@@ -41,7 +41,7 @@
             </nav>
             break;
         case NavChoice.Design:
-            <Design DefaultDesign="DefaultDesign" OnDefaultDesign="UpdateDesign"></Design>
+            <Design @bind-ActiveNode="ActiveNode" @bind-DefaultDesign="DefaultDesign"></Design>
             break;
         case NavChoice.About:
             <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
@@ -56,4 +56,5 @@
             break;
     }
 }
-<Canvas DefaultDesign="DefaultDesign"></Canvas>
+
+<Canvas @bind-ActiveNode="ActiveNode" ChangeMenu="UpdateChoice" DefaultDesign="DefaultDesign"></Canvas>

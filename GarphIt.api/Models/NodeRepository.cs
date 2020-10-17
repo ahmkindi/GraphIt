@@ -46,6 +46,7 @@ namespace GarphIt.api.Models
                 result.Xaxis = node.Xaxis;
                 result.Yaxis = node.Yaxis;
                 result.NodeColor = node.NodeColor;
+                result.Radius = node.Radius;
 
                 await appDbContext.SaveChangesAsync();
 

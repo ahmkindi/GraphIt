@@ -1,5 +1,6 @@
 ﻿using GraphIt.models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,18 @@ namespace GraphIt.web.Pages
 
         public NavChoice? Choice { get; set; }
         public DefaultDesign DefaultDesign { get; set; }
+        public Node ActiveNode { get; set; }
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (ActiveNode != null)
+            {
+                await JSRuntime.InvokeAsync<string>("console.log", ActiveNode.NodeId);
+
+            }
+        }
         public IndexBase()
         {
             DefaultDesign = new DefaultDesign
@@ -28,11 +40,6 @@ namespace GraphIt.web.Pages
         public void UpdateChoice(NavChoice? choice)
         {
             Choice = choice;
-        }
-
-        public void UpdateDesign(DefaultDesign defaultDesign)
-        {
-            DefaultDesign = defaultDesign;
         }
     }
 }

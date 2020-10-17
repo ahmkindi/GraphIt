@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "80zFnCtCVol3BdzDx3YWXNpBawTsc6xjZfoLyIoBtnikJ1YnAPyIXjcl1K1IxIc5gx5aAC90AcagiHIcpULtsg==",
+  "dgSpecHash": "XgLDlb3lxl7nmWncZPqgEp7eaEiyBfVOe8H2gLULh7TS5s8Fwcv4B9b/9u9YtRYM6imWZ8lv+Oq3Laj1egFSVg==",
   "success": true,
   "projectFilePath": "C:\\Users\\ahmki\\source\\repos\\GarphIt\\GarphIt.web\\GraphIt.web.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\ahmki\\.nuget\\packages\\blazor.extensions.canvas\\1.0.0\\blazor.extensions.canvas.1.0.0.nupkg.sha512",
     "C:\\Users\\ahmki\\.nuget\\packages\\microsoft.aspnetcore.authorization\\3.1.8\\microsoft.aspnetcore.authorization.3.1.8.nupkg.sha512",
     "C:\\Users\\ahmki\\.nuget\\packages\\microsoft.aspnetcore.blazor.httpclient\\3.2.0-preview3.20168.3\\microsoft.aspnetcore.blazor.httpclient.3.2.0-preview3.20168.3.nupkg.sha512",
     "C:\\Users\\ahmki\\.nuget\\packages\\microsoft.aspnetcore.components\\3.1.8\\microsoft.aspnetcore.components.3.1.8.nupkg.sha512",

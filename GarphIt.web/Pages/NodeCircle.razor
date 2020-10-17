@@ -1,0 +1,27 @@
+﻿@inherits NodeCircleBase
+
+<g class="pointer"
+   id="@Node.NodeId"
+   @onmouseup="OnMouseUp">
+    <circle cx="@Node.Xaxis"
+            cy="@Node.Yaxis"
+            r="@Node.Radius"
+            stroke="black"
+            stroke-width="2"
+            fill="@Node.NodeColor" />
+    <text text-anchor="middle"
+          fill="@Node.LabelColor"
+          font-size="@(Node.Radius/2)"
+          font-family="Verdana"
+          x="@Node.Xaxis"
+          y="@Node.Yaxis">
+        @if (Node.Label == null)
+        {
+            @Node.NodeId
+        }
+        else
+        {
+            @Node.Label
+        }
+    </text>
+</g>

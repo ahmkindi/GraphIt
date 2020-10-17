@@ -48,18 +48,6 @@ namespace GarphIt.api.Migrations
                     b.HasKey("EdgeId");
 
                     b.ToTable("Edges");
-
-                    b.HasData(
-                        new
-                        {
-                            EdgeId = 1,
-                            EdgeColor = "#000000",
-                            HeadId = 1,
-                            Label = "Hello",
-                            LabelColor = "#dd1122",
-                            TailId = 2,
-                            Weight = 10.119999999999999
-                        });
                 });
 
             modelBuilder.Entity("GraphIt.models.Node", b =>
@@ -80,6 +68,9 @@ namespace GarphIt.api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Radius")
+                        .HasColumnType("int");
+
                     b.Property<double>("Xaxis")
                         .HasColumnType("float");
 
@@ -89,26 +80,6 @@ namespace GarphIt.api.Migrations
                     b.HasKey("NodeId");
 
                     b.ToTable("Nodes");
-
-                    b.HasData(
-                        new
-                        {
-                            NodeId = 1,
-                            Label = "Hello",
-                            LabelColor = "#dd1122",
-                            NodeColor = "#000000",
-                            Xaxis = 10.119999999999999,
-                            Yaxis = 11.109999999999999
-                        },
-                        new
-                        {
-                            NodeId = 2,
-                            Label = "Bye",
-                            LabelColor = "#aabbcc",
-                            NodeColor = "#123456",
-                            Xaxis = 1.0,
-                            Yaxis = 13.44
-                        });
                 });
 #pragma warning restore 612, 618
         }

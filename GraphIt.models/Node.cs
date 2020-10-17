@@ -13,6 +13,8 @@ namespace GraphIt.models
         public double Xaxis { get; set; }
         [Required]
         public double Yaxis { get; set; }
+        [Required]
+        public int Radius { get; set; }
         public string Label { get; set; }
         [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]

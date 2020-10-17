@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GraphIt.web.Shared
+namespace GraphIt.web.Pages
 {
     public class DesignBase : ComponentBase
     {
@@ -20,7 +20,11 @@ namespace GraphIt.web.Shared
         [Parameter]
         public DefaultDesign DefaultDesign { get; set; }
         [Parameter]
-        public EventCallback<DefaultDesign> OnDefaultDesign { get; set; }
+        public EventCallback<DefaultDesign> DefaultDesignChanged { get; set; }
+        [Parameter]
+        public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter]
+        public Node ActiveNode { get; set; }
         public async Task OnColorChange(ColorPickerEventArgs args, string option)
         {
             ColorValue = ((JObject)args.CurrentValue).ToObject<HexColorValue>();
@@ -44,8 +48,30 @@ namespace GraphIt.web.Shared
             {
                 return;
             }
-            StateHasChanged();
-            await OnDefaultDesign.InvokeAsync(DefaultDesign);
+            await DefaultDesignChanged.InvokeAsync(DefaultDesign);
+        }
+
+        public async Task OnRadiusChange(ChangeEventArgs e)
+        {
+            ActiveNode.Radius = int.Parse(e.Value.ToString());
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+        }
+        public async Task OnNodeLabelChange(ChangeEventArgs e)
+        {
+            ActiveNode.Label = e.Value.ToString();
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+        }
+        public async Task OnNodeLabelColorChange(ColorPickerEventArgs e)
+        {
+            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
+            ActiveNode.LabelColor = ColorValue.Hex;
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+        }
+        public async Task OnNodeColorChange(ColorPickerEventArgs e)
+        {
+            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
+            ActiveNode.NodeColor = ColorValue.Hex;
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
         }
     }
 }

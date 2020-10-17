@@ -26,10 +26,6 @@ html, body {
     overflow: hidden;
 }
 
-canvas {
-    background-color: lightblue;
-    border: 1px solid black;
-}
 
 .navbar-custom {
     background-color: #D0CECE;
@@ -38,6 +34,29 @@ canvas {
 .logo-custom {
     background-color: black;
     color: white;
+}
+
+svg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+}
+
+svg text {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.pointer {
+    cursor: pointer;
 }
 
 .NavNone:hover {

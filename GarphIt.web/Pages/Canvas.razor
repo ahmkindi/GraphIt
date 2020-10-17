@@ -1,5 +1,41 @@
 ﻿@inherits CanvasBase
 
-<div @ref="divCanvas" @onclick="((e) => Click(e))">
-    <BECanvas Width="@windowSize.Width" Height="@windowSize.Height" @ref="CanvasReference"></BECanvas>
-</div>
+<SfContextMenu Items="@MenuItems" @ref="ContextMenu">
+    <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
+</SfContextMenu>
+
+<svg id="me" width="100%" height="100%" @onclick="OnClick" @ref="svgCanvas" 
+     @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp">
+    <defs>
+        <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5" />
+        </pattern>
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <rect width="80" height="80" fill="url(#smallGrid)" />
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1" />
+        </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#smallGrid)" />
+    @if (Nodes != null)
+    {
+        foreach (Node node in Nodes)
+        {
+            if (ActiveNode != null && node.NodeId == ActiveNode.NodeId)
+            {
+                continue;
+            }
+            <NodeCircle Node="node" ActiveNodeChanged="OnNodeClick"></NodeCircle>
+        }
+        if (ActiveNode != null)
+        {
+            <NodeCircle Node="ActiveNode" ActiveNodeChanged="OnNodeClick"></NodeCircle>
+            <rect x="@(ActiveNode.Xaxis-ActiveNode.Radius)"
+                    y="@(ActiveNode.Yaxis-ActiveNode.Radius)"
+                    width="@(ActiveNode.Radius*2)"
+                    height="@(ActiveNode.Radius*2)"
+                    stroke="black"
+                    stroke-dasharray="5,5"
+                    fill="none" />
+        }
+    }
+</svg>
