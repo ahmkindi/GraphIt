@@ -4,7 +4,7 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg id="me" width="100%" height="100%" @onclick="OnClick" @ref="svgCanvas" tabindex="0"
+<svg id="me" width="100%" height="100%" @ref="svgCanvas" tabindex="0" @onmousemove="OnMove"
      @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp">
     <defs>
         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
@@ -20,22 +20,22 @@
     {
         foreach (Node node in Nodes)
         {
-            if (ActiveNode != null && node.NodeId == ActiveNode.NodeId)
+            if ((ActiveNode != null && node.NodeId == ActiveNode.NodeId))
             {
                 continue;
             }
-            <NodeCircle Node="node" ActiveNodeChanged="OnNodeClick"></NodeCircle>
+            <NodeCircle Node="node" ActiveNodeChanged="OnNodeMouseDown"></NodeCircle>
         }
         if (ActiveNode != null)
         {
-            <NodeCircle Node="ActiveNode" ActiveNodeChanged="OnNodeClick"></NodeCircle>
+            <NodeCircle Node="ActiveNode" ActiveNodeChanged="OnNodeMouseDown"></NodeCircle>
             <rect x="@(ActiveNode.Xaxis-ActiveNode.Radius)"
-                    y="@(ActiveNode.Yaxis-ActiveNode.Radius)"
-                    width="@(ActiveNode.Radius*2)"
-                    height="@(ActiveNode.Radius*2)"
-                    stroke="black"
-                    stroke-dasharray="5,5"
-                    fill="none" />
+                  y="@(ActiveNode.Yaxis-ActiveNode.Radius)"
+                  width="@(ActiveNode.Radius*2)"
+                  height="@(ActiveNode.Radius*2)"
+                  stroke="black"
+                  stroke-dasharray="5,5"
+                  fill="none" />
         }
     }
 </svg>

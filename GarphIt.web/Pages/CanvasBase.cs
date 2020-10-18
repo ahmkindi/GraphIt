@@ -37,11 +37,14 @@ namespace GraphIt.web.Pages
         public Node ActiveNode { get; set; }
         public ElementReference svgCanvas;
         public SfContextMenu<MenuItem> ContextMenu;
-        private bool justClicked = false;
+        private bool moved = false;
+
         [Inject]
         public INodeService NodeService { get; set; }
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
+        public Node MovingNode { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             Nodes = await NodeService.GetNodes();
@@ -87,47 +90,53 @@ namespace GraphIt.web.Pages
             return;
         }
 
-        public void OnMouseUp(MouseEventArgs e)
+        public async Task OnMouseUp(MouseEventArgs e)
         {
+            if (MovingNode != null)
+            {
+                if (ActiveNode == null || ActiveNode.NodeId != MovingNode.NodeId)
+                {
+                    ActiveNode = MovingNode;
+                }
+                else
+                {
+                    await NodeService.UpdateNode(ActiveNode);
+                }
+                await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            }
             if (ActiveNode != null && e.Button == 2 && 
                 Math.Abs(e.ClientX-ActiveNode.Xaxis) <= ActiveNode.Radius
                 && Math.Abs(e.ClientY-ActiveNode.Yaxis) <= ActiveNode.Radius)
             {
                 ContextMenu.Open(e.ClientX, e.ClientY);
             }
-        }
-        public async Task OnClick(MouseEventArgs e)
-        {
-            if (justClicked)
+            else if (ActiveNode == null)
             {
-                justClicked = false;
-                return;
-            }
-            if (ActiveNode == null)
-            {
-                Offset Offset = await JSRuntime.InvokeAsync<Offset>("getCanvasOffsets", svgCanvas);
                 Node newNode = new Node
                 {
                     LabelColor = DefaultDesign.NodeLabelColor,
                     NodeColor = DefaultDesign.NodeColor,
-                    Xaxis = e.ClientX - Offset.Left,
-                    Yaxis = e.ClientY - Offset.Top,
+                    Xaxis = e.ClientX,
+                    Yaxis = e.ClientY,
                     Radius = DefaultDesign.NodeRadius
                 };
                 await NodeService.AddNode(newNode);
             }
-            else
+            else if (MovingNode == null && ActiveNode != null)
             {
                 ActiveNode = null;
                 await ActiveNodeChanged.InvokeAsync(ActiveNode);
             }
+            MovingNode = null;
             Nodes = await NodeService.GetNodes();
         }
-        public async Task OnNodeClick(Node node)
+        public async Task OnNodeMouseDown(Node node)
         {
-            ActiveNode = node;
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
-            justClicked = true;
+            MovingNode = node;
+            if (ActiveNode != null)
+            {
+                await NodeService.UpdateNode(ActiveNode);
+            }
         }
         public async Task OnMenuDelete()
         {
@@ -135,12 +144,25 @@ namespace GraphIt.web.Pages
             Nodes = await NodeService.GetNodes();
             ActiveNode = null;
             await ActiveNodeChanged.InvokeAsync(ActiveNode);
-            justClicked = false;
         }
 
         public async Task OnMenuEdit()
         {
             await ChangeMenu.InvokeAsync(NavChoice.Design);
+        }
+
+        public async Task OnMove(MouseEventArgs e)
+        {
+            if (MovingNode != null)
+            {
+                if (ActiveNode == null || ActiveNode.NodeId != MovingNode.NodeId) 
+                {
+                    ActiveNode = MovingNode;
+                    await ActiveNodeChanged.InvokeAsync(ActiveNode);
+                }
+                ActiveNode.Xaxis = e.ClientX;
+                ActiveNode.Yaxis = e.ClientY;
+            }
         }
     }
 }

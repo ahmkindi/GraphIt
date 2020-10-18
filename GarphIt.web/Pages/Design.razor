@@ -8,7 +8,7 @@
             </div>
             <div class="px-2">
                 Radius <SfNumericTextBox TValue="int?" Value="@DefaultDesign.NodeRadius" CssClass="radius"
-                                         Min=5 Max=999 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+                                         Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
             </div>
             <div class="px-2">
                 Color <SfColorPicker Value="@DefaultDesign.NodeColor" ValueChange="OnDefNodeColorChange"></SfColorPicker>
@@ -24,7 +24,7 @@
                     Current Node:
                 </div>
                 <div class="px-2">
-                    Radius <SfNumericTextBox TValue="int?" Value="@ActiveNode.Radius" Min=5 Max=999 Step=1 Format="###" CssClass="radius"
+                    Radius <SfNumericTextBox TValue="int?" Value="@ActiveNode.Radius" Min=10 Max=100 Step=1 Format="###" CssClass="radius"
                   Placeholder="Radius" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
                 </div>
                 <div class="px-2">

@@ -19,13 +19,10 @@ namespace GraphIt.web.Pages
         public Node Node { get; set; }
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
-        public async Task OnMouseUp()
+     
+        public async Task OnMouseDown()
         {
             await ActiveNodeChanged.InvokeAsync(Node);
-        }
-        public async Task OnKeyUp(KeyboardEventArgs e)
-        {
-            await JSRuntime.InvokeAsync<string>("console.log", e.Key);
         }
     }
 }
