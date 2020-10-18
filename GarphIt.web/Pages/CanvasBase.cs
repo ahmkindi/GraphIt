@@ -53,6 +53,13 @@ namespace GraphIt.web.Pages
                 await NodeService.UpdateNode(ActiveNode);
             }
         }
+        protected async override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("SetFocusToElement", svgCanvas);
+            }
+        }
 
         public async Task Select(MenuEventArgs<MenuItem> e)
         {
@@ -68,10 +75,11 @@ namespace GraphIt.web.Pages
 
         public async Task OnKeyUp(KeyboardEventArgs e)
         {
-            if (ActiveNode != null)
+            if (ActiveNode != null && (e.Key == "Delete" || e.Key == "Backspace"))
             {
                 await JSRuntime.InvokeAsync<string>("console.log", e.Key);
-            }
+                await OnMenuDelete();
+            }   
         }
 
         public void OnRightClick()
@@ -81,7 +89,9 @@ namespace GraphIt.web.Pages
 
         public void OnMouseUp(MouseEventArgs e)
         {
-            if (ActiveNode != null && e.Button == 2)
+            if (ActiveNode != null && e.Button == 2 && 
+                Math.Abs(e.ClientX-ActiveNode.Xaxis) <= ActiveNode.Radius
+                && Math.Abs(e.ClientY-ActiveNode.Yaxis) <= ActiveNode.Radius)
             {
                 ContextMenu.Open(e.ClientX, e.ClientY);
             }

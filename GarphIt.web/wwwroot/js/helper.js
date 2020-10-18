@@ -1,6 +1,6 @@
-﻿window.getWindowSize = () => {
-    return { height: window.innerHeight, width: window.innerWidth };
-};
+﻿function SetFocusToElement(el) {
+    el.focus();
+}
 
 function getCanvasOffsets(el) {
     return { left: el.offsetLeft, top: el.offsetTop };

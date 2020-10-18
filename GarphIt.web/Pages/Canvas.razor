@@ -4,7 +4,7 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg id="me" width="100%" height="100%" @onclick="OnClick" @ref="svgCanvas" 
+<svg id="me" width="100%" height="100%" @onclick="OnClick" @ref="svgCanvas" tabindex="0"
      @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp">
     <defs>
         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
