@@ -14,17 +14,16 @@ namespace GraphIt.web.Pages
         public NavChoice? Choice { get; set; }
         public DefaultDesign DefaultDesign { get; set; }
         public Node ActiveNode { get; set; }
+        public GraphType GraphType { get; set; } = new GraphType
+        {
+            Weighted = false,
+            Directed = false
+        };
+        public bool InsertNode { get; set; } = false;
+        public bool InitialModal { get; set; } = true;
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (ActiveNode != null)
-            {
-                await JSRuntime.InvokeAsync<string>("console.log", ActiveNode.NodeId);
-
-            }
-        }
         public IndexBase()
         {
             DefaultDesign = new DefaultDesign
@@ -40,6 +39,10 @@ namespace GraphIt.web.Pages
         public void UpdateChoice(NavChoice? choice)
         {
             Choice = choice;
+        }
+        public void OnInitialClose(bool b)
+        {
+            InitialModal = b;
         }
     }
 }

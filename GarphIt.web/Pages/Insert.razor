@@ -1,0 +1,12 @@
+﻿@inherits InsertBase
+
+<nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+    <div class="d-inline-flex">
+        <div>
+            <SfCheckBox TChecked="bool" Label="Node" Value="InsertNode" @onchange="(e => UpdateInsertNode(e))" EnableRtl="true"></SfCheckBox>
+        </div>
+        <div>
+            Edge
+        </div>
+    </div>
+</nav>

@@ -60,6 +60,7 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\GraphIt.
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\NodeCircle.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\GraphIt.web.csproj.CoreCompileInputs.cache
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\GraphIt.web.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp3.1\BlazorPro.BlazorSize.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\GraphIt.web.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\App.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Canvas.razor.g.cs
@@ -69,3 +70,7 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pa
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\NodeCircle.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\_Imports.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Insert.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Insert.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\InitialModal.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\InitialModal.razor.g.cs

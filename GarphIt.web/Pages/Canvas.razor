@@ -4,18 +4,8 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg id="me" width="100%" height="100%" @ref="svgCanvas" tabindex="0" @onmousemove="OnMove"
-     @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp">
-    <defs>
-        <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-            <path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5" />
-        </pattern>
-        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-            <rect width="80" height="80" fill="url(#smallGrid)" />
-            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1" />
-        </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#smallGrid)" />
+<svg viewBox="@ViewBox[0] @ViewBox[1] @Browser.Width @Browser.Height" @ref="svgCanvas" tabindex="0" @onmousemove="OnMove" @onmousedown="OnMouseDown"
+     @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" class="@SvgClass">
     @if (Nodes != null)
     {
         foreach (Node node in Nodes)

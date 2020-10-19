@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v3.1": {
       "GraphIt.web/1.0.0": {
         "dependencies": {
+          "BlazorPro.BlazorSize": "2.3.0",
           "GraphIt.models": "1.0.0",
           "Microsoft.AspNetCore.Blazor.HttpClient": "3.2.0-preview3.20168.3",
           "Syncfusion.Blazor": "18.3.0.38",
@@ -303,6 +304,21 @@
         },
         "compile": {
           "GraphIt.web.dll": {}
+        }
+      },
+      "BlazorPro.BlazorSize/2.3.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Web": "3.1.8",
+          "Microsoft.Extensions.DependencyInjection": "3.1.8"
+        },
+        "runtime": {
+          "lib/netstandard2.0/BlazorPro.BlazorSize.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/BlazorPro.BlazorSize.dll": {}
         }
       },
       "Microsoft.AspNetCore.Authorization/3.1.8": {
@@ -2233,6 +2249,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "BlazorPro.BlazorSize/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KFIfNDzg+S8xNl3ZxCeJc/yyZiYUowuQ242iYQjovTFxvo2d/NeGMtFZ9ZTtJYSYqgGNo755siL5fXiHw4VIhA==",
+      "path": "blazorpro.blazorsize/2.3.0",
+      "hashPath": "blazorpro.blazorsize.2.3.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authorization/3.1.8": {
       "type": "package",

@@ -88,14 +88,35 @@ using Syncfusion.Blazor.Inputs;
 #nullable disable
 #nullable restore
 #line 12 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
-using Syncfusion.Blazor.Navigations;
+using Syncfusion.Blazor.Buttons;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 13 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
+using Syncfusion.Blazor.Popups;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 14 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
+using Syncfusion.Blazor.Navigations;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 15 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
 using Syncfusion.Blazor.Navigations.Internal;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 16 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
+using BlazorPro.BlazorSize;
 
 #line default
 #line hidden

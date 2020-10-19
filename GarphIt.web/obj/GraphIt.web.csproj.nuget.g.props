@@ -17,5 +17,6 @@
   </PropertyGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)syncfusion.blazor\18.3.0.38\buildTransitive\Syncfusion.Blazor.props" Condition="Exists('$(NuGetPackageRoot)syncfusion.blazor\18.3.0.38\buildTransitive\Syncfusion.Blazor.props')" />
+    <Import Project="$(NuGetPackageRoot)blazorpro.blazorsize\2.3.0\buildTransitive\BlazorPro.BlazorSize.props" Condition="Exists('$(NuGetPackageRoot)blazorpro.blazorsize\2.3.0\buildTransitive\BlazorPro.BlazorSize.props')" />
   </ImportGroup>
 </Project>

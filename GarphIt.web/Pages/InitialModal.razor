@@ -1,0 +1,39 @@
+﻿@inherits InitialModalBase
+<SfDialog Width="300px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="col px-2 text-center lead">
+                Welcome to GraphIt
+            </div>
+            <div class="text-center text-justify">
+                To get started specify some of feature of your graph, this will make it easier for you when creating the graph.
+                If your unsure what you want you can skip this step and change the graph type later. If you skip the default
+                will be undirected and unweighted edges.
+            </div>
+            <div class="d-inline-flex justify-content-center">
+                <p>Unweighted</p>
+                <label class="switch">
+                    <input type="checkbox" @bind="GraphType.Weighted">
+                    <span class="slider round"></span>
+                </label>
+                <p>Wighted</p>
+            </div>
+            <div class="d-inline-flex justify-content-center">
+                <p>Undirected</p>
+                <label class="switch">
+                    <input type="checkbox" @bind="GraphType.Directed">
+                    <span class="slider round"></span>
+                </label>
+                <p>Directed</p>
+            </div>
+            <div class="d-flex justify-content-around">
+                <div class="p-2">
+                    <SfButton @onclick="OnSkipClick" CssClass="e-outline">Skip</SfButton>
+                </div>
+                <div class="p-2">
+                    <SfButton @onclick="OnDoneClick" CssClass="e-outline">Done</SfButton>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>

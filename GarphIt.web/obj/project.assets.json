@@ -2,6 +2,25 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
+      "BlazorPro.BlazorSize/2.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Web": "3.1.6",
+          "Microsoft.Extensions.DependencyInjection": "3.1.6"
+        },
+        "compile": {
+          "lib/netstandard2.0/BlazorPro.BlazorSize.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/BlazorPro.BlazorSize.dll": {}
+        },
+        "build": {
+          "buildTransitive/BlazorPro.BlazorSize.props": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/BlazorPro.BlazorSize.props": {}
+        }
+      },
       "Microsoft.AspNetCore.Authorization/3.1.8": {
         "type": "package",
         "dependencies": {
@@ -372,6 +391,28 @@
     }
   },
   "libraries": {
+    "BlazorPro.BlazorSize/2.3.0": {
+      "sha512": "KFIfNDzg+S8xNl3ZxCeJc/yyZiYUowuQ242iYQjovTFxvo2d/NeGMtFZ9ZTtJYSYqgGNo755siL5fXiHw4VIhA==",
+      "type": "package",
+      "path": "blazorpro.blazorsize/2.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "blazor-glove-128.jpg",
+        "blazorpro.blazorsize.2.3.0.nupkg.sha512",
+        "blazorpro.blazorsize.nuspec",
+        "build/BlazorPro.BlazorSize.props",
+        "build/Microsoft.AspNetCore.StaticWebAssets.props",
+        "buildMultiTargeting/BlazorPro.BlazorSize.props",
+        "buildTransitive/BlazorPro.BlazorSize.props",
+        "lib/netstandard2.0/BlazorPro.BlazorSize.dll",
+        "staticwebassets/blazorSize.js",
+        "staticwebassets/blazorSize.min.js",
+        "staticwebassets/blazorSizeMedia.js",
+        "staticwebassets/blazorSizeResize.js"
+      ]
+    },
     "Microsoft.AspNetCore.Authorization/3.1.8": {
       "sha512": "vBVCalVaxmv8MqFH1/Qe/fMjwmFWZhGJISiNEa6Is0ZNNFAHHdbvBmreL7qmGaIHt4krnDiV8i3GZa/zi21FBA==",
       "type": "package",
@@ -1274,6 +1315,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "BlazorPro.BlazorSize >= 2.3.0",
       "GraphIt.models >= 1.0.0",
       "Microsoft.AspNetCore.Blazor.HttpClient >= 3.2.0-preview3.20168.3",
       "Syncfusion.Blazor >= 18.3.0.38"
@@ -1320,6 +1362,10 @@
     "frameworks": {
       "netcoreapp3.1": {
         "dependencies": {
+          "BlazorPro.BlazorSize": {
+            "target": "Package",
+            "version": "[2.3.0, )"
+          },
           "Microsoft.AspNetCore.Blazor.HttpClient": {
             "target": "Package",
             "version": "[3.2.0-preview3.20168.3, )"
