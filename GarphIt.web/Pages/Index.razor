@@ -30,7 +30,7 @@
             </nav>
             break;
         case NavChoice.Insert:
-            <Insert @bind-InsertNode="InsertNode"></Insert>
+            <Insert @bind-GraphMode="GraphMode"></Insert>
             break;
         case NavChoice.Design:
             <Design @bind-ActiveNode="ActiveNode" @bind-DefaultDesign="DefaultDesign"></Design>
@@ -49,7 +49,7 @@
     }
 }
 
-<Canvas @bind-ActiveNode="ActiveNode" ChangeMenu="UpdateChoice" DefaultDesign="DefaultDesign" InsertNode="InsertNode"></Canvas>
+<Canvas @bind-ActiveNode="ActiveNode" ChangeMenu="UpdateChoice" DefaultDesign="DefaultDesign" GraphMode="GraphMode"></Canvas>
 @if (InitialModal)
 {
     <InitialModal GraphType="GraphType" OnClose="OnInitialClose"></InitialModal>

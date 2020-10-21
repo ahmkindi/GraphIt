@@ -31,7 +31,7 @@ namespace GarphIt.api
                 options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
             services.AddControllers();
             services.AddScoped<INodeRepository, NodeRepository>();
-            services.AddScoped<IEdgeRepositry, EdgeRepository>();
+            services.AddScoped<IEdgeRepository, EdgeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

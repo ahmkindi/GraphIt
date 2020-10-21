@@ -31,8 +31,16 @@
                     Color <SfColorPicker Value="@ActiveNode.NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker>
                 </div>
                 <div class="px-2">
-                    Label <SfTextBox CssClass="radius" ValueChange="OnNodeLabelChange"></SfTextBox> 
-                          <SfColorPicker Value="@ActiveNode.LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker>
+                    Label
+                    @if (ActiveNode.Label == null)
+                    {
+                        <SfTextBox CssClass="radius" ValueChange="OnNodeLabelChange" Value="@(ActiveNode.NodeId.ToString())"></SfTextBox>
+                    }
+                    else
+                    {
+                        <SfTextBox CssClass="radius" ValueChange="OnNodeLabelChange" Value="@ActiveNode.Label"></SfTextBox>
+                    }
+                    <SfColorPicker Value="@ActiveNode.LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker>
                 </div>
             </div>
         }

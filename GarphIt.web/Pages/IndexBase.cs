@@ -19,7 +19,7 @@ namespace GraphIt.web.Pages
             Weighted = false,
             Directed = false
         };
-        public bool InsertNode { get; set; } = false;
+        public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
         [Inject]
         public IJSRuntime JSRuntime { get; set; }

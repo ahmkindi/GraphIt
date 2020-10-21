@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GarphIt.api.Models
 {
-    public class EdgeRepository : IEdgeRepositry
+    public class EdgeRepository : IEdgeRepository
     {
         private readonly AppDbContext appDbContext;
 

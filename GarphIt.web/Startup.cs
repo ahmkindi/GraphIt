@@ -34,6 +34,10 @@ namespace GraphIt.web
             {
                 client.BaseAddress = new Uri("https://localhost:44379/");
             });
+            services.AddHttpClient<IEdgeService, EdgeService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44379/");
+            });
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzMwOTQzQDMxMzgyZTMzMmUzMEppR1dzL3pyd2pDc0JuVHhlYXpyd1MxWDh4SFN2YkR6cFJ3encxS1BCMjQ9");
             services.AddSyncfusionBlazor();
             services.AddScoped<ResizeListener>();

@@ -22,5 +22,8 @@ namespace GraphIt.models
         [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string NodeColor { get; set; }
+
+        public List<Edge> EdgesStart { get; set; } = new List<Edge>();
+        public List<Edge> EdgesEnd { get; set; } = new List<Edge>();
     }
 }

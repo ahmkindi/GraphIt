@@ -24,7 +24,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Node> ActiveNodeDesign { get; set; }
         [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
-        [Parameter] public bool InsertNode { get; set; }
+        [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
@@ -59,7 +59,7 @@ namespace GraphIt.web.Pages
             {
                 await NodeService.UpdateNode(ActiveNode);
             }
-            if (InsertNode)
+            if (GraphMode == GraphMode.InsertNode)
             {
                 SvgClass = "insert";
             }
@@ -140,7 +140,7 @@ namespace GraphIt.web.Pages
             }
             else if (ActiveNode == null)
             {
-                if (InsertNode)
+                if (GraphMode == GraphMode.InsertNode)
                 {
                     Node newNode = new Node
                     {
@@ -164,7 +164,7 @@ namespace GraphIt.web.Pages
                 await ActiveNodeChanged.InvokeAsync(ActiveNode);
             }
             MovingNode = null;
-            if (!InsertNode)
+            if (GraphMode == GraphMode.Default)
             {
                 SvgClass = "grab";
                 pan = false;
@@ -194,7 +194,7 @@ namespace GraphIt.web.Pages
 
         public void OnMouseDown(MouseEventArgs e)
         {
-            if (MovingNode == null && !InsertNode)
+            if (MovingNode == null && GraphMode == GraphMode.Default)
             {
                 pan = true;
                 SvgClass = "grabbing";

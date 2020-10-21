@@ -15,16 +15,11 @@ namespace GraphIt.web.Pages
         {
             public string Hex { get; set; }
         }
-        [Parameter]
-        public HexColorValue ColorValue { get; set; }
-        [Parameter]
-        public DefaultDesign DefaultDesign { get; set; }
-        [Parameter]
-        public EventCallback<DefaultDesign> DefaultDesignChanged { get; set; }
-        [Parameter]
-        public EventCallback<Node> ActiveNodeChanged { get; set; }
-        [Parameter]
-        public Node ActiveNode { get; set; }
+        [Parameter] public HexColorValue ColorValue { get; set; }
+        [Parameter] public DefaultDesign DefaultDesign { get; set; }
+        [Parameter] public EventCallback<DefaultDesign> DefaultDesignChanged { get; set; }
+        [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter] public Node ActiveNode { get; set; }
         public async Task OnDefNodeColorChange(ColorPickerEventArgs e)
         {
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
