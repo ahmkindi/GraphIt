@@ -4,8 +4,9 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg viewBox="@ViewBox[0] @ViewBox[1] @Browser.Width @Browser.Height" @ref="svgCanvas" tabindex="0" @onmousemove="OnMove" @onmousedown="OnMouseDown"
-     @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" class="@SvgClass">
+<svg viewBox="@ViewBox.Xaxis @ViewBox.Yaxis @((int)((double)Browser.Width*Scale)) @((int)((double)Browser.Height*Scale))" @ref="svgCanvas" 
+     tabindex="0" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick" 
+     @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll" class="@SvgClass">
     @if (Nodes != null)
     {
         foreach (Node node in Nodes)

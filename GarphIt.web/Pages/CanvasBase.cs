@@ -25,7 +25,12 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
         [Parameter] public bool InsertNode { get; set; }
+        [Parameter] public Node ActiveNode { get; set; }
+        [Inject] public INodeService NodeService { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] public ResizeListener Listener { get; set; }
         public string SvgClass { get; set; }
+        public Node MovingNode { get; set; }
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public IEnumerable<Node> Nodes { get; set; }
         public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>
@@ -34,26 +39,19 @@ namespace GraphIt.web.Pages
             new MenuItem{Text="Delete"},
             new MenuItem{Text="Insert Edge"}
         };
-        [Parameter]
-        public Node ActiveNode { get; set; }
         public ElementReference svgCanvas;
         public SfContextMenu<MenuItem> ContextMenu;
         private bool pan = false;
-        public double[] ViewBox { get; set; } = {0, 0};
+        public ViewBox ViewBox { get; set; } = new ViewBox();
+        public double Scale { get; set; } = 1;
         private double[] oldViewBox = {0, 0};
         private double[] origin = new double[2];
-
-        [Inject]
-        public INodeService NodeService { get; set; }
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
-        [Inject]
-        public ResizeListener Listener { get; set; }
-        public Node MovingNode { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             Nodes = await NodeService.GetNodes();
+            ViewBox.Xaxis = oldViewBox[0];
+            ViewBox.Yaxis = oldViewBox[1];
         }
         protected override async Task OnParametersSetAsync()
         {
@@ -91,9 +89,17 @@ namespace GraphIt.web.Pages
             }
         }
 
-        public async Task OnScroll(MouseEventArgs e)
+        public async Task OnScroll(WheelEventArgs e)
         {
-            await JSRuntime.InvokeAsync<string>("console.log", e.Button);
+            await JSRuntime.InvokeAsync<string>("console.log", e.DeltaY);
+            if (e.DeltaY > 0)
+            {
+                Scale += 0.1;
+            }
+            else if (e.DeltaY < 0)
+            {
+                Scale -= 0.1;
+            }
         }
 
         public async Task OnKeyUp(KeyboardEventArgs e)
@@ -109,7 +115,9 @@ namespace GraphIt.web.Pages
         {
             return;
         }
-
+        // TODO: Use node id in label
+        // TODO: Only show weight if not all one
+        // TODO: Useful footer similar to word
         public async Task OnMouseUp(MouseEventArgs e)
         {
             if (MovingNode != null)
@@ -125,8 +133,8 @@ namespace GraphIt.web.Pages
                 await ActiveNodeChanged.InvokeAsync(ActiveNode);
             }
             if (ActiveNode != null && e.Button == 2 && 
-                Math.Abs(e.ClientX-ActiveNode.Xaxis) <= ActiveNode.Radius
-                && Math.Abs(e.ClientY-ActiveNode.Yaxis) <= ActiveNode.Radius)
+                Math.Abs(e.ClientX*Scale+ViewBox.Xaxis-ActiveNode.Xaxis) <= ActiveNode.Radius
+                && Math.Abs(e.ClientY*Scale+ViewBox.Yaxis-ActiveNode.Yaxis) <= ActiveNode.Radius)
             {
                 ContextMenu.Open(e.ClientX, e.ClientY);
             }
@@ -134,21 +142,20 @@ namespace GraphIt.web.Pages
             {
                 if (InsertNode)
                 {
-                    Offset Offset = await JSRuntime.InvokeAsync<Offset>("getCanvasOffsets", svgCanvas);
                     Node newNode = new Node
                     {
                         LabelColor = DefaultDesign.NodeLabelColor,
                         NodeColor = DefaultDesign.NodeColor,
-                        Xaxis = e.ClientX-Offset.Left,
-                        Yaxis = e.ClientY-Offset.Top,
+                        Xaxis = e.ClientX * Scale + ViewBox.Xaxis,
+                        Yaxis = e.ClientY * Scale + ViewBox.Yaxis,
                         Radius = DefaultDesign.NodeRadius
                     };
                     await NodeService.AddNode(newNode);
                 }
                 else if (pan)
                 {
-                    oldViewBox[0] = ViewBox[0];
-                    oldViewBox[1] = ViewBox[1];
+                    oldViewBox[0] = ViewBox.Xaxis;
+                    oldViewBox[1] = ViewBox.Yaxis;
                 }
             }
             else if (MovingNode == null && ActiveNode != null)
@@ -204,14 +211,13 @@ namespace GraphIt.web.Pages
                     ActiveNode = MovingNode;
                     await ActiveNodeChanged.InvokeAsync(ActiveNode);
                 }
-                Offset Offset = await JSRuntime.InvokeAsync<Offset>("getCanvasOffsets", svgCanvas);
-                ActiveNode.Xaxis = e.ClientX - Offset.Left;
-                ActiveNode.Yaxis = e.ClientY - Offset.Top;
+                ActiveNode.Xaxis = e.ClientX * Scale + ViewBox.Xaxis;
+                ActiveNode.Yaxis = e.ClientY * Scale + ViewBox.Yaxis;
             }
             else if (pan)
             {
-                ViewBox[0] = oldViewBox[0] - (e.ClientX - origin[0]);
-                ViewBox[1] = oldViewBox[1] - (e.ClientY - origin[1]);
+                ViewBox.Xaxis = oldViewBox[0] - ((e.ClientX - origin[0]) * Scale);
+                ViewBox.Yaxis = oldViewBox[1] - ((e.ClientY - origin[1]) * Scale);
             }
         }
 
