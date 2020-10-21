@@ -1,5 +1,6 @@
 ﻿using GraphIt.models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor.Buttons;
 using System;
 using System.Collections.Generic;
@@ -26,23 +27,31 @@ namespace GraphIt.web.Pages
                 InsertEdge = true;
             }
         }
-        public async Task UpdateInsertNode(ChangeEventArgs e)
+        public async Task UpdateInsertNode()
         {
-            InsertNode = (bool) e.Value;
+            InsertNode = !InsertNode;
             if (InsertNode) 
             {
                 InsertEdge = false;
                 await GraphModeChanged.InvokeAsync(GraphMode.InsertNode);
-            } 
+            }
+            else if (!InsertEdge)
+            {
+                await GraphModeChanged.InvokeAsync(GraphMode.Default);
+            }
         }
 
-        public async Task UpdateInsertEdge(ChangeEventArgs e)
+        public async Task UpdateInsertEdge()
         {
-            InsertEdge = (bool) e.Value;
+            InsertEdge = !InsertEdge;
             if (InsertEdge)
             {
-                InsertEdge = false;
+                InsertNode = false;
                 await GraphModeChanged.InvokeAsync(GraphMode.InsertEdge);
+            }
+            else if (!InsertNode)
+            {
+                await GraphModeChanged.InvokeAsync(GraphMode.Default);
             }
         }
     }

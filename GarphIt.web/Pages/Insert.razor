@@ -3,18 +3,10 @@
 <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
     <div class="d-inline-flex">
         <div class="px-2">
-            Node
-            <label class="switch">
-                <input type="checkbox" value="InsertNode" @onchange="UpdateInsertNode">
-                <span class="slider round"></span>
-            </label>
+            <SfCheckBox TChecked="bool" Label="Nodes" @onclick="UpdateInsertNode" Checked="InsertNode">Nodes</SfCheckBox>
         </div>
         <div class="px-2">
-            Edge
-            <label class="switch">
-                <input type="checkbox" value="InsertEdge" @onchange="UpdateInsertEdge">
-                <span class="slider round"></span>
-            </label>
+            <SfCheckBox TChecked="bool" Label="Nodes" @onclick="UpdateInsertEdge" Checked="InsertEdge">Edges</SfCheckBox>
         </div>
     </div>
 </nav>
