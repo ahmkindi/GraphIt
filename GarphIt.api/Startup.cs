@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.Logging;
 
 namespace GarphIt.api
@@ -28,8 +29,10 @@ namespace GarphIt.api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
-            services.AddControllers();
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DBConnection")));
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddScoped<INodeRepository, NodeRepository>();
             services.AddScoped<IEdgeRepository, EdgeRepository>();
         }

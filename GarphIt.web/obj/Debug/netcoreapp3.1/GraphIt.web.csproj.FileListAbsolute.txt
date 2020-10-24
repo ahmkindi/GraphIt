@@ -74,3 +74,7 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDec
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Insert.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\InitialModal.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\InitialModal.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\EdgeLine.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\EdgeLine.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Footer.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Footer.razor.g.cs

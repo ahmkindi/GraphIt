@@ -21,35 +21,53 @@ namespace GraphIt.web.Pages
     public class CanvasBase : ComponentBase, IDisposable
     {
         [Parameter] public DefaultDesign DefaultDesign { get; set; }
-        [Parameter] public EventCallback<Node> ActiveNodeDesign { get; set; }
+        [Parameter] public GraphType GraphType { get; set; }
         [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter] public EventCallback<Edge> ActiveEdgeChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
+        [Parameter] public Edge ActiveEdge { get; set; }
         [Inject] public INodeService NodeService { get; set; }
+        [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Inject] public ResizeListener Listener { get; set; }
         public string SvgClass { get; set; }
+        public double EdgeWeight { get; set; } = 1;
+
+        private bool WaitingForTail = false;
+
         public Node MovingNode { get; set; }
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public IEnumerable<Node> Nodes { get; set; }
+        public IEnumerable<Edge> Edges { get; set; }
         public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>
         {
             new MenuItem{Text="Edit"},
             new MenuItem{Text="Delete"},
             new MenuItem{Text="Insert Edge"}
         };
+        public List<MenuItem> CanvasMenuItems { get; set; } = new List<MenuItem>
+        {
+            new MenuItem{Text="Insert Node"},
+            new MenuItem{Text="Zoom In"},
+            new MenuItem{Text="Zoom Out"}
+        };
         public ElementReference svgCanvas;
         public SfContextMenu<MenuItem> ContextMenu;
+        public SfContextMenu<MenuItem> CanvasContextMenu;
         private bool pan = false;
         public ViewBox ViewBox { get; set; } = new ViewBox();
         public double Scale { get; set; } = 1;
+        public bool GetEdgeWeight { get; set; } = false;
         private double[] oldViewBox = {0, 0};
         private double[] origin = new double[2];
+        private int[] connect = new int[2];
 
         protected override async Task OnInitializedAsync()
         {
             Nodes = await NodeService.GetNodes();
+            Edges = await EdgeService.GetEdges();
             ViewBox.Xaxis = oldViewBox[0];
             ViewBox.Yaxis = oldViewBox[1];
         }
@@ -58,21 +76,30 @@ namespace GraphIt.web.Pages
             if (ActiveNode != null)
             {
                 await NodeService.UpdateNode(ActiveNode);
+                Nodes = await NodeService.GetNodes();
             }
-            if (GraphMode == GraphMode.InsertNode)
+            if (ActiveEdge != null)
             {
-                SvgClass = "insert";
+                await EdgeService.UpdateEdge(ActiveEdge);
+                Edges = await EdgeService.GetEdges();
             }
-            else
+            if (GraphMode == GraphMode.Default)
             {
                 SvgClass = "grab";
             }
+            else if (GraphMode == GraphMode.InsertNode)
+            {
+                SvgClass = "insert";
+            }
+            else if (GraphMode == GraphMode.InsertEdge)
+            {
+                SvgClass = "alias";
+            }
         }
-        protected async override Task OnAfterRenderAsync(bool firstRender)
+        protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender)
             {
-                await JSRuntime.InvokeVoidAsync("SetFocusToElement", svgCanvas);
                 Listener.OnResized += WindowResized;
             }
         }
@@ -87,8 +114,30 @@ namespace GraphIt.web.Pages
             {
                 await OnMenuEdit();
             }
+            else if (e.Item.Text == "Insert Edge")
+            {
+                OnMenuInsertEdge();
+            }
         }
 
+        public void OnMenuInsertEdge()
+        {
+            SvgClass = "alias";
+            WaitingForTail = true;
+            StateHasChanged();
+;       }
+        public async Task OnMenuDelete()
+        {
+            await NodeService.DeleteNode(ActiveNode.NodeId);
+            Nodes = await NodeService.GetNodes();
+            ActiveNode = null;
+            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+        }
+
+        public async Task OnMenuEdit()
+        {
+            await ChangeMenu.InvokeAsync(NavChoice.Design);
+        }
         public async Task OnScroll(WheelEventArgs e)
         {
             await JSRuntime.InvokeAsync<string>("console.log", e.DeltaY);
@@ -115,9 +164,7 @@ namespace GraphIt.web.Pages
         {
             return;
         }
-        // TODO: Use node id in label
-        // TODO: Only show weight if not all one
-        // TODO: Useful footer similar to word
+  
         public async Task OnMouseUp(MouseEventArgs e)
         {
             if (MovingNode != null)
@@ -132,11 +179,17 @@ namespace GraphIt.web.Pages
                 }
                 await ActiveNodeChanged.InvokeAsync(ActiveNode);
             }
-            if (ActiveNode != null && e.Button == 2 && 
-                Math.Abs(e.ClientX*Scale+ViewBox.Xaxis-ActiveNode.Xaxis) <= ActiveNode.Radius
-                && Math.Abs(e.ClientY*Scale+ViewBox.Yaxis-ActiveNode.Yaxis) <= ActiveNode.Radius)
+            if (e.Button == 2)
             {
-                ContextMenu.Open(e.ClientX, e.ClientY);
+                if (ActiveNode != null && Math.Abs(e.ClientX * Scale + ViewBox.Xaxis - ActiveNode.Xaxis) <= ActiveNode.Radius
+                    && Math.Abs(e.ClientY * Scale + ViewBox.Yaxis - ActiveNode.Yaxis) <= ActiveNode.Radius)
+                {
+                    ContextMenu.Open(e.ClientX, e.ClientY);
+                }
+                else
+                {
+                    CanvasContextMenu.Open(e.ClientX, e.ClientY);
+                }
             }
             else if (ActiveNode == null)
             {
@@ -170,31 +223,51 @@ namespace GraphIt.web.Pages
                 pan = false;
             }
             Nodes = await NodeService.GetNodes();
+            Edges = await EdgeService.GetEdges();
         }
         public async Task OnNodeMouseDown(Node node)
         {
-            MovingNode = node;
-            if (ActiveNode != null)
+            if (ActiveNode!=null && WaitingForTail)
             {
-                await NodeService.UpdateNode(ActiveNode);
+                WaitingForTail = false;
+                connect[0] = ActiveNode.NodeId;
+                connect[1] = node.NodeId;
+                if (GraphType.Weighted == true)
+                {
+                    GetEdgeWeight = true;   
+                }
+                else
+                {
+                    await AddNewEdge(true);
+                }
             }
-        }
-        public async Task OnMenuDelete()
-        {
-            await NodeService.DeleteNode(ActiveNode.NodeId);
-            Nodes = await NodeService.GetNodes();
-            ActiveNode = null;
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            MovingNode = node;
         }
 
-        public async Task OnMenuEdit()
+        public async Task AddNewEdge(bool done)
         {
-            await ChangeMenu.InvokeAsync(NavChoice.Design);
+            if (done)
+            {
+                Edge newEdge = new Edge
+                {
+                    LabelColor = DefaultDesign.EdgeLabelColor,
+                    EdgeColor = DefaultDesign.EdgeColor,
+                    HeadNodeId = connect[0],
+                    TailNodeId = connect[1],
+                    Width = 5
+                };
+                if (GraphType.Weighted)
+                {
+                    newEdge.Weight = EdgeWeight;
+                }
+                await EdgeService.AddEdge(newEdge);
+            }
+            GetEdgeWeight = false;
         }
 
         public void OnMouseDown(MouseEventArgs e)
         {
-            if (MovingNode == null && GraphMode == GraphMode.Default)
+            if (e.Button == 1 && MovingNode == null && GraphMode == GraphMode.Default)
             {
                 pan = true;
                 SvgClass = "grabbing";

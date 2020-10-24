@@ -14,6 +14,7 @@ namespace GraphIt.web.Pages
         public NavChoice? Choice { get; set; }
         public DefaultDesign DefaultDesign { get; set; }
         public Node ActiveNode { get; set; }
+        public Edge ActiveEdge { get; set; }
         public GraphType GraphType { get; set; } = new GraphType
         {
             Weighted = false,
@@ -21,8 +22,6 @@ namespace GraphIt.web.Pages
         };
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
 
         public IndexBase()
         {
@@ -32,7 +31,7 @@ namespace GraphIt.web.Pages
                 NodeLabelColor = "#ffffff",
                 NodeRadius = 50,
                 EdgeColor = "#000000",
-                EdgeLabelColor = "#ffffff"
+                EdgeLabelColor = "#000000"
             };
         }
 

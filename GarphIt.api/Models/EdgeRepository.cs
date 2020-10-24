@@ -18,12 +18,17 @@ namespace GarphIt.api.Models
 
         public async Task<IEnumerable<Edge>> GetEdges()
         {
-            return await appDbContext.Edges.ToListAsync();
+            return await appDbContext.Edges
+                .Include(e => e.HeadNode)
+                .Include(e => e.TailNode)
+                .ToListAsync();
         }
 
         public async Task<Edge> GetEdge(int edgeId)
         {
             return await appDbContext.Edges
+                .Include(e => e.HeadNode)
+                .Include(e => e.TailNode)
                 .FirstOrDefaultAsync(e => e.EdgeId == edgeId);
         }
 
@@ -43,8 +48,8 @@ namespace GarphIt.api.Models
             {
                 result.Label = edge.Label;
                 result.LabelColor = edge.LabelColor;
-                result.HeadId = edge.HeadId;
-                result.TailId = edge.TailId;
+                result.HeadNodeId = edge.HeadNodeId;
+                result.TailNodeId = edge.TailNodeId;
                 result.Weight = edge.Weight;
                 result.EdgeColor = edge.EdgeColor;
 

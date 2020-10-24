@@ -18,13 +18,18 @@ namespace GarphIt.api.Models
 
         public async Task<IEnumerable<Node>> GetNodes()
         {
-            return await appDbContext.Nodes.ToListAsync();
+            return await appDbContext.Nodes
+                .Include(n => n.HeadEdges)
+                .Include(n => n.TailEdges)
+                .ToListAsync();
         }
 
         public async Task<Node> GetNode(int nodeId)
         {
             return await appDbContext.Nodes
-                .FirstOrDefaultAsync(e => e.NodeId == nodeId);
+                .Include(n => n.HeadEdges)
+                .Include(n => n.TailEdges)
+                .FirstOrDefaultAsync(n => n.NodeId == nodeId);
         }
 
         public async Task<Node> AddNode(Node node)

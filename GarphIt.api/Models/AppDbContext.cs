@@ -18,15 +18,6 @@ namespace GarphIt.api.Models
             modelBuilder.Entity<Edge>()
                 .Property(e => e.Weight)
                 .HasDefaultValue(1);
-            modelBuilder.Entity<Edge>()
-                .HasOne(e => e.HeadNode)
-                .WithMany(n => n.EdgesStart)
-                .HasForeignKey(e => e.HeadId);
-            modelBuilder.Entity<Edge>()
-                .HasOne(e => e.TailNode)
-                .WithMany(n => n.EdgesEnd)
-                .HasForeignKey(e => e.TailId)
-                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

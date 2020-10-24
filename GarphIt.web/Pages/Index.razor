@@ -1,6 +1,11 @@
 ﻿@page "/"
 @inherits IndexBase
 
+@if (InitialModal)
+{
+    <InitialModal GraphType="GraphType" OnClose="OnInitialClose"></InitialModal>
+}
+
 <NavBar OnChoice="UpdateChoice"></NavBar>
 
 @if (Choice != null)
@@ -49,8 +54,6 @@
     }
 }
 
-<Canvas @bind-ActiveNode="ActiveNode" ChangeMenu="UpdateChoice" DefaultDesign="DefaultDesign" GraphMode="GraphMode"></Canvas>
-@if (InitialModal)
-{
-    <InitialModal GraphType="GraphType" OnClose="OnInitialClose"></InitialModal>
-}
+<Canvas @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" ChangeMenu="UpdateChoice" 
+        DefaultDesign="DefaultDesign" GraphMode="GraphMode" GraphType="GraphType"></Canvas>
+<Footer></Footer>

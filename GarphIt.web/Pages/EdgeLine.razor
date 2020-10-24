@@ -1,0 +1,40 @@
+﻿@inherits EdgeLineBase
+
+<g class="pointer">
+    @if (Edge.Directed)
+    {
+        <defs>
+            <marker id="arrowhead" markerWidth="@(Edge.Width*2)" markerHeight="@(Edge.Width*1.5)"
+                    refX="@(Edge.TailNode.Radius + (Edge.Width*2))" refY="@(Edge.Width*0.75)" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" />
+            </marker>
+        </defs>
+    }
+    <path id="@Edge.EdgeId" d="M@(Coordinates[0]), @Coordinates[1], @Coordinates[2], @Coordinates[3]" stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" />
+    @if (GraphType.Weighted)
+    {
+        <g>
+            <text fill="@Edge.LabelColor">
+                <textpath href="#@(Edge.EdgeId)" startOffset="50%" text-anchor="middle">
+                    @if (Edge.Label == null || Edge.Label == "")
+                    {
+                        @("THE EDGE WEIGHT IS " + Edge.Weight)
+                    }
+                    else
+                    {
+                        @Edge.Label
+                    }
+                </textpath>
+            </text>
+        </g>
+    }
+    @if (ActiveEdge != null && Edge.EdgeId == ActiveEdge.EdgeId)
+    {
+        <style>
+            path {
+                stroke-dasharray: 11, 5;
+            }
+        </style>
+    }
+</g>
+ 
