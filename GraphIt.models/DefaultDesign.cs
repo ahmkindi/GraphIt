@@ -11,5 +11,6 @@ namespace GraphIt.models
         public int NodeRadius { get; set; }
         public string EdgeColor { get; set; }
         public string EdgeLabelColor { get; set; }
+        public double EdgeWidth { get; set; }
     }
 }

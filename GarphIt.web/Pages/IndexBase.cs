@@ -31,7 +31,8 @@ namespace GraphIt.web.Pages
                 NodeLabelColor = "#ffffff",
                 NodeRadius = 50,
                 EdgeColor = "#000000",
-                EdgeLabelColor = "#000000"
+                EdgeLabelColor = "#000000",
+                EdgeWidth = 5
             };
         }
 

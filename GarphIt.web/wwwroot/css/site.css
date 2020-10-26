@@ -26,6 +26,9 @@ html, body {
     overflow: hidden;
 }
 
+.activeEdge {
+    stroke-dasharray: 11, 5;
+}
 
 .navbar-custom {
     background-color: #D0CECE;

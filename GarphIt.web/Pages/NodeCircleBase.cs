@@ -13,12 +13,9 @@ namespace GraphIt.web.Pages
 {
     public class NodeCircleBase : ComponentBase
     {
-        [Parameter]
-        public EventCallback<Node> ActiveNodeChanged { get; set; }
-        [Parameter]
-        public Node Node { get; set; }
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
+        [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter] public Node ActiveNode { get; set; }
+        [Parameter] public Node Node { get; set; }
      
         public async Task OnMouseDown()
         {

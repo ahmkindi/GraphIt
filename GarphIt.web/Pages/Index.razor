@@ -38,7 +38,7 @@
             <Insert @bind-GraphMode="GraphMode"></Insert>
             break;
         case NavChoice.Design:
-            <Design @bind-ActiveNode="ActiveNode" @bind-DefaultDesign="DefaultDesign"></Design>
+            <Design @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" @bind-DefaultDesign="DefaultDesign"></Design>
             break;
         case NavChoice.About:
             <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
@@ -56,4 +56,4 @@
 
 <Canvas @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" ChangeMenu="UpdateChoice" 
         DefaultDesign="DefaultDesign" GraphMode="GraphMode" GraphType="GraphType"></Canvas>
-<Footer></Footer>
+<Footer GraphMode="GraphMode"></Footer>

@@ -1,6 +1,7 @@
 ﻿@inherits EdgeLineBase
 
-<g class="pointer">
+<g class="pointer"
+   @onmousedown="OnMouseDown">
     @if (Edge.Directed)
     {
         <defs>
@@ -10,31 +11,26 @@
             </marker>
         </defs>
     }
-    <path id="@Edge.EdgeId" d="M@(Coordinates[0]), @Coordinates[1], @Coordinates[2], @Coordinates[3]" stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" />
+    <path id="@Edge.EdgeId" d="M@(Coordinates[0]), @Coordinates[1], @Coordinates[2], @Coordinates[3]" 
+          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" class="@ActiveEdgeCss" />
     @if (GraphType.Weighted)
     {
-        <g>
+        <text>
             <text fill="@Edge.LabelColor">
-                <textpath href="#@(Edge.EdgeId)" startOffset="50%" text-anchor="middle">
+                HELLO WORLLLLLLLLLLLLLLLLLLLDDD
+                @*<textpath xlink:href="@(Navigation.Uri+"#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
+                    HELLO WORLD!
                     @if (Edge.Label == null || Edge.Label == "")
                     {
-                        @("THE EDGE WEIGHT IS " + Edge.Weight)
+                        @Edge.Weight
                     }
                     else
                     {
                         @Edge.Label
                     }
-                </textpath>
+                </textpath>*@
             </text>
-        </g>
-    }
-    @if (ActiveEdge != null && Edge.EdgeId == ActiveEdge.EdgeId)
-    {
-        <style>
-            path {
-                stroke-dasharray: 11, 5;
-            }
-        </style>
+        </text>
     }
 </g>
  

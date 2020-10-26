@@ -16,7 +16,7 @@
         {
             foreach (Edge edge in Edges)
             {
-                <EdgeLine Edge="edge" ActiveNode="ActiveNode" GraphType="GraphType" ActiveEdge="ActiveEdge"></EdgeLine>
+                <EdgeLine Edge="edge" @bind-ActiveNode="ActiveNode" ActiveEdge="ActiveEdge" ActiveEdgeChanged="OnEdgeClick" GraphType="GraphType"></EdgeLine>
             }
         }
         foreach (Node node in Nodes)
@@ -26,18 +26,11 @@
             {
                 continue;
             }
-            <NodeCircle Node="node" ActiveNodeChanged="OnNodeMouseDown"></NodeCircle>
+            <NodeCircle Node="node" @bind-ActiveNode="ActiveNode"></NodeCircle>
         }
         if (ActiveNode != null)
         {
-            <NodeCircle Node="ActiveNode" ActiveNodeChanged="OnNodeMouseDown"></NodeCircle>
-            <rect x="@(ActiveNode.Xaxis-ActiveNode.Radius)"
-                  y="@(ActiveNode.Yaxis-ActiveNode.Radius)"
-                  width="@(ActiveNode.Radius*2)"
-                  height="@(ActiveNode.Radius*2)"
-                  stroke="black"
-                  stroke-dasharray="5,5"
-                  fill="none" />
+            <NodeCircle Node="ActiveNode" @bind-ActiveNode="ActiveNode"></NodeCircle>
         }
     }
 </svg>
