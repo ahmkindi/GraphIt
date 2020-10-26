@@ -4,6 +4,7 @@ using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Syncfusion.Blazor.Charts;
 using Syncfusion.Blazor.Data;
 using Syncfusion.Blazor.HeatMap;
 using Syncfusion.Blazor.Navigations;
@@ -34,9 +35,7 @@ namespace GraphIt.web.Pages
         [Inject] public ResizeListener Listener { get; set; }
         public string SvgClass { get; set; }
         public double EdgeWeight { get; set; } = 1;
-
         private bool WaitingForTail = false;
-
         public Node MovingNode { get; set; }
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public IEnumerable<Node> Nodes { get; set; }
@@ -120,6 +119,18 @@ namespace GraphIt.web.Pages
             {
                 OnMenuInsertEdge();
             }
+            else if (e.Item.Text == "Insert Node")
+            {
+                await InsertNode(origin[0], origin[1]);
+            }
+            else if (e.Item.Text == "Zoom In")
+            {
+                ZoomIn();
+            }
+            else if (e.Item.Text == "Zoom Out")
+            {
+                ZoomOut();
+            }
         }
 
         public void OnMenuInsertEdge()
@@ -155,11 +166,11 @@ namespace GraphIt.web.Pages
             await JSRuntime.InvokeAsync<string>("console.log", e.DeltaY);
             if (e.DeltaY > 0)
             {
-                Scale += 0.1;
+                ZoomOut();
             }
             else if (e.DeltaY < 0)
             {
-                Scale -= 0.1;
+                ZoomIn();
             }
         }
 
@@ -180,6 +191,8 @@ namespace GraphIt.web.Pages
             else
             {
                 CanvasContextMenu.Open(e.ClientX, e.ClientY);
+                origin[0] = e.ClientX;
+                origin[1] = e.ClientY;
             }
         }
   
@@ -197,22 +210,14 @@ namespace GraphIt.web.Pages
             if (moveNode)
             {
                 await NodeService.UpdateNode(ActiveNode);
-                await ActiveNodeChanged.InvokeAsync(ActiveNode);
+                Nodes = await NodeService.GetNodes();
                 moveNode = false;
             }
             else if (ActiveNode == null)
             {
                 if (GraphMode == GraphMode.InsertNode)
                 {
-                    Node newNode = new Node
-                    {
-                        LabelColor = DefaultDesign.NodeLabelColor,
-                        NodeColor = DefaultDesign.NodeColor,
-                        Xaxis = e.ClientX * Scale + ViewBox.Xaxis,
-                        Yaxis = e.ClientY * Scale + ViewBox.Yaxis,
-                        Radius = DefaultDesign.NodeRadius
-                    };
-                    await NodeService.AddNode(newNode);
+                    await InsertNode(e.ClientX, e.ClientY);
                 }
                 else if (pan)
                 {
@@ -230,8 +235,6 @@ namespace GraphIt.web.Pages
                 SvgClass = "grab";
                 pan = false;
             }
-            Nodes = await NodeService.GetNodes();
-            Edges = await EdgeService.GetEdges();
         }
 
         public async Task OnMouseDown(MouseEventArgs e)
@@ -314,6 +317,7 @@ namespace GraphIt.web.Pages
                 Edges = await EdgeService.GetEdges();
             }
             GetEdgeWeight = false;
+            Edges = await EdgeService.GetEdges();
         }
 
         public void Dispose()
@@ -330,6 +334,33 @@ namespace GraphIt.web.Pages
         {
             return Math.Abs(x * Scale + ViewBox.Xaxis - ActiveNode.Xaxis) <= ActiveNode.Radius
                     && Math.Abs(y * Scale + ViewBox.Yaxis - ActiveNode.Yaxis) <= ActiveNode.Radius;
+        }
+
+        public async Task InsertNode(double x, double y)
+        {
+            Node newNode = new Node
+            {
+                LabelColor = DefaultDesign.NodeLabelColor,
+                NodeColor = DefaultDesign.NodeColor,
+                Xaxis = x * Scale + ViewBox.Xaxis,
+                Yaxis = y * Scale + ViewBox.Yaxis,
+                Radius = DefaultDesign.NodeRadius
+            };
+            await NodeService.AddNode(newNode);
+            Nodes = await NodeService.GetNodes();
+        }
+
+        public void ZoomIn()
+        {
+            if (Scale > 0.2)
+            {
+                Scale -= 0.1;
+            }
+        }
+
+        public void ZoomOut()
+        {
+            Scale += 0.1;
         }
     }
 }
