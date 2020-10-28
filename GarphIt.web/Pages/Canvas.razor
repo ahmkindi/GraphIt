@@ -1,22 +1,25 @@
 ﻿@inherits CanvasBase
 
-<SfContextMenu Items="@MenuItems" @ref="ContextMenu">
+<SfContextMenu Items="@NodeMenuItems" @ref="NodeContextMenu">
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 <SfContextMenu Items="@CanvasMenuItems" @ref="CanvasContextMenu">
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
+<SfContextMenu Items="@EdgeMenuItems" @ref="EdgeContextMenu">
+    <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
+</SfContextMenu>
 
-<svg viewBox="@ViewBox.Xaxis @ViewBox.Yaxis @((int)((double)Browser.Width*Scale)) @((int)((double)Browser.Height*Scale))" @ref="svgCanvas"
-     tabindex="0" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" @oncontextmenu="OnRightClick"
-     @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll" class="@SvgClass">
+<svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @((int)((double)Browser.Width*SVGControl.Scale)) @((int)((double)Browser.Height*SVGControl.Scale))" 
+     tabindex="0" class="@SvgClass" @ref="svgCanvas" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" 
+     @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
     @if (Nodes != null)
     {
         @if (Edges != null)
         {
             foreach (Edge edge in Edges)
             {
-                <EdgeLine Edge="edge" @bind-ActiveNode="ActiveNode" ActiveEdge="ActiveEdge" ActiveEdgeChanged="OnEdgeClick" GraphType="GraphType"></EdgeLine>
+                <EdgeLine Edge="edge" ActiveNode="ActiveNode" ActiveEdge="ActiveEdge" OnEdgeClick="OnEdgeClick" OnEdgeRightClick="OnEdgeRightClick" GraphType="GraphType"></EdgeLine>
             }
         }
         foreach (Node node in Nodes)
@@ -26,20 +29,20 @@
             {
                 continue;
             }
-            <NodeCircle Node="node" @bind-ActiveNode="ActiveNode"></NodeCircle>
+            <NodeCircle Node="node" ActiveNode="ActiveNode" OnNodeClick="OnNodeClick" OnNodeRightClick="OnNodeRightClick"></NodeCircle>
         }
         if (ActiveNode != null)
         {
-            <NodeCircle Node="ActiveNode" @bind-ActiveNode="ActiveNode"></NodeCircle>
+            <NodeCircle Node="ActiveNode" ActiveNode="ActiveNode" OnNodeClick="OnNodeClick" OnNodeRightClick="OnNodeRightClick"></NodeCircle>
         }
     }
 </svg>
-@if (GetEdgeWeight)
+@if (NewEdge.GetEdgeWeight)
 {
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <SfNumericTextBox Min=1 Placeholder="Edge Weight" FloatLabelType="@FloatLabelType.Auto" @bind-Value="EdgeWeight"></SfNumericTextBox>
+                <SfNumericTextBox Min=1 Placeholder="Edge Weight" FloatLabelType="@FloatLabelType.Auto" @bind-Value="NewEdge.Weight"></SfNumericTextBox>
                 <SfButton CssClass="e-success" @onclick="(() => AddNewEdge(true))">Done</SfButton>
                 <SfButton CssClass="e-danger" @onclick="(() => AddNewEdge(false))">Cancel</SfButton>
             </Content>

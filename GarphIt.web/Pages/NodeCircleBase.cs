@@ -13,13 +13,21 @@ namespace GraphIt.web.Pages
 {
     public class NodeCircleBase : ComponentBase
     {
-        [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter] public EventCallback<Node> OnNodeClick { get; set; }
+        [Parameter] public EventCallback<Node> OnNodeRightClick { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
         [Parameter] public Node Node { get; set; }
      
-        public async Task OnMouseDown()
+        public async Task OnMouseDown(MouseEventArgs e)
         {
-            await ActiveNodeChanged.InvokeAsync(Node);
+            if (e.Button == 2)
+            {
+                await OnNodeRightClick.InvokeAsync(Node);
+            }
+            else
+            {
+                await OnNodeClick.InvokeAsync(Node);
+            }   
         }
     }
 }
