@@ -1,12 +1,12 @@
 ﻿@inherits CanvasBase
 
-<SfContextMenu Items="@NodeMenuItems" @ref="NodeContextMenu">
+<SfContextMenu Items="@ContextMenus.NodeItems" @ref="ContextMenus.NodeMenu">
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
-<SfContextMenu Items="@CanvasMenuItems" @ref="CanvasContextMenu">
+<SfContextMenu Items="@ContextMenus.CanvasItems" @ref="ContextMenus.CanvasMenu">
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
-<SfContextMenu Items="@EdgeMenuItems" @ref="EdgeContextMenu">
+<SfContextMenu Items="@ContextMenus.EdgeItems" @ref="ContextMenus.EdgeMenu">
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 

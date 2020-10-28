@@ -1,5 +1,6 @@
 ﻿using BlazorPro.BlazorSize;
 using GraphIt.models;
+using GraphIt.web.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -38,27 +39,8 @@ namespace GraphIt.web.Pages
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public IEnumerable<Node> Nodes { get; set; }
         public IEnumerable<Edge> Edges { get; set; }
-        public List<MenuItem> NodeMenuItems { get; set; } = new List<MenuItem>
-        {
-            new MenuItem{Text="Edit"},
-            new MenuItem{Text="Delete"},
-            new MenuItem{Text="Insert Edge"}
-        };
-        public List<MenuItem> CanvasMenuItems { get; set; } = new List<MenuItem>
-        {
-            new MenuItem{Text="Insert Node"},
-            new MenuItem{Text="Zoom In"},
-            new MenuItem{Text="Zoom Out"}
-        };
-        public List<MenuItem> EdgeMenuItems { get; set; } = new List<MenuItem>
-        {
-            new MenuItem{Text="Edit"},
-            new MenuItem{Text="Delete"}
-        };
         public ElementReference svgCanvas;
-        public SfContextMenu<MenuItem> NodeContextMenu;
-        public SfContextMenu<MenuItem> CanvasContextMenu;
-        public SfContextMenu<MenuItem> EdgeContextMenu;
+        public ContextMenus ContextMenus { get; set; } = new ContextMenus();
         private ObjectClicked ObjectClicked = new ObjectClicked();
         public SVGControl SVGControl { get; set; } = new SVGControl();
         private double[] origin = new double[2];
@@ -98,29 +80,26 @@ namespace GraphIt.web.Pages
 
         public async Task Select(MenuEventArgs<MenuItem> e)
         {
-            if (e.Item.Text == "Delete")
+            switch (e.Item.Text)
             {
-                await OnDelete();
-            } 
-            else if (e.Item.Text == "Edit")
-            {
-                await ChangeMenu.InvokeAsync(NavChoice.Design);
-            }
-            else if (e.Item.Text == "Insert Edge")
-            {
-                InsertEdge();
-            }
-            else if (e.Item.Text == "Insert Node")
-            {
-                await InsertNode(origin[0], origin[1]);
-            }
-            else if (e.Item.Text == "Zoom In")
-            {
-                ZoomIn();
-            }
-            else if (e.Item.Text == "Zoom Out")
-            {
-                ZoomOut();
+                case "Delete":
+                    await OnDelete();
+                    break;
+                case "Edit":
+                    await ChangeMenu.InvokeAsync(NavChoice.Design);
+                    break;
+                case "Insert Edge":
+                    InsertEdge();
+                    break;
+                case "Insert Node":
+                    await InsertNode(origin[0], origin[1]);
+                    break;
+                case "Zoom In":
+                    ZoomIn();
+                    break;
+                case "Zoom Out":
+                    ZoomOut();
+                    break;
             }
         }
 
@@ -181,19 +160,19 @@ namespace GraphIt.web.Pages
             {
                 if (ActiveNode != null && ObjectClicked.NodeRight)
                 {
-                    NodeContextMenu.Open(e.ClientX, e.ClientY);
+                    ContextMenus.NodeMenu.Open(e.ClientX, e.ClientY);
                     ObjectClicked.NodeRight = false;
                 }
                 else if (ActiveEdge != null && ObjectClicked.EdgeRight)
                 {
-                    EdgeContextMenu.Open(e.ClientX, e.ClientY);
+                    ContextMenus.EdgeMenu.Open(e.ClientX, e.ClientY);
                     ObjectClicked.EdgeRight = false;
                 }
                 else
                 {
                     ActiveEdge = null;
                     ActiveNode = null;
-                    CanvasContextMenu.Open(e.ClientX, e.ClientY);
+                    ContextMenus.CanvasMenu.Open(e.ClientX, e.ClientY);
                     origin[0] = e.ClientX;
                     origin[1] = e.ClientY;
                     await ActiveNodeChanged.InvokeAsync(ActiveNode);
