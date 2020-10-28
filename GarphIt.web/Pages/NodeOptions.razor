@@ -1,0 +1,46 @@
+﻿@inherits NodeOptionsBase
+
+<nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+    <div class="text-center border-right border-dark">
+        <div class="d-flex">
+            <div class="font-weight-bold text-left">
+                Default:
+            </div>
+            <div class="px-2">
+                Radius <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
+                                         Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+            </div>
+            <div class="px-2">
+                Color <SfColorPicker Value="@DefaultOptions.NodeColor" ValueChange="OnDefNodeColorChange" ShowButtons="false"></SfColorPicker>
+            </div>
+            <div class="px-2">
+                Label <SfColorPicker Value="@DefaultOptions.NodeLabelColor" ValueChange="OnDefNodeLabelColorChange" ShowButtons="false"></SfColorPicker>
+            </div>
+        @if (ActiveNode != null)
+        {
+            <div class="font-weight-bold pl-2">
+                Selected:
+            </div>
+            <div class="px-2">
+                Radius <SfNumericTextBox TValue="int?" Value="@ActiveNode.Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
+                                            Placeholder="Radius" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+            </div>
+            <div class="px-2">
+                Color <SfColorPicker Value="@ActiveNode.NodeColor" ValueChange="OnNodeColorChange" ShowButtons="false"></SfColorPicker>
+            </div>
+            <div class="px-2">
+                Label
+                @if (ActiveNode.Label == null)
+                {
+                    <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@(ActiveNode.NodeId.ToString())"></SfTextBox>
+                }
+                else
+                {
+                    <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNode.Label"></SfTextBox>
+                }
+                <SfColorPicker Value="@ActiveNode.LabelColor" ValueChange="OnNodeLabelColorChange" ShowButtons="false"></SfColorPicker>
+            </div>
+        }
+        </div>
+    </div>
+</nav>

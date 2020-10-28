@@ -13,7 +13,7 @@ namespace GraphIt.web.Pages
     {
         [Parameter] public Edge Edge { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
-        [Parameter] public GraphType GraphType { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public Edge ActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeClick { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeRightClick { get; set; }

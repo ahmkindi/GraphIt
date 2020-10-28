@@ -10,20 +10,22 @@ namespace GraphIt.web.Pages
     public class NavBarBase : ComponentBase
     {
         public NavCss[] NavElements { get; set; }
-        public NavChoice? Choice { get; set; } = null;
-
-        [Parameter]
-        public EventCallback<NavChoice?> OnChoice { get; set; }
-        public NavBarBase()
+        [Parameter] public NavChoice? Choice { get; set; } = null;
+        [Parameter] public EventCallback<NavChoice?> ChoiceChanged { get; set; }
+        protected override void OnInitialized()
         {
             var length = Enum.GetNames(typeof(NavChoice)).Length;
             NavElements = new NavCss[length];
-            for (int i = 0; i < length; i++)
-            {
-                NavElements[i] = NavCss.NavNone;
-            }
         }
 
+        protected override void OnParametersSet()
+        {
+            for (int i = 0; i < NavElements.Length; i++)
+            {
+                if (Choice != null && i == (int)Choice) NavElements[(int)this.Choice] = NavCss.NavActive;
+                else NavElements[i] = NavCss.NavNone;
+            }
+        }
         public async Task Click(NavChoice choice)
         {
             if (Choice != null)
@@ -32,7 +34,7 @@ namespace GraphIt.web.Pages
             }
             Choice = choice;
             NavElements[(int)this.Choice] = NavCss.NavActive;
-            await OnChoice.InvokeAsync(Choice);
+            await ChoiceChanged.InvokeAsync(Choice);
         }
 
         public async Task Reset()
@@ -42,7 +44,7 @@ namespace GraphIt.web.Pages
                 NavElements[(int)this.Choice] = NavCss.NavNone;
                 Choice = null;
             }
-            await OnChoice.InvokeAsync(Choice);
+            await ChoiceChanged.InvokeAsync(Choice);
         }
     }
 }

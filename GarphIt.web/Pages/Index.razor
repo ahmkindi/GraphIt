@@ -3,10 +3,10 @@
 
 @if (InitialModal)
 {
-    <InitialModal GraphType="GraphType" OnClose="OnInitialClose"></InitialModal>
+    <InitialModal DefaultOptions="DefaultOptions" OnClose="OnInitialClose"></InitialModal>
 }
 
-<NavBar OnChoice="UpdateChoice"></NavBar>
+<NavBar @bind-Choice="Choice"></NavBar>
 
 @if (Choice != null)
 {
@@ -23,22 +23,14 @@
                 </div>
             </nav>
             break;
-        case NavChoice.Home:
-            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-                <div class="collapse navbar-collapse mx-0" id="navbarNav">
-                    <ul class="navbar-nav mx-0">
-                        <li class="nav-item">
-                            <button type="button" class="btn">Save</button>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode"></Insert>
             break;
-        case NavChoice.Design:
-            <Design @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" @bind-DefaultDesign="DefaultDesign"></Design>
+        case NavChoice.Node:
+            <NodeOptions @bind-ActiveNode="ActiveNode" @bind-DefaultOptions="DefaultOptions"></NodeOptions>
+            break;
+        case NavChoice.Edge:
+            <EdgeOptions @bind-ActiveEdge="ActiveEdge" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
             break;
         case NavChoice.About:
             <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
@@ -54,6 +46,6 @@
     }
 }
 
-<Canvas @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" ChangeMenu="UpdateChoice" 
-        DefaultDesign="DefaultDesign" GraphMode="GraphMode" GraphType="GraphType"></Canvas>
+<Canvas @bind-ActiveNode="ActiveNode" @bind-ActiveEdge="ActiveEdge" ChangeMenu="UpdateChoice"
+        DefaultOptions="DefaultOptions" GraphMode="GraphMode"></Canvas>
 <Footer GraphMode="GraphMode"></Footer>

@@ -9,8 +9,8 @@ namespace GraphIt.web.Pages
 {
     public class InitialModalBase : ComponentBase
     {
-        [Parameter] public GraphType GraphType { get; set; }
-        [Parameter] public EventCallback<GraphType> GraphTypeChanged { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public EventCallback<bool> OnClose { get; set; }
         public async Task OnSkipClick()
         {
@@ -19,7 +19,7 @@ namespace GraphIt.web.Pages
 
         public async Task OnDoneClick()
         {
-            await GraphTypeChanged.InvokeAsync(GraphType);
+            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
             await OnClose.InvokeAsync(false);
         }
     }

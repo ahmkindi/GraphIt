@@ -12,29 +12,11 @@ namespace GraphIt.web.Pages
     {
 
         public NavChoice? Choice { get; set; }
-        public DefaultDesign DefaultDesign { get; set; }
+        public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
         public Node ActiveNode { get; set; }
         public Edge ActiveEdge { get; set; }
-        public GraphType GraphType { get; set; } = new GraphType
-        {
-            Weighted = false,
-            Directed = false
-        };
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
-
-        public IndexBase()
-        {
-            DefaultDesign = new DefaultDesign
-            {
-                NodeColor = "#000000",
-                NodeLabelColor = "#ffffff",
-                NodeRadius = 50,
-                EdgeColor = "#000000",
-                EdgeLabelColor = "#000000",
-                EdgeWidth = 5
-            };
-        }
 
         public void UpdateChoice(NavChoice? choice)
         {

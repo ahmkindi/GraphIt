@@ -4,7 +4,6 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\GraphIt.
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\GraphIt.web.RazorComponent.input.cache
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\App.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Canvas.razor.g.cs
-C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Design.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\NavBar.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
@@ -64,7 +63,6 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp3.1\BlazorPr
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\GraphIt.web.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\App.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Canvas.razor.g.cs
-C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Design.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\NavBar.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\NodeCircle.razor.g.cs
@@ -78,3 +76,7 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDec
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\EdgeLine.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Footer.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Footer.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\EdgeOptions.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\NodeOptions.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\EdgeOptions.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\NodeOptions.razor.g.cs

@@ -6,22 +6,20 @@
                 Welcome to GraphIt
             </div>
             <div class="text-center text-justify">
-                To get started specify some of feature of your graph, this will make it easier for you when creating the graph.
-                If your unsure what you want you can skip this step and change the graph type later. If you skip the default
-                will be undirected and unweighted edges.
+                Choose default options for edges, this can be changed anytime from the Edges tab
             </div>
             <div class="d-inline-flex justify-content-center">
                 <p>Unweighted</p>
                 <label class="switch">
-                    <input type="checkbox" @bind="GraphType.Weighted">
+                    <input type="checkbox" @bind="DefaultOptions.Weighted">
                     <span class="slider round"></span>
                 </label>
-                <p>Wighted</p>
+                <p>Weighted</p>
             </div>
             <div class="d-inline-flex justify-content-center">
                 <p>Undirected</p>
                 <label class="switch">
-                    <input type="checkbox" @bind="GraphType.Directed">
+                    <input type="checkbox" @bind="DefaultOptions.Directed">
                     <span class="slider round"></span>
                 </label>
                 <p>Directed</p>

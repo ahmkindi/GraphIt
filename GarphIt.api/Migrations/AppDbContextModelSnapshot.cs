@@ -50,8 +50,8 @@ namespace GarphIt.api.Migrations
                         .HasColumnType("float")
                         .HasDefaultValue(1.0);
 
-                    b.Property<double>("Width")
-                        .HasColumnType("float");
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("EdgeId");
 

@@ -13,7 +13,7 @@
     }
     <path id="@Edge.EdgeId" d="M@(Coordinates[0]), @Coordinates[1], @Coordinates[2], @Coordinates[3]" 
           stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" class="@ActiveEdgeCss" />
-    @if (GraphType.Weighted)
+    @if (DefaultOptions.Weighted)
     {
         <text>
             <text fill="@Edge.LabelColor">

@@ -22,8 +22,7 @@ namespace GraphIt.web.Pages
 {
     public class CanvasBase : ComponentBase, IDisposable
     {
-        [Parameter] public DefaultDesign DefaultDesign { get; set; }
-        [Parameter] public GraphType GraphType { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
         [Parameter] public EventCallback<Edge> ActiveEdgeChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
@@ -86,7 +85,14 @@ namespace GraphIt.web.Pages
                     await OnDelete();
                     break;
                 case "Edit":
-                    await ChangeMenu.InvokeAsync(NavChoice.Design);
+                    if (ActiveEdge != null)
+                    {
+                        await ChangeMenu.InvokeAsync(NavChoice.Edge);
+                    }
+                    else if (ActiveNode != null)
+                    {
+                        await ChangeMenu.InvokeAsync(NavChoice.Node);
+                    }
                     break;
                 case "Insert Edge":
                     InsertEdge();
@@ -272,7 +278,7 @@ namespace GraphIt.web.Pages
             {
                 NewEdge.WaitingForNode = false;
                 NewEdge.Head = ActiveNode;
-                if (GraphType.Weighted == true)
+                if (DefaultOptions.Weighted == true)
                 {
                     NewEdge.GetEdgeWeight = true;
                 }
@@ -280,6 +286,10 @@ namespace GraphIt.web.Pages
                 {
                     await AddNewEdge(true);
                 }
+            }
+            else if (GraphMode == GraphMode.InsertEdge)
+            {
+                InsertEdge();
             }
         }
         public async Task OnNodeRightClick(Node node)
@@ -298,13 +308,13 @@ namespace GraphIt.web.Pages
             {
                 Edge newEdge = new Edge
                 {
-                    LabelColor = DefaultDesign.EdgeLabelColor,
-                    EdgeColor = DefaultDesign.EdgeColor,
+                    LabelColor = DefaultOptions.EdgeLabelColor,
+                    EdgeColor = DefaultOptions.EdgeColor,
                     HeadNodeId = NewEdge.Head.NodeId,
                     TailNodeId = NewEdge.Tail.NodeId,
-                    Width = DefaultDesign.EdgeWidth
+                    Width = DefaultOptions.EdgeWidth
                 };
-                if (GraphType.Weighted)
+                if (DefaultOptions.Weighted)
                 {
                     newEdge.Weight = NewEdge.Weight;
                 }
@@ -331,11 +341,11 @@ namespace GraphIt.web.Pages
         {
             Node newNode = new Node
             {
-                LabelColor = DefaultDesign.NodeLabelColor,
-                NodeColor = DefaultDesign.NodeColor,
+                LabelColor = DefaultOptions.NodeLabelColor,
+                NodeColor = DefaultOptions.NodeColor,
                 Xaxis = x * SVGControl.Scale + SVGControl.Xaxis,
                 Yaxis = y * SVGControl.Scale + SVGControl.Yaxis,
-                Radius = DefaultDesign.NodeRadius
+                Radius = DefaultOptions.NodeRadius
             };
             await NodeService.AddNode(newNode);
             Nodes = await NodeService.GetNodes();
