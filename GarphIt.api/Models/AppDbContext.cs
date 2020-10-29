@@ -18,6 +18,9 @@ namespace GarphIt.api.Models
             modelBuilder.Entity<Edge>()
                 .Property(e => e.Weight)
                 .HasDefaultValue(1);
+            modelBuilder.Entity<Edge>()
+                .Property(e => e.Curve)
+                .HasDefaultValue(1);
         }
     }
 }

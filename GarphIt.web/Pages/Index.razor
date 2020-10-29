@@ -6,7 +6,7 @@
     <InitialModal DefaultOptions="DefaultOptions" OnClose="OnInitialClose"></InitialModal>
 }
 
-<NavBar @bind-Choice="Choice"></NavBar>
+<NavBar @bind-Choice="Choice" ActiveEdge="ActiveEdge" ActiveNode="ActiveNode"></NavBar>
 
 @if (Choice != null)
 {
@@ -27,10 +27,24 @@
             <Insert @bind-GraphMode="GraphMode"></Insert>
             break;
         case NavChoice.Node:
-            <NodeOptions @bind-ActiveNode="ActiveNode" @bind-DefaultOptions="DefaultOptions"></NodeOptions>
+            <NodeOptions @bind-DefaultOptions="DefaultOptions"></NodeOptions>
             break;
         case NavChoice.Edge:
-            <EdgeOptions @bind-ActiveEdge="ActiveEdge" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
+            <EdgeOptions @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
+            break;
+        case NavChoice.Algorithms:
+            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+                <div class="collapse navbar-collapse mx-0" id="navbarNav">
+                    <ul class="navbar-nav mx-0">
+                        <li class="nav-item">
+                            <button type="button" class="btn">Save</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            break;
+        case NavChoice.Selected:
+            <Selected @bind-ActiveEdge="ActiveEdge" @bind-ActiveNode="ActiveNode" DefaultOptions="DefaultOptions"></Selected>
             break;
         case NavChoice.About:
             <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">

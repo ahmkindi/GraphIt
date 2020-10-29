@@ -8,6 +8,8 @@ namespace GraphIt.models
         Insert,
         Node,
         Edge,
+        Algorithms,
+        Selected,
         About
     }
 }

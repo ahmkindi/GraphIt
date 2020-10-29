@@ -2,9 +2,6 @@
 
 <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
     <div class="d-flex">
-        <div class="font-weight-bold text-left">
-            Default:
-        </div>
         <div class="px-2">
             <SfCheckBox @bind-Checked="DefaultOptions.Weighted" Label="Weighted" @onchange="OnDefWeightedChange" CssClass="e-small"></SfCheckBox>
             <SfCheckBox @bind-Checked="DefaultOptions.Directed" Label="Directed" @onchange="OnDefDirectedChange" CssClass="e-small"></SfCheckBox>
@@ -14,45 +11,10 @@
                                     @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
         </div>
         <div class="px-2">
-            Color <SfColorPicker Value="@DefaultOptions.EdgeColor" ValueChange="OnDefEdgeColorChange" ShowButtons="false"></SfColorPicker>
+            Color <SfColorPicker Value="@DefaultOptions.EdgeColor" ValueChange="OnDefEdgeColorChange"></SfColorPicker>
         </div>
         <div class="px-2">
-            Label <SfColorPicker Value="@DefaultOptions.EdgeLabelColor" ValueChange="OnDefEdgeLabelColorChange" ShowButtons="false"></SfColorPicker>
+            Label <SfColorPicker Value="@DefaultOptions.EdgeLabelColor" ValueChange="OnDefEdgeLabelColorChange"></SfColorPicker>
         </div>
     </div>
-    @if (ActiveEdge != null)
-    {
-    <div class="font-weight-bold text-left">
-        Selected:
-    </div>
-    <div class="px-2">
-        <SfCheckBox @bind-Checked="ActiveEdge.Directed" Label="Directed" @onchange="OnDirectedChange" CssClass="e-small"></SfCheckBox>
-    </div>
-    <div class="px-2">
-        Width <SfNumericTextBox TValue="int?" Value="@ActiveEdge.Width" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                Placeholder="Width" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
-    </div>
-    <div class="px-2">
-        Color <SfColorPicker Value="@ActiveEdge.EdgeColor" ValueChange="OnEdgeColorChange" ShowButtons="false"></SfColorPicker>
-    </div>
-    <div class="px-2">
-        Label
-        @if (ActiveEdge.Label == null || ActiveEdge.Label == "")
-        {
-            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@(ActiveEdge.Weight.ToString())"></SfTextBox>
-        }
-        else
-        {
-            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdge.Label"></SfTextBox>
-        }
-        <SfColorPicker Value="@ActiveEdge.LabelColor" ValueChange="OnEdgeLabelColorChange" ShowButtons="false"></SfColorPicker>
-    </div>
-        @if (DefaultOptions.Weighted)
-        {
-            <div class="px-2">
-                Weight: <SfNumericTextBox Value="@ActiveEdge.Weight" Min=1 ShowSpinButton=false CssClass="shortInput"
-                    Placeholder="Weight" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
-            </div>
-        }
-    }
 </nav>

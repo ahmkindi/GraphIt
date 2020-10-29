@@ -30,6 +30,10 @@ html, body {
     stroke-dasharray: 11, 5;
 }
 
+.e-plus-icon::before {
+    content: '\e823';
+}
+
 .navbar-custom {
     background-color: #D0CECE;
 }
@@ -61,8 +65,8 @@ svg {
     cursor: grabbing;
 }
 
-.alias {
-    cursor: alias;
+.moveNode{
+    cursor: move;
 }
 svg text {
     -webkit-touch-callout: none;

@@ -18,8 +18,7 @@ namespace GraphIt.web.Pages
         [Parameter] public HexColorValue ColorValue { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Parameter] public Edge ActiveEdge { get; set; }
-        [Parameter] public EventCallback<Edge> ActiveEdgeChanged { get; set; }
+        
 
         public async Task OnDefWeightedChange()
         {
@@ -47,39 +46,6 @@ namespace GraphIt.web.Pages
         {
             DefaultOptions.EdgeWidth = int.Parse(e.Value.ToString());
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-
-        public async Task OnDirectedChange()
-        {
-            DefaultOptions.Directed = !DefaultOptions.Directed;
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-        public async Task OnWidthChange(ChangeEventArgs e)
-        {
-            ActiveEdge.Width = int.Parse(e.Value.ToString());
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
-        }
-        public async Task OnEdgeLabelChange(ChangedEventArgs e)
-        {
-            ActiveEdge.Label = e.Value.ToString();
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
-        }
-        public async Task OnEdgeLabelColorChange(ColorPickerEventArgs e)
-        {
-            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveEdge.LabelColor = ColorValue.Hex;
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
-        }
-        public async Task OnEdgeColorChange(ColorPickerEventArgs e)
-        {
-            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveEdge.EdgeColor = ColorValue.Hex;
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
-        }
-        public async Task OnWeightChange(ChangeEventArgs e)
-        {
-            ActiveEdge.Weight = double.Parse(e.Value.ToString());
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
         }
     }
 }

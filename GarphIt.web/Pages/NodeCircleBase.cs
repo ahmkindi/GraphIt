@@ -17,7 +17,13 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Node> OnNodeRightClick { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
         [Parameter] public Node Node { get; set; }
-     
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+        public string NodeCss { get; set; }
+
+        protected override void OnInitialized()
+        {
+            NodeCss = "pointer";
+        }
         public async Task OnMouseDown(MouseEventArgs e)
         {
             if (e.Button == 2)
@@ -26,8 +32,14 @@ namespace GraphIt.web.Pages
             }
             else
             {
+                NodeCss = "moveNode";
                 await OnNodeClick.InvokeAsync(Node);
             }   
+        }
+
+        public void OnMouseUp()
+        {
+            NodeCss = "pointer";
         }
     }
 }

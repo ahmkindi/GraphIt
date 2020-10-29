@@ -19,6 +19,12 @@
             <li class="nav-item @NavElements[(int)NavChoice.Edge]" @onclick="(() => Click(NavChoice.Edge))">
                 <button type="button" class="btn shadow-none">Edge</button>
             </li>
+            @if (ActiveNode != null || ActiveEdge != null)
+            {
+                <li class="nav-item @NavElements[(int)NavChoice.Selected]" @onclick="(() => Click(NavChoice.Selected))">
+                    <button type="button" class="btn shadow-none">Selected</button>
+                </li>
+            }
             <li class="nav-item @NavElements[(int)NavChoice.About]" @onclick="(() => Click(NavChoice.About))">
                 <button type="button" class="btn shadow-none">About</button>
             </li>

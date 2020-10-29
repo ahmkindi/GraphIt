@@ -17,15 +17,14 @@ namespace GraphIt.web.Pages
         [Parameter] public Edge ActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeClick { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeRightClick { get; set; }
-        public double[] Coordinates { get; set; } = new double[4];
+        public double[] Coordinates { get; set; } = new double[6];
         public string ActiveEdgeCss { get; set; }
         protected override void OnParametersSet()
         {
-            ActiveEdgeCss = "";
             Coordinates[0] = Edge.HeadNode.Xaxis;
             Coordinates[1] = Edge.HeadNode.Yaxis;
-            Coordinates[2] = Edge.TailNode.Xaxis;
-            Coordinates[3] = Edge.TailNode.Yaxis;
+            Coordinates[4] = Edge.TailNode.Xaxis;
+            Coordinates[5] = Edge.TailNode.Yaxis;
             if (ActiveNode != null)
             {
                 if (Edge.HeadNodeId == ActiveNode.NodeId)
@@ -35,13 +34,18 @@ namespace GraphIt.web.Pages
                 }
                 else if (Edge.TailNodeId == ActiveNode.NodeId)
                 {
-                    Coordinates[2] = ActiveNode.Xaxis;
-                    Coordinates[3] = ActiveNode.Yaxis;
+                    Coordinates[4] = ActiveNode.Xaxis;
+                    Coordinates[5] = ActiveNode.Yaxis;
                 }
             }
+            Coordinates[2] = (Coordinates[0] + Coordinates[4]) / 2;
             if (ActiveEdge != null && ActiveEdge.EdgeId == Edge.EdgeId)
             {
-                ActiveEdgeCss = "activeEdge";
+                Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2) * ActiveEdge.Curve;
+            }
+            else
+            {
+                Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2) * Edge.Curve;
             }
         }
         public async Task OnMouseDown(MouseEventArgs e)

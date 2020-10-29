@@ -1,36 +1,67 @@
 ﻿@inherits EdgeLineBase
-
+@if (ActiveEdge != null && ActiveEdge.EdgeId == Edge.EdgeId)
+{
+    <g class="pointer"
+       @onmousedown="OnMouseDown">
+        @if (Edge.Directed)
+        {
+            <defs>
+                <marker id="arrowhead" markerWidth="@(ActiveEdge.Width*2)" markerHeight="@(ActiveEdge.Width*1.5)"
+                        refX="@(ActiveEdge.TailNode.Radius)" refY="@(ActiveEdge.Width*0.75)" orient="auto">
+                    <polygon points="0 0, @(ActiveEdge.Width*2) @(ActiveEdge.Width*0.75), 0 @(ActiveEdge.Width*1.5)" />
+                </marker>
+            </defs>
+        }
+        <path id="@ActiveEdge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
+              stroke-width="@ActiveEdge.Width" stroke="@ActiveEdge.EdgeColor" marker-end="url(#arrowhead)" class="activeEdge" fill="none"/>
+        @if (DefaultOptions.Weighted)
+        {
+            <text>
+                <text>
+                    @ActiveEdge.Weight
+                </text>
+            </text>
+        }
+        @if (ActiveEdge.Label != null)
+        {
+            <text>
+                <text>
+                    @ActiveEdge.Label
+                </text>
+            </text>
+        }
+    </g>
+}
+else
+{
 <g class="pointer"
    @onmousedown="OnMouseDown">
     @if (Edge.Directed)
     {
         <defs>
             <marker id="arrowhead" markerWidth="@(Edge.Width*2)" markerHeight="@(Edge.Width*1.5)"
-                    refX="@(Edge.TailNode.Radius + (Edge.Width*2))" refY="@(Edge.Width*0.75)" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" />
+                    refX="@(Edge.TailNode.Radius)" refY="@(Edge.Width*0.75)" orient="auto">
+                <polygon points="0 0, @(Edge.Width*2) @(Edge.Width*0.75), 0 @(Edge.Width*1.5)" />
             </marker>
         </defs>
     }
-    <path id="@Edge.EdgeId" d="M@(Coordinates[0]), @Coordinates[1], @Coordinates[2], @Coordinates[3]" 
-          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" class="@ActiveEdgeCss" />
+    <path id="@Edge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
+          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)"/>
     @if (DefaultOptions.Weighted)
     {
         <text>
-            <text fill="@Edge.LabelColor">
-                HELLO WORLLLLLLLLLLLLLLLLLLLDDD
-                @*<textpath xlink:href="@(Navigation.Uri+"#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
-                    HELLO WORLD!
-                    @if (Edge.Label == null || Edge.Label == "")
-                    {
-                        @Edge.Weight
-                    }
-                    else
-                    {
-                        @Edge.Label
-                    }
-                </textpath>*@
+            <text>
+                @Edge.Weight
+            </text>
+        </text>
+    }
+    @if (Edge.Label != null)
+    {
+        <text>
+            <text>
+                @Edge.Label
             </text>
         </text>
     }
 </g>
- 
+}

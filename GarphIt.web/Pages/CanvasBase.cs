@@ -190,6 +190,7 @@ namespace GraphIt.web.Pages
                 if (ObjectClicked.Node)
                 {
                     ObjectClicked.Node = false;
+                    SvgClass = "pointer";
                     await NodeService.UpdateNode(ActiveNode);
                     Nodes = await NodeService.GetNodes();
                     Edges = await EdgeService.GetEdges();
@@ -242,6 +243,7 @@ namespace GraphIt.web.Pages
         {
             if (ObjectClicked.Node && ActiveNode != null)
             {
+                SvgClass = "moveNode";
                 ActiveNode.Xaxis = e.ClientX * SVGControl.Scale + SVGControl.Xaxis;
                 ActiveNode.Yaxis = e.ClientY * SVGControl.Scale + SVGControl.Yaxis;
             }
@@ -312,7 +314,8 @@ namespace GraphIt.web.Pages
                     EdgeColor = DefaultOptions.EdgeColor,
                     HeadNodeId = NewEdge.Head.NodeId,
                     TailNodeId = NewEdge.Tail.NodeId,
-                    Width = DefaultOptions.EdgeWidth
+                    Width = DefaultOptions.EdgeWidth,
+                    Directed = DefaultOptions.Directed
                 };
                 if (DefaultOptions.Weighted)
                 {

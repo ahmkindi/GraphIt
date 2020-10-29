@@ -14,6 +14,7 @@ namespace GraphIt.models
         public int HeadNodeId { get; set; }
         [ForeignKey(nameof(TailNode))]
         public int TailNodeId { get; set; }
+        public double Curve { get; set; }
         [Required]
         public double Weight { get; set; }
         public string Label { get; set; }

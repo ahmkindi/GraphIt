@@ -12,6 +12,8 @@ namespace GraphIt.web.Pages
         public NavCss[] NavElements { get; set; }
         [Parameter] public NavChoice? Choice { get; set; } = null;
         [Parameter] public EventCallback<NavChoice?> ChoiceChanged { get; set; }
+        [Parameter] public Node ActiveNode { get; set; }
+        [Parameter] public Edge ActiveEdge { get; set; }
         protected override void OnInitialized()
         {
             var length = Enum.GetNames(typeof(NavChoice)).Length;

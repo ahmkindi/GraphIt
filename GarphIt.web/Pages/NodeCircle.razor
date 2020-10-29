@@ -2,9 +2,10 @@
 
 @if (ActiveNode != null && Node.NodeId == ActiveNode.NodeId)
 {
-    <g class="pointer"
+    <g class="@NodeCss"
        id="@ActiveNode.NodeId"
-       @onmousedown="OnMouseDown">
+       @onmousedown="OnMouseDown"
+       @onmouseup="OnMouseUp">
         <circle cx="@ActiveNode.Xaxis"
                 cy="@ActiveNode.Yaxis"
                 r="@ActiveNode.Radius"
