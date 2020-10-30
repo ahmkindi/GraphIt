@@ -1,39 +1,5 @@
 ﻿@inherits EdgeLineBase
-@if (ActiveEdge != null && ActiveEdge.EdgeId == Edge.EdgeId)
-{
-    <g class="pointer"
-       @onmousedown="OnMouseDown">
-        @if (Edge.Directed)
-        {
-            <defs>
-                <marker id="arrowhead" markerWidth="@(ActiveEdge.Width*2)" markerHeight="@(ActiveEdge.Width*1.5)"
-                        refX="@(ActiveEdge.TailNode.Radius)" refY="@(ActiveEdge.Width*0.75)" orient="auto">
-                    <polygon points="0 0, @(ActiveEdge.Width*2) @(ActiveEdge.Width*0.75), 0 @(ActiveEdge.Width*1.5)" />
-                </marker>
-            </defs>
-        }
-        <path id="@ActiveEdge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
-              stroke-width="@ActiveEdge.Width" stroke="@ActiveEdge.EdgeColor" marker-end="url(#arrowhead)" class="activeEdge" fill="none"/>
-        @if (DefaultOptions.Weighted)
-        {
-            <text>
-                <text>
-                    @ActiveEdge.Weight
-                </text>
-            </text>
-        }
-        @if (ActiveEdge.Label != null)
-        {
-            <text>
-                <text>
-                    @ActiveEdge.Label
-                </text>
-            </text>
-        }
-    </g>
-}
-else
-{
+
 <g class="pointer"
    @onmousedown="OnMouseDown">
     @if (Edge.Directed)
@@ -45,23 +11,24 @@ else
             </marker>
         </defs>
     }
-    <path id="@Edge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
-          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)"/>
     @if (DefaultOptions.Weighted)
     {
+        <defs>
+            <filter x="0" y="0" width="1" height="1" id="solid">
+                <feFlood flood-color="@Edge.EdgeColor" />
+                <feComposite in="SourceGraphic" operator="xor" />
+            </filter>
+        </defs>
         <text>
-            <text>
-                @Edge.Weight
-            </text>
+            <text text-anchor="middle" x="@(0.25*Coordinates[0]+ 0.5*Coordinates[2] + 0.25*Coordinates[4])"
+                  y="@(0.25*Coordinates[1]+ 0.5*Coordinates[3] + 0.25*Coordinates[5])" filter="url(#solid)" fill="@Edge.LabelColor">@Edge.Weight</text>
         </text>
     }
-    @if (Edge.Label != null)
-    {
-        <text>
-            <text>
-                @Edge.Label
-            </text>
-        </text>
-    }
+    <path id="@Edge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
+          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" fill="none" class="@ActiveEdgeCss"/>
+    <text>
+        <textpath href="@("https://localhost:44367/#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
+            @Edge.Label
+        </textpath>
+    </text>
 </g>
-}

@@ -21,6 +21,12 @@ namespace GraphIt.web.Pages
         public string ActiveEdgeCss { get; set; }
         protected override void OnParametersSet()
         {
+            ActiveEdgeCss = "";
+            if (ActiveEdge != null && ActiveEdge.EdgeId == Edge.EdgeId)
+            {
+                Edge = ActiveEdge;
+                ActiveEdgeCss = "activeEdge";
+            }
             Coordinates[0] = Edge.HeadNode.Xaxis;
             Coordinates[1] = Edge.HeadNode.Yaxis;
             Coordinates[4] = Edge.TailNode.Xaxis;
@@ -38,15 +44,8 @@ namespace GraphIt.web.Pages
                     Coordinates[5] = ActiveNode.Yaxis;
                 }
             }
-            Coordinates[2] = (Coordinates[0] + Coordinates[4]) / 2;
-            if (ActiveEdge != null && ActiveEdge.EdgeId == Edge.EdgeId)
-            {
-                Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2) * ActiveEdge.Curve;
-            }
-            else
-            {
-                Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2) * Edge.Curve;
-            }
+            Coordinates[2] = ((Coordinates[0] + Coordinates[4]) / 2) + ((Math.Abs(Coordinates[1] - Coordinates[5])) * Edge.Curve);
+            Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2)+((Math.Abs(Coordinates[0] - Coordinates[4])) * Edge.Curve);
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {

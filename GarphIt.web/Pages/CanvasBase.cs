@@ -85,14 +85,7 @@ namespace GraphIt.web.Pages
                     await OnDelete();
                     break;
                 case "Edit":
-                    if (ActiveEdge != null)
-                    {
-                        await ChangeMenu.InvokeAsync(NavChoice.Edge);
-                    }
-                    else if (ActiveNode != null)
-                    {
-                        await ChangeMenu.InvokeAsync(NavChoice.Node);
-                    }
+                    await ChangeMenu.InvokeAsync(NavChoice.Selected);
                     break;
                 case "Insert Edge":
                     InsertEdge();

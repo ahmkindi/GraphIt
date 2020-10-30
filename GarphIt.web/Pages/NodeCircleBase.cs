@@ -1,7 +1,6 @@
 ﻿using GraphIt.models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Syncfusion.Blazor.Navigations;
 using Syncfusion.Blazor.SplitButtons;
 using System;
@@ -17,12 +16,19 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Node> OnNodeRightClick { get; set; }
         [Parameter] public Node ActiveNode { get; set; }
         [Parameter] public Node Node { get; set; }
-        [Inject] public IJSRuntime JSRuntime { get; set; }
         public string NodeCss { get; set; }
 
         protected override void OnInitialized()
         {
             NodeCss = "pointer";
+        }
+
+        protected override void OnParametersSet()
+        {
+            if (ActiveNode != null && ActiveNode.NodeId == Node.NodeId)
+            {
+                Node = ActiveNode;
+            }
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {
