@@ -17,7 +17,7 @@ namespace GraphIt.web.Pages
         public Edge ActiveEdge { get; set; }
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
-
+        public double Scale { get; set; } = 1;
         public void UpdateChoice(NavChoice? choice)
         {
             Choice = choice;

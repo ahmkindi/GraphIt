@@ -22,12 +22,10 @@ namespace GraphIt.web.Pages
 
         public async Task OnDefWeightedChange()
         {
-            DefaultOptions.Weighted = !DefaultOptions.Weighted;
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
         public async Task OnDefDirectedChange()
         {
-            DefaultOptions.Directed = !DefaultOptions.Directed;
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
         public async Task OnDefEdgeColorChange(ColorPickerEventArgs e)

@@ -81,7 +81,6 @@ namespace GraphIt.web.Pages
 
         public async Task OnDirectedChange()
         {
-            ActiveEdge.Directed = !ActiveEdge.Directed;
             await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
         }
         public async Task OnCurve(double x)
