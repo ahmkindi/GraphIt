@@ -8,6 +8,7 @@ namespace GraphIt.web.Services
 {
     public interface IEdgeService
     {
+        Task<IEnumerable<Edge>> Search(int headId, int tailId, bool directed);
         Task<IEnumerable<Edge>> GetEdges();
         Task<Edge> GetEdge(int id);
         Task<Edge> UpdateEdge(Edge updatedEdge);

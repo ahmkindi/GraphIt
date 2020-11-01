@@ -8,6 +8,7 @@ namespace GarphIt.api.Models
 {
     public interface IEdgeRepository
     {
+        Task<IEnumerable<Edge>> Search(int headId, int tailId, bool directed);
         Task<IEnumerable<Edge>> GetEdges();
         Task<Edge> GetEdge(int edgeId);
         Task<Edge> AddEdge(Edge edge);

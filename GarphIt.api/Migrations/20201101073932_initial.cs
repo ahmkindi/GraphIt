@@ -32,8 +32,7 @@ namespace GarphIt.api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HeadNodeId = table.Column<int>(nullable: false),
                     TailNodeId = table.Column<int>(nullable: false),
-                    CurvePointX = table.Column<double>(nullable: false),
-                    CurvePointY = table.Column<double>(nullable: false),
+                    Curve = table.Column<double>(nullable: false, defaultValue: 0.0),
                     Weight = table.Column<double>(nullable: false, defaultValue: 1.0),
                     Label = table.Column<string>(nullable: true),
                     Width = table.Column<int>(nullable: false),
@@ -59,14 +58,15 @@ namespace GarphIt.api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Edges_HeadNodeId",
-                table: "Edges",
-                column: "HeadNodeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Edges_TailNodeId",
                 table: "Edges",
                 column: "TailNodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Edges_HeadNodeId_TailNodeId",
+                table: "Edges",
+                columns: new[] { "HeadNodeId", "TailNodeId" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

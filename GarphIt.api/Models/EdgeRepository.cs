@@ -73,5 +73,21 @@ namespace GarphIt.api.Models
 
             return null;
         }
+
+        public async Task<IEnumerable<Edge>> Search(int headId, int tailId, bool directed)
+        {
+            IQueryable<Edge> query = appDbContext.Edges;
+            if (directed)
+            {
+                query = query.Where(e => (e.HeadNodeId == headId && e.TailNodeId == tailId) 
+                || (e.HeadNodeId == tailId && e.TailNodeId == headId && e.Directed == false));
+            }
+            if (!directed)
+            {
+                query = query.Where(e => (e.HeadNodeId == headId && e.TailNodeId == tailId)
+                || (e.HeadNodeId == tailId && e.TailNodeId == headId));
+            }
+            return await query.ToListAsync();
+        }
     }
 }

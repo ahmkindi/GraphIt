@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarphIt.api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201029071035_initial")]
+    [Migration("20201101073932_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,10 @@ namespace GarphIt.api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("CurvePointX")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CurvePointY")
-                        .HasColumnType("float");
+                    b.Property<double>("Curve")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
 
                     b.Property<bool>("Directed")
                         .HasColumnType("bit");
@@ -63,9 +62,10 @@ namespace GarphIt.api.Migrations
 
                     b.HasKey("EdgeId");
 
-                    b.HasIndex("HeadNodeId");
-
                     b.HasIndex("TailNodeId");
+
+                    b.HasIndex("HeadNodeId", "TailNodeId")
+                        .IsUnique();
 
                     b.ToTable("Edges");
                 });

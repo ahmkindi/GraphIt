@@ -18,14 +18,8 @@ namespace GraphIt.web.Pages
 
         protected override void OnParametersSet()
         {
-            if (GraphMode == GraphMode.InsertNode)
-            {
-                InsertNode = true;
-            }
-            else if (GraphMode == GraphMode.InsertNode)
-            {
-                InsertEdge = true;
-            }
+            InsertNode = GraphMode == GraphMode.InsertNode;
+            InsertEdge = GraphMode == GraphMode.InsertEdge;
         }
         public async Task UpdateInsertNode()
         {

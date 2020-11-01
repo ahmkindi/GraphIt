@@ -2,7 +2,9 @@
 using GraphIt.models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GarphIt.api.Controllers
@@ -24,6 +26,21 @@ namespace GarphIt.api.Controllers
             try
             {
                 return Ok(await edgeRepository.GetEdges());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
+        
+        [HttpGet("{search}")]
+        public async Task<ActionResult<IEnumerable<Edge>>> Search(int headId, int tailId, bool directed)
+        {
+            try
+            {
+                var result = await edgeRepository.Search(headId, tailId, directed);
+                return Ok(result);
             }
             catch (Exception)
             {

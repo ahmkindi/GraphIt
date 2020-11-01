@@ -17,8 +17,9 @@ namespace GraphIt.web.Pages
         [Parameter] public Edge ActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeClick { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeRightClick { get; set; }
-        public double[] Coordinates { get; set; } = new double[6];
         public string ActiveEdgeCss { get; set; }
+        public double ArrowOffset { get; set; }
+        public double[] CurvePoint { get; set; } = new double[2];
         protected override void OnParametersSet()
         {
             ActiveEdgeCss = "";
@@ -27,25 +28,27 @@ namespace GraphIt.web.Pages
                 Edge = ActiveEdge;
                 ActiveEdgeCss = "activeEdge";
             }
-            Coordinates[0] = Edge.HeadNode.Xaxis;
-            Coordinates[1] = Edge.HeadNode.Yaxis;
-            Coordinates[4] = Edge.TailNode.Xaxis;
-            Coordinates[5] = Edge.TailNode.Yaxis;
             if (ActiveNode != null)
             {
                 if (Edge.HeadNodeId == ActiveNode.NodeId)
                 {
-                    Coordinates[0] = ActiveNode.Xaxis;
-                    Coordinates[1] = ActiveNode.Yaxis;
+                    Edge.HeadNode = ActiveNode;
                 }
                 else if (Edge.TailNodeId == ActiveNode.NodeId)
                 {
-                    Coordinates[4] = ActiveNode.Xaxis;
-                    Coordinates[5] = ActiveNode.Yaxis;
+                    Edge.TailNode = ActiveNode;
                 }
             }
-            Coordinates[2] = ((Coordinates[0] + Coordinates[4]) / 2) + ((Math.Abs(Coordinates[1] - Coordinates[5])) * Edge.Curve);
-            Coordinates[3] = ((Coordinates[1] + Coordinates[5]) / 2)+((Math.Abs(Coordinates[0] - Coordinates[4])) * Edge.Curve);
+            if (Edge.HeadNodeId == Edge.TailNodeId)
+            {
+                ArrowOffset = 0;
+            }
+            else
+            {
+                ArrowOffset = Convert.ToDouble(-Edge.HeadNode.Radius) / Edge.Width;
+            }
+            CurvePoint[0] = ((Edge.HeadNode.Xaxis + Edge.TailNode.Xaxis) / 2) + ((Math.Abs(Edge.HeadNode.Yaxis - Edge.TailNode.Yaxis)) * Edge.Curve);
+            CurvePoint[1] = ((Edge.HeadNode.Yaxis + Edge.TailNode.Yaxis) / 2) + ((Math.Abs(Edge.HeadNode.Xaxis - Edge.TailNode.Xaxis)) * Edge.Curve);
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {

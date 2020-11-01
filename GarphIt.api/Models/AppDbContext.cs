@@ -20,7 +20,7 @@ namespace GarphIt.api.Models
                 .HasDefaultValue(1);
             modelBuilder.Entity<Edge>()
                 .Property(e => e.Curve)
-                .HasDefaultValue(1);
+                .HasDefaultValue(0);
         }
     }
 }

@@ -51,7 +51,14 @@ namespace GraphIt.web.Pages
         }
         public async Task OnEdgeLabelChange(ChangedEventArgs e)
         {
-            ActiveEdge.Label = e.Value.ToString();
+            if (e.Value != null)
+            {
+                ActiveEdge.Label = e.Value.ToString();
+            }
+            else
+            {
+                ActiveEdge.Label = null;
+            }
             await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
         }
         public async Task OnEdgeLabelColorChange(ColorPickerEventArgs e)

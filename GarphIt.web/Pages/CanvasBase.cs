@@ -301,6 +301,11 @@ namespace GraphIt.web.Pages
         {
             if (done && NewEdge.Head != null && NewEdge.Tail != null)
             {
+                IEnumerable<Edge> edgesToDelete = await EdgeService.Search(NewEdge.Head.NodeId, NewEdge.Tail.NodeId, DefaultOptions.Directed);
+                foreach (Edge e in edgesToDelete) 
+                {
+                    await EdgeService.DeleteEdge(e.EdgeId);
+                }
                 Edge newEdge = new Edge
                 {
                     LabelColor = DefaultOptions.EdgeLabelColor,

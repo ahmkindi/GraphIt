@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarphIt.api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201029073132_initial2")]
-    partial class initial2
+    [Migration("20201101084722_second")]
+    partial class second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,7 +30,7 @@ namespace GarphIt.api.Migrations
                     b.Property<double>("Curve")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("float")
-                        .HasDefaultValue(1.0);
+                        .HasDefaultValue(0.0);
 
                     b.Property<bool>("Directed")
                         .HasColumnType("bit");

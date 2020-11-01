@@ -2,32 +2,51 @@
 
 <g class="pointer"
    @onmousedown="OnMouseDown">
+    @if (ArrowOffset == 0)
+    {
+        <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @(Edge.HeadNode.Yaxis+Edge.HeadNode.Radius)
+                               A @Edge.HeadNode.Radius @Edge.HeadNode.Radius 0 1 0 @(Edge.HeadNode.Xaxis+Edge.HeadNode.Radius) @Edge.HeadNode.Yaxis"
+              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-start="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+    }
+    else
+    {
+        <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @Edge.HeadNode.Yaxis Q @CurvePoint[0] @CurvePoint[1] @Edge.TailNode.Xaxis @Edge.TailNode.Yaxis"
+              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-start="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+    }
     @if (Edge.Directed)
     {
         <defs>
-            <marker id="arrowhead" markerWidth="@(Edge.Width*2)" markerHeight="@(Edge.Width*1.5)"
-                    refX="@(Edge.TailNode.Radius)" refY="@(Edge.Width*0.75)" orient="auto">
-                <polygon points="0 0, @(Edge.Width*2) @(Edge.Width*0.75), 0 @(Edge.Width*1.5)" />
+            <marker id="@("arrowhead"+Edge.EdgeId)" markerWidth="7" markerHeight="5"
+                    refX="@(ArrowOffset)" refY="2.5" orient="auto">
+                <polygon points="7 0, 7 5, 0 2.5" fill="@(Edge.EdgeColor)" />
             </marker>
         </defs>
     }
     @if (DefaultOptions.Weighted)
     {
         <defs>
-            <filter x="0" y="0" width="1" height="1" id="solid">
+            <filter x="0" y="0" width="1" height="1" id="@("solid"+Edge.EdgeId)">
                 <feFlood flood-color="@Edge.EdgeColor" />
                 <feComposite in="SourceGraphic" operator="xor" />
             </filter>
         </defs>
-        <text>
-            <text text-anchor="middle" x="@(0.25*Coordinates[0]+ 0.5*Coordinates[2] + 0.25*Coordinates[4])"
-                  y="@(0.25*Coordinates[1]+ 0.5*Coordinates[3] + 0.25*Coordinates[5])" filter="url(#solid)" fill="@Edge.LabelColor">@Edge.Weight</text>
-        </text>
+        @if (ArrowOffset == 0)
+        {
+            <text>
+                <text text-anchor="middle" x="@(Edge.HeadNode.Xaxis+(2*Edge.HeadNode.Radius)-3)"
+                      y="@(Edge.HeadNode.Yaxis+(2*Edge.HeadNode.Radius)-3)" filter="url(#@("solid"+Edge.EdgeId))" fill="@Edge.LabelColor">@Edge.Weight</text>
+            </text>
+        }
+        else
+        {
+            <text>
+                <text text-anchor="middle" x="@(0.25*Edge.HeadNode.Xaxis + 0.5*CurvePoint[0] + 0.25*Edge.TailNode.Xaxis)"
+                      y="@(0.25*Edge.HeadNode.Yaxis + 0.5*CurvePoint[1] + 0.25*Edge.TailNode.Yaxis)" filter="url(#@("solid"+Edge.EdgeId))" fill="@Edge.LabelColor">@Edge.Weight</text>
+            </text>
+        }
     }
-    <path id="@Edge.EdgeId" d="M @(Coordinates[0]) @Coordinates[1] Q @Coordinates[2] @Coordinates[3] @Coordinates[4] @Coordinates[5]"
-          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#arrowhead)" fill="none" class="@ActiveEdgeCss"/>
     <text>
-        <textpath href="@("https://localhost:44367/#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
+        <textpath href="@("#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
             @Edge.Label
         </textpath>
     </text>
