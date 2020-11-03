@@ -109,13 +109,20 @@ using Syncfusion.Blazor.Navigations;
 #nullable disable
 #nullable restore
 #line 15 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
-using Syncfusion.Blazor.Navigations.Internal;
+using Syncfusion.Blazor.SplitButtons;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 16 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
+using Syncfusion.Blazor.Navigations.Internal;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 17 "C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\_Imports.razor"
 using BlazorPro.BlazorSize;
 
 #line default

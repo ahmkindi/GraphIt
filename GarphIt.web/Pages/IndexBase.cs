@@ -18,6 +18,7 @@ namespace GraphIt.web.Pages
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
         public double Scale { get; set; } = 1;
+        public Representation Rep { get; set; } = Representation.None;
         public void UpdateChoice(NavChoice? choice)
         {
             Choice = choice;

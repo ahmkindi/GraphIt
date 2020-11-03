@@ -5,6 +5,15 @@
 {
     <InitialModal DefaultOptions="DefaultOptions" OnClose="OnInitialClose"></InitialModal>
 }
+@if (Rep == Representation.Matrix)
+{
+    <AdjMatrix @bind-Rep="Rep"></AdjMatrix>
+}
+else if (Rep == Representation.List)
+{
+
+}
+
 
 <NavBar @bind-Choice="Choice" ActiveEdge="ActiveEdge" ActiveNode="ActiveNode"></NavBar>
 
@@ -13,15 +22,7 @@
     switch (Choice)
     {
         case NavChoice.File:
-            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-                <div class="collapse navbar-collapse mx-0" id="navbarNav">
-                    <ul class="navbar-nav mx-0">
-                        <li class="nav-item">
-                            <button type="button" class="btn">Save</button>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+            <File @bind-Rep="Rep"></File>
             break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode"></Insert>

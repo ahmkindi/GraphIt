@@ -30,10 +30,6 @@ html, body {
     stroke-dasharray: 11, 5;
 }
 
-.e-plus-icon::before {
-    content: '\e823';
-}
-
 .navbar-custom {
     background-color: #D0CECE;
 }
