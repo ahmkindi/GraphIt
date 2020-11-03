@@ -4,6 +4,7 @@ using GraphIt.web.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Syncfusion.Blazor.Charts;
 using Syncfusion.Blazor.Data;
@@ -319,7 +320,7 @@ namespace GraphIt.web.Pages
                 };
                 if (DefaultOptions.Weighted)
                 {
-                    newEdge.Weight = NewEdge.Weight;
+                    newEdge.Weight = Math.Round(NewEdge.Weight, 2);
                 }
                 await EdgeService.AddEdge(newEdge);
                 Edges = await EdgeService.GetEdges();

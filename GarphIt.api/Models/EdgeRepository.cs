@@ -50,10 +50,11 @@ namespace GarphIt.api.Models
                 result.LabelColor = edge.LabelColor;
                 result.HeadNodeId = edge.HeadNodeId;
                 result.TailNodeId = edge.TailNodeId;
-                result.Weight = edge.Weight;
+                result.Weight = Math.Round(edge.Weight, 2);
                 result.EdgeColor = edge.EdgeColor;
                 result.Directed = edge.Directed;
                 result.Curve = edge.Curve;
+                result.Width = edge.Width;
 
                 await appDbContext.SaveChangesAsync();
 

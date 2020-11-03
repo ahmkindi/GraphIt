@@ -2,52 +2,50 @@
 
 <g class="pointer"
    @onmousedown="OnMouseDown">
-    @if (ArrowOffset == 0)
+    @if (Edge.HeadNodeId == Edge.TailNodeId)
     {
+    <g>
         <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @(Edge.HeadNode.Yaxis+Edge.HeadNode.Radius)
                                A @Edge.HeadNode.Radius @Edge.HeadNode.Radius 0 1 0 @(Edge.HeadNode.Xaxis+Edge.HeadNode.Radius) @Edge.HeadNode.Yaxis"
-              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-start="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+        <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="@(10+Edge.Width*2)" rotate="@Rotate">
+            <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowLabel</textPath>
+        </text>
+        @if (DefaultOptions.Weighted)
+        {
+            <text>
+                <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@Rotate">
+                    <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowWeight</textPath>
+                </text>
+            </text>
+        }
+    </g>
     }
     else
     {
-        <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @Edge.HeadNode.Yaxis Q @CurvePoint[0] @CurvePoint[1] @Edge.TailNode.Xaxis @Edge.TailNode.Yaxis"
-              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-start="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+<g>
+    <path id="@Edge.EdgeId" d="M @Edge.TailNode.Xaxis @Edge.TailNode.Yaxis Q @CurvePoint[0] @CurvePoint[1] @Edge.HeadNode.Xaxis @Edge.HeadNode.Yaxis"
+          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+    <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.LabelColor" dy="@(10+Edge.Width*2)" rotate="@Rotate">
+        <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowLabel</textPath>
+    </text>
+    @if (DefaultOptions.Weighted)
+    {
+        <text>
+            <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@Rotate">
+                <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowWeight</textPath>
+            </text>
+        </text>
+    }
+</g>
     }
     @if (Edge.Directed)
     {
         <defs>
             <marker id="@("arrowhead"+Edge.EdgeId)" markerWidth="7" markerHeight="5"
                     refX="@(ArrowOffset)" refY="2.5" orient="auto">
-                <polygon points="7 0, 7 5, 0 2.5" fill="@(Edge.EdgeColor)" />
+                <polygon points="0 0, 7 2.5, 0 5" fill="@(Edge.EdgeColor)" />
             </marker>
         </defs>
     }
-    @if (DefaultOptions.Weighted)
-    {
-        <defs>
-            <filter x="0" y="0" width="1" height="1" id="@("solid"+Edge.EdgeId)">
-                <feFlood flood-color="@Edge.EdgeColor" />
-                <feComposite in="SourceGraphic" operator="xor" />
-            </filter>
-        </defs>
-        @if (ArrowOffset == 0)
-        {
-            <text>
-                <text text-anchor="middle" x="@(Edge.HeadNode.Xaxis+(2*Edge.HeadNode.Radius)-3)"
-                      y="@(Edge.HeadNode.Yaxis+(2*Edge.HeadNode.Radius)-3)" filter="url(#@("solid"+Edge.EdgeId))" fill="@Edge.LabelColor">@Edge.Weight</text>
-            </text>
-        }
-        else
-        {
-            <text>
-                <text text-anchor="middle" x="@(0.25*Edge.HeadNode.Xaxis + 0.5*CurvePoint[0] + 0.25*Edge.TailNode.Xaxis)"
-                      y="@(0.25*Edge.HeadNode.Yaxis + 0.5*CurvePoint[1] + 0.25*Edge.TailNode.Yaxis)" filter="url(#@("solid"+Edge.EdgeId))" fill="@Edge.LabelColor">@Edge.Weight</text>
-            </text>
-        }
-    }
-    <text>
-        <textpath href="@("#"+Edge.EdgeId)" startOffset="50%" text-anchor="middle">
-            @Edge.Label
-        </textpath>
-    </text>
 </g>
