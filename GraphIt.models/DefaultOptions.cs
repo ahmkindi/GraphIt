@@ -14,5 +14,6 @@ namespace GraphIt.models
         public int EdgeWidth { get; set; } = 5;
         public bool Weighted { get; set; } = true;
         public bool Directed { get; set; } = true;
+        public bool MultiGraph { get; set; } = false;
     }
 }

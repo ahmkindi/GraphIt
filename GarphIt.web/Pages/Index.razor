@@ -21,8 +21,8 @@ else if (Rep == Representation.List)
 {
     switch (Choice)
     {
-        case NavChoice.File:
-            <File @bind-Rep="Rep"></File>
+        case NavChoice.Home:
+            <Home @bind-Rep="Rep" @bind-DefaultOptions="DefaultOptions"></Home>
             break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode"></Insert>
