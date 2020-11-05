@@ -10,9 +10,8 @@
         Mode: @GraphMode
     </div>
     <div class="px-2">
-        @($"{(int) (100*Scale)}%")
-        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(0.1))" IsPrimary="true"><i class="fas fa-search-plus"></i></SfButton>
-        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(-0.1))" IsPrimary="true"><i class="fas fa-search-minus"></i></SfButton>
-        <i class="fas fa-search-plus"></i>
+        @($"{(int) (200-100*Scale)}%")
+        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(-0.1))" IsPrimary="true" Disabled="@StopZoomIn"><i class="fas fa-search-plus"></i></SfButton>
+        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(0.1))" IsPrimary="true"><i class="fas fa-search-minus"></i></SfButton>
     </div>
 </div>

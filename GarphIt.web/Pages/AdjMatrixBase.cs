@@ -15,7 +15,7 @@ namespace GraphIt.web.Pages
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         public IEnumerable<Node> Nodes { get; set; }
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
             Nodes = await NodeService.GetNodes();
         }

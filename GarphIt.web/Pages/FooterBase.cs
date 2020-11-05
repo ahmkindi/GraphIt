@@ -17,12 +17,15 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<double> ScaleChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
+        public bool StopZoomIn { get; set; }
         protected override async Task OnParametersSetAsync()
         {
             IEnumerable<Node> nodes = await NodeService.GetNodes();
             IEnumerable<Edge> edges = await EdgeService.GetEdges();
             NodeCount = nodes.Count();
             EdgeCount = edges.Count();
+            if (Scale <= 0.2) StopZoomIn = true;
+            else StopZoomIn = false;
         }
         public async Task OnScaleClick(double x)
         {
