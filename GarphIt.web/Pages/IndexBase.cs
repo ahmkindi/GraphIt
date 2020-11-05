@@ -27,5 +27,9 @@ namespace GraphIt.web.Pages
         {
             InitialModal = b;
         }
+        public void UpdateCanvas(bool b)
+        {
+            if (b) StateHasChanged();
+        }
     }
 }

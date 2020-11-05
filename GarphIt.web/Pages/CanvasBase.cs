@@ -57,12 +57,10 @@ namespace GraphIt.web.Pages
             if (ActiveNode != null)
             {
                 await NodeService.UpdateNode(ActiveNode);
-                Nodes = await NodeService.GetNodes();
             }
             if (ActiveEdge != null)
             {
                 await EdgeService.UpdateEdge(ActiveEdge);
-                Edges = await EdgeService.GetEdges();
             }
             if (GraphMode == GraphMode.Default)
             {
@@ -72,6 +70,8 @@ namespace GraphIt.web.Pages
             {
                 SvgClass = "insert";
             }
+            Nodes = await NodeService.GetNodes();
+            Edges = await EdgeService.GetEdges();
         }
         protected override void OnAfterRender(bool firstRender)
         {
@@ -320,10 +320,6 @@ namespace GraphIt.web.Pages
                     foreach (Edge e in edgesToDelete)
                     {
                         await EdgeService.DeleteEdge(e.EdgeId);
-                    }
-                    if (NewEdge.Head.NodeId == NewEdge.Tail.NodeId)
-                    {
-
                     }
                 }
                 Edge newEdge = new Edge

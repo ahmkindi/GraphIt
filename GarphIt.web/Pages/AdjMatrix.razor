@@ -4,7 +4,7 @@
     <DialogTemplates>
         <Header> Adjacency Matrix </Header>
         <Content>
-            @if (Nodes == null)
+            @if (Nodes == null || Edges == null)
             {
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
@@ -24,15 +24,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Node node in Nodes)
+                            @foreach (Node tail in Nodes)
                             {
-                                <tr>
-                                    <th scope="row">@node.NodeId</th>
-                                    @foreach (Node _ in Nodes)
+                            <tr>
+                                <th scope="row">@tail.NodeId</th>
+                                @foreach (Node head in Nodes)
+                                {
+                                    @if (Adjacent(tail, head))
                                     {
-                                        <td>Edit Me</td>
+                                        <td>
+                                            <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                              Placeholder="Weight" @onchange="((e) => RemoveEdge(e, tail, head))"></SfNumericTextBox>
+                                        </td>
                                     }
-                                </tr>
+                                    else
+                                    {
+                                        <td>
+                                            <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                              Placeholder="Weight" @onchange="((e) => AddEdge(e, tail, head))"></SfNumericTextBox>
+                                        </td>
+                                    }
+                                }
+                            </tr>
                             }
                         </tbody>
                     </table>

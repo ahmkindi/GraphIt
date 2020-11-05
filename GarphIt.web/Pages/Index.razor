@@ -7,7 +7,7 @@
 }
 @if (Rep == Representation.Matrix)
 {
-    <AdjMatrix @bind-Rep="Rep"></AdjMatrix>
+    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" UpdateCanvas="UpdateCanvas"></AdjMatrix>
 }
 else if (Rep == Representation.List)
 {
