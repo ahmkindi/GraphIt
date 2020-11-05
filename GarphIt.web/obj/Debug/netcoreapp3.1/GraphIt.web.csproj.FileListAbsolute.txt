@@ -80,8 +80,6 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDec
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\NodeOptions.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\EdgeOptions.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\NodeOptions.razor.g.cs
-C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Selected.razor.g.cs
-C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\Selected.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\File.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\Razor\Pages\File.razor.g.cs
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\AdjMatrix.razor.g.cs

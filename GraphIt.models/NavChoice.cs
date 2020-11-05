@@ -9,7 +9,6 @@ namespace GraphIt.models
         Node,
         Edge,
         Algorithms,
-        Selected,
         About
     }
 }
