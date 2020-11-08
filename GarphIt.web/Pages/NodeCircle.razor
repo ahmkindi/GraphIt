@@ -1,6 +1,6 @@
 ﻿@inherits NodeCircleBase
 
-<g class="pointer"
+<g class="@NodeCss"
    id="@Node.NodeId"
    @onmousedown="OnMouseDown">
     <circle cx="@Node.Xaxis"
@@ -28,7 +28,7 @@
     </text>
 </g>
 
-@if (ActiveNode != null && Node.NodeId == ActiveNode.NodeId)
+@if (Active)
 {
     <rect x="@(Node.Xaxis-Node.Radius)"
           y="@(Node.Yaxis-Node.Radius)"

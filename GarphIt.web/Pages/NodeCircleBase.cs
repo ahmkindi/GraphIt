@@ -13,39 +13,38 @@ namespace GraphIt.web.Pages
     public class NodeCircleBase : ComponentBase
     {
         [Parameter] public EventCallback<Node> OnNodeClick { get; set; }
+        [Parameter] public EventCallback<Node> AddActiveNode { get; set; }
+        [Parameter] public EventCallback<Node> RemoveActiveNode { get; set; }
         [Parameter] public EventCallback<Node> OnNodeRightClick { get; set; }
-        [Parameter] public Node ActiveNode { get; set; }
+        [Parameter] public ObjectClicked ObjectClicked { get; set; }
+        [Parameter] public EventCallback<ObjectClicked> ObjectClickedChanged { get; set; }
         [Parameter] public Node Node { get; set; }
+        [Parameter] public bool Active { get; set; }
         public string NodeCss { get; set; }
-
-        protected override void OnInitialized()
-        {
-            NodeCss = "pointer";
-        }
-
         protected override void OnParametersSet()
         {
-            if (ActiveNode != null && ActiveNode.NodeId == Node.NodeId)
-            {
-                Node = ActiveNode;
-            }
+            if (Active) NodeCss = "moveNode";
+            else NodeCss = "pointer";
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {
             if (e.Button == 2)
             {
+                ObjectClicked.NodeRight = true;
+                await ObjectClickedChanged.InvokeAsync(ObjectClicked);
                 await OnNodeRightClick.InvokeAsync(Node);
             }
             else
             {
-                NodeCss = "moveNode";
-                await OnNodeClick.InvokeAsync(Node);
+                ObjectClicked.Any = true;
+                await ObjectClickedChanged.InvokeAsync(ObjectClicked);
+                if (e.CtrlKey)
+                {
+                    if (Active) await RemoveActiveNode.InvokeAsync(Node);
+                    else await AddActiveNode.InvokeAsync(Node);
+                }
+                else if (!Active) await OnNodeClick.InvokeAsync(Node);
             }   
-        }
-
-        public void OnMouseUp()
-        {
-            NodeCss = "pointer";
         }
     }
 }

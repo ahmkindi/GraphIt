@@ -1,6 +1,7 @@
 ﻿using GraphIt.models;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json.Linq;
+using Syncfusion.Blazor.Buttons;
 using Syncfusion.Blazor.Inputs;
 using System;
 using System.Collections.Generic;
@@ -18,52 +19,71 @@ namespace GraphIt.web.Pages
         [Parameter] public HexColorValue ColorValue { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Parameter] public Edge ActiveEdge { get; set; }
-        [Parameter] public EventCallback<Edge> ActiveEdgeChanged { get; set; }
+        [Parameter] public IList<Edge> ActiveEdges { get; set; }
+        [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
 
         public async Task OnWidthChange(ChangeEventArgs e)
         {
-            ActiveEdge.Width = int.Parse(e.Value.ToString());
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.Width = int.Parse(e.Value.ToString());
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
         public async Task OnEdgeLabelChange(ChangedEventArgs e)
         {
-            if (e.Value != null)
+            foreach (Edge edge in ActiveEdges)
             {
-                ActiveEdge.Label = e.Value.ToString();
+                edge.Label = e.Value;
             }
-            else
-            {
-                ActiveEdge.Label = null;
-            }
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
         public async Task OnEdgeLabelColorChange(ColorPickerEventArgs e)
         {
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveEdge.LabelColor = ColorValue.Hex;
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.LabelColor = ColorValue.Hex;
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
         public async Task OnEdgeColorChange(ColorPickerEventArgs e)
         {
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveEdge.EdgeColor = ColorValue.Hex;
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.EdgeColor = ColorValue.Hex;
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
         public async Task OnWeightChange(ChangeEventArgs e)
         {
-            ActiveEdge.Weight = double.Parse(e.Value.ToString());
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.Weight = double.Parse(e.Value.ToString());
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
 
+        public async Task OnManyDirectedChange(ChangeEventArgs e)
+        {
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.Directed = bool.Parse(e.Value.ToString());
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+        }
         public async Task OnDirectedChange()
         {
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
         public async Task OnCurve(double x)
         {
-            ActiveEdge.Curve += x;
-            await ActiveEdgeChanged.InvokeAsync(ActiveEdge);
+            foreach (Edge edge in ActiveEdges)
+            {
+                edge.Curve += x;
+            }
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
 
         public async Task OnDefWeightedChange()

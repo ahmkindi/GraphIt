@@ -18,30 +18,42 @@ namespace GraphIt.web.Pages
         [Parameter] public HexColorValue ColorValue { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Parameter] public Node ActiveNode { get; set; }
-        [Parameter] public EventCallback<Node> ActiveNodeChanged { get; set; }
+        [Parameter] public IList<Node> ActiveNodes { get; set; }
+        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
-            ActiveNode.Radius = int.Parse(e.Value.ToString());
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            foreach(Node node in ActiveNodes) 
+            {
+                node.Radius = int.Parse(e.Value.ToString());
+            }
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnNodeLabelChange(ChangedEventArgs e)
         {
-            ActiveNode.Label = e.Value.ToString();
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            foreach (Node node in ActiveNodes)
+            {
+                node.Label = e.Value;
+            }
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnNodeLabelColorChange(ColorPickerEventArgs e)
         {
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveNode.LabelColor = ColorValue.Hex;
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            foreach (Node node in ActiveNodes)
+            {
+                node.LabelColor = ColorValue.Hex;
+            }
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnNodeColorChange(ColorPickerEventArgs e)
         {
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            ActiveNode.NodeColor = ColorValue.Hex;
-            await ActiveNodeChanged.InvokeAsync(ActiveNode);
+            foreach (Node node in ActiveNodes)
+            {
+                node.NodeColor = ColorValue.Hex;
+            }
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnDefNodeColorChange(ColorPickerEventArgs e)
         {

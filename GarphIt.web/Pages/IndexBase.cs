@@ -1,4 +1,5 @@
 ﻿using GraphIt.models;
+using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
@@ -10,11 +11,12 @@ namespace GraphIt.web.Pages
 {
     public class IndexBase : ComponentBase
     {
-
+        [Inject] public INodeService NodeService { get; set; }
+        [Inject] public IEdgeService EdgeService { get; set; }
         public NavChoice? Choice { get; set; }
         public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
-        public Node ActiveNode { get; set; }
-        public Edge ActiveEdge { get; set; }
+        public IList<Node> ActiveNodes { get; set; } = new List<Node>();
+        public IList<Edge> ActiveEdges { get; set; } = new List<Edge>();
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
         public double Scale { get; set; } = 1;
@@ -30,6 +32,23 @@ namespace GraphIt.web.Pages
         public void UpdateCanvas(bool b)
         {
             if (b) StateHasChanged();
+        }
+        public async Task ActiveNodesChanged(IList<Node> nodes)
+        {
+            foreach (Node node in nodes)
+            {
+                await NodeService.UpdateNode(node);
+            }
+            ActiveNodes = nodes;
+        }
+
+        public async Task ActiveEdgesChanged(IList<Edge> edges)
+        {
+            foreach (Edge edge in edges)
+            {
+                await EdgeService.UpdateEdge(edge);
+            }
+            ActiveEdges = edges;
         }
     }
 }

@@ -7,7 +7,7 @@
     <g>
         <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @(Edge.HeadNode.Yaxis+Edge.HeadNode.Radius)
                                A @Edge.HeadNode.Radius @Edge.HeadNode.Radius 0 1 0 @(Edge.HeadNode.Xaxis+Edge.HeadNode.Radius) @Edge.HeadNode.Yaxis"
-              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" fill="none" class="@ActiveEdgeCss" />
         <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="@(10+Edge.Width*2)" rotate="@Rotate">
             <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowLabel</textPath>
         </text>

@@ -10,8 +10,8 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @((int)((double)Browser.Width*SVGControl.Scale)) @((int)((double)Browser.Height*SVGControl.Scale))" 
-     tabindex="0" class="@SvgClass" @ref="svgCanvas" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" 
+<svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @((int)((double)Browser.Width*SVGControl.Scale)) @((int)((double)Browser.Height*SVGControl.Scale))"
+     tabindex="0" class="@SvgClass" @ref="svgCanvas" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp"
      @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
     @if (Nodes != null)
     {
@@ -19,21 +19,33 @@
         {
             foreach (Edge edge in Edges)
             {
-                <EdgeLine Edge="edge" ActiveNode="ActiveNode" ActiveEdge="ActiveEdge" OnEdgeClick="OnEdgeClick" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions"></EdgeLine>
+                if ((ActiveEdges.Where(e => e.EdgeId == edge.EdgeId).Any()))
+                {
+                    continue;
+                }
+                <EdgeLine Edge="edge" Active="false" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
+                         RemoveActiveEdge="RemoveActiveEdge" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions"></EdgeLine>
+            }
+            foreach (Edge edge in ActiveEdges)
+            {
+                <EdgeLine Edge="edge" Active="true" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
+                         RemoveActiveEdge="RemoveActiveEdge" DefaultOptions="DefaultOptions"></EdgeLine>
             }
         }
         foreach (Node node in Nodes)
         {
 
-            if ((ActiveNode != null && node.NodeId == ActiveNode.NodeId))
+            if ((ActiveNodes.Where(n => n.NodeId == node.NodeId).Any()))
             {
                 continue;
             }
-            <NodeCircle Node="node" ActiveNode="ActiveNode" OnNodeClick="OnNodeClick" OnNodeRightClick="OnNodeRightClick"></NodeCircle>
+            <NodeCircle Node="node" Active="false" @bind-ObjectClicked="ObjectClicked" OnNodeClick="OnNodeClick"
+                        OnNodeRightClick="OnNodeRightClick" AddActiveNode="AddActiveNode" RemoveActiveNode="RemoveActiveNode"></NodeCircle>
         }
-        if (ActiveNode != null)
+        foreach (Node node in ActiveNodes)
         {
-            <NodeCircle Node="ActiveNode" ActiveNode="ActiveNode" OnNodeClick="OnNodeClick" OnNodeRightClick="OnNodeRightClick"></NodeCircle>
+            <NodeCircle Node="node" Active="true" @bind-ObjectClicked="ObjectClicked" OnNodeClick="OnNodeClick"
+                        OnNodeRightClick="OnNodeRightClick" AddActiveNode="AddActiveNode" RemoveActiveNode="RemoveActiveNode"></NodeCircle>
         }
     }
 </svg>
