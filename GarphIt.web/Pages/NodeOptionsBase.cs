@@ -1,4 +1,5 @@
 ﻿using GraphIt.models;
+using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json.Linq;
 using Syncfusion.Blazor.Inputs;
@@ -20,6 +21,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
+        [Inject] public INodeService NodeService { get; set; }
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
@@ -71,6 +73,32 @@ namespace GraphIt.web.Pages
         {
             DefaultOptions.NodeRadius = int.Parse(e.Value.ToString());
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
+        }
+
+        public async Task OnRelabel()
+        {
+            Node newNode;
+            int count = 1;
+            if (ActiveNodes.Any())
+            {
+                foreach (Node node in ActiveNodes)
+                {
+                    newNode = node;
+                    newNode.Label = count.ToString();
+                    await NodeService.UpdateNode(newNode);
+                    count++;
+                }
+            }
+            else
+            {
+                foreach (Node node in await NodeService.GetNodes())
+                {
+                    newNode = node;
+                    newNode.Label = count.ToString();
+                    await NodeService.UpdateNode(newNode);
+                    count++;
+                }
+            }
         }
     }
 }

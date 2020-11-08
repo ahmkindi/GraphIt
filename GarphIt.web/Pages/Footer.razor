@@ -1,17 +1,24 @@
 ﻿@inherits FooterBase
-<div class="footer d-flex flex-row py-0 my-0">
-    <div class="px-2">
+<div class="footer d-flex flex-row py-0 my-0 align-items-center">
+    <span class="px-2">
         Nodes: @NodeCount
-    </div>
-    <div class="px-2">
+    </span>
+    <span class="px-2">
         Edges: @EdgeCount
-    </div>
-    <div class="px-2">
+    </span>
+    <span class="px-2">
         Mode: @GraphMode
-    </div>
-    <div class="px-2">
-        @($"{(int) (200-100*Scale)}%")
-        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(-0.1))" IsPrimary="true" Disabled="@StopZoomIn"><i class="fas fa-search-plus"></i></SfButton>
-        <SfButton CssClass="e-round" OnClick="@(() => OnScaleClick(0.1))" IsPrimary="true"><i class="fas fa-search-minus"></i></SfButton>
-    </div>
+    </span>
+    <span class="px-2 btn-group" role="group">
+        <button id="" type="button" class="btn NavNone shadow-none" @onclick="@(() => OnScaleClick(0.1))">-</button>
+        <span>Zoom</span>
+        @if (StopZoomIn)
+        {
+            <button type="button" class="btn btn-secondary" disabled>+</button>
+        }
+        else
+        {
+            <button type="button" class="btn NavNone shadow-none" @onclick="@(() => OnScaleClick(-0.1))">-</button>
+        }
+    </span>
 </div>

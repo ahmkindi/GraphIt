@@ -347,7 +347,8 @@ namespace GraphIt.web.Pages
                 NodeColor = DefaultOptions.NodeColor,
                 Xaxis = x * SVGControl.Scale + SVGControl.Xaxis,
                 Yaxis = y * SVGControl.Scale + SVGControl.Yaxis,
-                Radius = DefaultOptions.NodeRadius
+                Radius = DefaultOptions.NodeRadius,
+                Label = (Nodes.Count() + 1).ToString()
             };
             await NodeService.AddNode(newNode);
             Nodes = await NodeService.GetNodes();

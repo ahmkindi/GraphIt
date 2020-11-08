@@ -46,14 +46,15 @@
                     Radius <SfNumericTextBox TValue="int?"  Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
                 </div>
                 <div class="px-1">
-                    Color <SfColorPicker ValueChange="OnNodeColorChange"></SfColorPicker>
+                    Color <SfColorPicker Value="@ActiveNodes.ElementAt(0).NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker>
                 </div>
                 <div class="px-1">
                     Label
                     <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
-                    <SfColorPicker ValueChange="OnNodeLabelColorChange"></SfColorPicker>
+                    <SfColorPicker Value="@ActiveNodes.ElementAt(0).LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker>
                 </div>
             }
+            <button type="button" class="btn NavNone" @onclick="OnRelabel">Re-label</button>
         </div>
     </div>
 </nav>
