@@ -35,7 +35,7 @@ namespace GraphIt.web.Pages
         }
         public async Task ActiveNodesChanged(IList<Node> nodes)
         {
-            foreach (Node node in nodes)
+            foreach (Node node in nodes.ToList())
             {
                 await NodeService.UpdateNode(node);
             }
@@ -44,7 +44,7 @@ namespace GraphIt.web.Pages
 
         public async Task ActiveEdgesChanged(IList<Edge> edges)
         {
-            foreach (Edge edge in edges)
+            foreach (Edge edge in edges.ToList())
             {
                 await EdgeService.UpdateEdge(edge);
             }

@@ -1,6 +1,6 @@
 ﻿@inherits AdjMatrixBase
 
-<SfDialog Target="#target" Width="350px" AllowDragging="true">
+<SfDialog Target="#target" Width="400px" Height="400px" AllowDragging="true">
     <DialogTemplates>
         <Header> Adjacency Matrix </Header>
         <Content>
@@ -10,42 +10,65 @@
                     <span class="sr-only">Loading...</span>
                 </div>
             }
+            else if (TextView)
+            {
+                <div class="multiline">
+                    @if (GetInitText)
+                    {
+                        <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@GetText()" @onchange="OnChangeText">
+                        </SfTextBox>
+                    }
+                    else
+                    {
+                        <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@TextMatrix" @onchange="OnChangeText">
+                        </SfTextBox>
+                    }
+                    @if (!ValidInput)
+                    {
+                        <div class="text-danger">There was formatting error, please input only either 0, 1 comma seperated</div>
+                    }
+                </div>
+            }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-sm table-bordered table-striped">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">Node ID</th>
+                                <th scope="col">Node 
+                                <button type="button" class="btn btn-sm btn-success p-0" 
+                                        @onclick="(async() => { await AddNode(NodeCount.ToString()); await UpdateCanvas.InvokeAsync(true); })">+</button></th>
                                 @foreach (Node node in Nodes)
                                 {
-                                    <th scope="col">@node.NodeId</th>
+                                    <th scope="col">@node.Label</th>
                                 }
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (Node tail in Nodes)
                             {
-                            <tr>
-                                <th scope="row">@tail.NodeId</th>
-                                @foreach (Node head in Nodes)
-                                {
-                                    @if (Adjacent(tail, head))
+                                <tr>
+                                    <th scope="row">@tail.Label 
+                                    <button type="button" class="btn btn-sm btn-danger p-0" 
+                                            @onclick="(async() => { await NodeService.DeleteNode(tail.NodeId); await UpdateCanvas.InvokeAsync(true); })">X</button></th>
+                                    @foreach (Node head in Nodes)
                                     {
-                                        <td>
-                                            <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
-                                                              Placeholder="Weight" @onchange="((e) => RemoveEdge(e, tail, head))"></SfNumericTextBox>
-                                        </td>
+                                        @if (Adjacent(tail, head))
+                                        {
+                                            <td class="p-0 m-0">
+                                                <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                                  Placeholder="Adjacent" @onchange="((e) => RemoveEdge(e, tail, head))"></SfNumericTextBox>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="m-0 p-0">
+                                                <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                                  Placeholder="Adjacent" @onchange="((e) => AddEdge(e, tail, head))"></SfNumericTextBox>
+                                            </td>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <td>
-                                            <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
-                                                              Placeholder="Weight" @onchange="((e) => AddEdge(e, tail, head))"></SfNumericTextBox>
-                                        </td>
-                                    }
-                                }
-                            </tr>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -54,6 +77,15 @@
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="Close" OnClick="@CloseMatrix"/>
+        @if (TextView)
+        {
+            <DialogButton Content="Table View" OnClick="(() => TextView = !TextView)" />
+            <DialogButton Content="Close" OnClick="@CloseMatrix" />
+        }
+        else
+        {
+            <DialogButton Content="Text View" OnClick="(() => { TextView = !TextView; GetInitText = true; })" />
+            <DialogButton Content="Close" OnClick="@CloseMatrix" />
+        }
     </DialogButtons>
 </SfDialog>

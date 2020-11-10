@@ -5,14 +5,6 @@
 {
     <InitialModal DefaultOptions="DefaultOptions" OnClose="OnInitialClose"></InitialModal>
 }
-@if (Rep == Representation.Matrix)
-{
-    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" UpdateCanvas="UpdateCanvas"></AdjMatrix>
-}
-else if (Rep == Representation.List)
-{
-
-}
 
 
 <NavBar @bind-Choice="Choice"></NavBar>
@@ -57,8 +49,11 @@ else if (Rep == Representation.List)
             break;
     }
 }
-
-<Canvas ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged" 
-        ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged" 
+@if (Rep == Representation.Matrix)
+{
+    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" UpdateCanvas="UpdateCanvas"></AdjMatrix>
+}
+<Canvas ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged"
+        ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged"
         ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-Scale="Scale"></Canvas>
 <Footer GraphMode="GraphMode" @bind-Scale="Scale"></Footer>

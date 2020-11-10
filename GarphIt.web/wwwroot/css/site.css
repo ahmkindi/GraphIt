@@ -51,6 +51,16 @@ svg {
     right: 0;
 }
 
+.e-dialog .e-dlg-header {
+    font-size: 20px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.multiline {
+    width: 100%;
+}
+
 .insert{
     cursor: copy;
 }

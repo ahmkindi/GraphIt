@@ -183,7 +183,7 @@ namespace GraphIt.web.Pages
                 SVGControl.OldXaxis = SVGControl.Xaxis;
                 SVGControl.OldYaxis = SVGControl.Yaxis;
             }
-            foreach (Node node in ActiveNodes) await NodeService.UpdateNode(node);
+            foreach (Node node in ActiveNodes.ToList()) await NodeService.UpdateNode(node);
             Nodes = await NodeService.GetNodes();
             Edges = await EdgeService.GetEdges();
         }
