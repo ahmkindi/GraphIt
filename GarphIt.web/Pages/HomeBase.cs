@@ -21,9 +21,9 @@ namespace GraphIt.web.Pages
             Rep = Representation.Matrix;
             await RepChanged.InvokeAsync(Rep);
         }
-        public async Task OnListClick()
+        public async Task OnWeightMatrixClick()
         {
-            Rep = Representation.List;
+            Rep = Representation.WeightedMatrix;
             await RepChanged.InvokeAsync(Rep);
         }
         public async Task OnSimpleChange()

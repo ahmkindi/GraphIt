@@ -26,17 +26,18 @@ namespace GraphIt.web.Pages
         public bool TextView { get; set; }
         public bool ValidInput { get; set; }
         public bool GetInitText { get; set; }
+        public Edge AdjEdge { get; set; }
         public string TextMatrix { get; set; } = "";
         protected override void OnInitialized()
         {
             TextView = false;
             GetInitText = true;
+            ValidInput = true;
         }
         protected override async Task OnParametersSetAsync()
         {
             Nodes = await NodeService.GetNodes();
             Edges = await EdgeService.GetEdges();
-            ValidInput = true;
             NodeCount = Nodes.Count();
         }
         protected override void OnAfterRender(bool firstRender)
@@ -50,26 +51,28 @@ namespace GraphIt.web.Pages
             await RepChanged.InvokeAsync(Rep);
         }
 
-        public bool Adjacent(Node tail, Node head)
+        public Edge Adjacent(Node tail, Node head)
         {
             foreach (Edge edge in Edges)
             {
                 if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
                     || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !edge.Directed))
                 {
-                    return true;
+                    return edge;
                 }
             }
-            return false;
+            return null;
         }
 
-        public async Task AddEdge(ChangeEventArgs e, Node tail, Node head)
+        public async Task OnChangeTable(ChangeEventArgs e, Node tail, Node head)
         {
-            if (int.Parse(e.Value.ToString()) == 1)
+            double weight = Math.Round(double.Parse(e.Value.ToString()), 2);
+            if (weight > 0)
             {
                 bool directed;
                 if (await RemoveEdge(head, tail)) directed = false;
                 else directed = true;
+                await RemoveEdge(tail, head);
                 Edge newEdge = new Edge
                 {
                     LabelColor = DefaultOptions.EdgeLabelColor,
@@ -77,16 +80,12 @@ namespace GraphIt.web.Pages
                     HeadNodeId = head.NodeId,
                     TailNodeId = tail.NodeId,
                     Width = DefaultOptions.EdgeWidth,
-                    Directed = directed
+                    Directed = directed,
+                    Weight = weight
                 };
                 await EdgeService.AddEdge(newEdge);
-                await UpdateCanvas.InvokeAsync(true);
             }
-        }
-
-        public async Task RemoveEdge(ChangeEventArgs e, Node tail, Node head)
-        {
-            if (int.Parse(e.Value.ToString()) == 0)
+            else if (weight == 0)
             {
                 foreach (Edge edge in Edges)
                 {
@@ -96,13 +95,13 @@ namespace GraphIt.web.Pages
                         await EdgeService.DeleteEdge(edge.EdgeId);
                         if (!edge.Directed)
                         {
-                            await AddEdge(head, tail, true);
+                            await AddEdge(head, tail, true, edge.Weight);
                         }
                         break;
                     }
                 }
-                await UpdateCanvas.InvokeAsync(true);
             }
+            await UpdateCanvas.InvokeAsync(true);
         }
 
         public async Task<bool> RemoveEdge(Node tail, Node head)
@@ -120,7 +119,7 @@ namespace GraphIt.web.Pages
             return false;
         }
 
-        public async Task AddEdge(Node tail, Node head, bool directed)
+        public async Task AddEdge(Node tail, Node head, bool directed, double weight)
         {
             Edge newEdge = new Edge
             {
@@ -129,7 +128,8 @@ namespace GraphIt.web.Pages
                 HeadNodeId = head.NodeId,
                 TailNodeId = tail.NodeId,
                 Width = DefaultOptions.EdgeWidth,
-                Directed = directed
+                Directed = directed,
+                Weight = weight
             };
             await EdgeService.AddEdge(newEdge);
             Edges = await EdgeService.GetEdges();
@@ -152,11 +152,11 @@ namespace GraphIt.web.Pages
         public async Task OnChangeText(ChangeEventArgs e)
         {
             string input = e.Value.ToString();
-            string[] rows = ParseInput(input);
+            double[,] weights = ParseInput(input);
             TextMatrix = input;
             if (ValidInput)
             {
-                int difference = rows.Length - NodeCount;
+                int difference = weights.GetLength(0) - NodeCount;
                 if (difference > 0)
                 {
                     for (int i = 1; i <= difference; i++)
@@ -177,21 +177,19 @@ namespace GraphIt.web.Pages
                     await EdgeService.DeleteEdge(edge.EdgeId);
                 }
                 Edges = await EdgeService.GetEdges();
-                for (int i = 0; i < rows.Length; i++)
+                for (int i = 0; i < weights.GetLength(0); i++)
                 {
                     Node tail = Nodes.ElementAt(i);
-                    for (int j = 0; j < rows[i].Length; j++)
+                    for (int j = 0; j < weights.GetLength(1); j++)
                     {
                         Node head = Nodes.ElementAt(j);
-                        switch (rows[i][j])
+                        if (weights[i,j] != 0)
                         {
-                            case '1':
-                                if (await RemoveEdge(head, tail))
-                                {
-                                    await AddEdge(tail, head, false);
-                                }
-                                else await AddEdge(tail, head, true);
-                                break;
+                            if (await RemoveEdge(head, tail))
+                            {
+                                await AddEdge(tail, head, false, weights[i,j]);
+                            }
+                            else await AddEdge(tail, head, true, weights[i,j]);
                         }
                     }
                 }
@@ -199,14 +197,32 @@ namespace GraphIt.web.Pages
             }
         }
 
-        public string[] ParseInput(string input)
+        public double[,] ParseInput(string input)
         {
-            var result = Regex.Split(Regex.Replace(input, @"(,|\n$)", ""), "\r\n|\r|\n");
-            var regex = @$"^$|(((0|1),){{{result.Length-1}}}(0|1)\n){{{result.Length-1}}}((0|1),){{{result.Length-1}}}(0|1)$";
-            ValidInput = Regex.Match(input, regex).Success;
-            if (input == "")
+            string[] temp = Regex.Split(Regex.Replace(input, @"\n$", ""), "\r\n|\r|\n");
+            double[,] result = new double[temp.Length, temp.Length];
+            string numRegex;
+            if (Rep == Representation.Matrix)
             {
-                result = new string[0];
+                numRegex = "(0|1)";
+            }
+            else
+            {
+                numRegex = "[0-9]{1,8}([.][0-9]{1,2})?";
+            }
+            var regex = @$"^$|^(({numRegex},){{{temp.Length - 1}}}{numRegex}\n){{{temp.Length - 1}}}({numRegex},){{{temp.Length - 1}}}{numRegex}$";
+            ValidInput = Regex.Match(input, regex).Success;
+            if (ValidInput)
+            {
+                if (input == "")
+                {
+                    return new double[0, 0];
+                }
+                for (int i = 0; i < temp.Length; i++)
+                {
+                    string[] d = temp[i].Split(',');
+                    for (int j = 0; j < d.Length; j++) result[i, j] = double.Parse(d[j]);
+                }
             }
             return result;
         }
@@ -219,7 +235,12 @@ namespace GraphIt.web.Pages
                 var count = 1;
                 foreach (Node head in Nodes)
                 {
-                    if (Adjacent(tail, head)) value += "1";
+                    Edge edge = Adjacent(tail, head);
+                    if (edge != null) 
+                    {
+                        if (Rep == Representation.Matrix) value += "1";
+                        else value += edge.Weight.ToString();
+                    }
                     else value += "0";
                     if (count < NodeCount) value += ",";
                     count++;

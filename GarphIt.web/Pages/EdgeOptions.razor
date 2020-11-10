@@ -43,9 +43,11 @@
                 <SfColorPicker Value="@ActiveEdges.ElementAt(0).LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker>
             </div>
             <div class="px-1">
-                Curve
-                <SfButton CssClass="e-round" IconCss="e-icons e-plus-icon" IsPrimary="true" IsToggle="true" @onclick="(() => OnCurve(0.1))"></SfButton>
-                <SfButton CssClass="e-round" IconCss="e-icons e-plus-icon" IsPrimary="true" IsToggle="true" @onclick="(() => OnCurve(-0.1))"></SfButton>
+                <span class="px-2 btn-group" role="group">
+                    <button type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnCurve(0.1))">-</button>
+                    Curve
+                    <button type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnCurve(-0.1))">+</button>
+                </span>
             </div>
             @if (DefaultOptions.Weighted)
             {

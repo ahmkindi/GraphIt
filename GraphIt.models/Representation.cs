@@ -8,6 +8,6 @@ namespace GraphIt.models
     {
         None,
         Matrix,
-        List
+        WeightedMatrix
     }
 }

@@ -12,22 +12,30 @@
             }
             else if (TextView)
             {
-                <div class="multiline">
-                    @if (GetInitText)
-                    {
-                        <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@GetText()" @onchange="OnChangeText">
-                        </SfTextBox>
-                    }
-                    else
-                    {
-                        <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@TextMatrix" @onchange="OnChangeText">
-                        </SfTextBox>
-                    }
-                    @if (!ValidInput)
-                    {
-                        <div class="text-danger">There was formatting error, please input only either 0, 1 comma seperated</div>
-                    }
-                </div>
+        <div class="multiline">
+            @if (GetInitText)
+            {
+                <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@GetText()" @onchange="OnChangeText">
+                </SfTextBox>
+            }
+            else
+            {
+                <SfTextBox Multiline="true" Placeholder="Add Nodes by typing 0, 1" Value="@TextMatrix" @onchange="OnChangeText">
+                </SfTextBox>
+            }
+            @if (!ValidInput)
+            {
+                if (Rep == Representation.Matrix)
+                {
+                    <div class="text-danger">There was formatting error: please input only a sqaure matrix of either 0, 1 comma seperated</div>
+                }
+                else
+                {
+                    <div class="text-danger">There was formatting error, please input only a square matrix of decimal numbers upto 2 decimal places, comma seperated</div>
+                }
+
+            }
+        </div>
             }
             else
             {
@@ -47,28 +55,49 @@
                         <tbody>
                             @foreach (Node tail in Nodes)
                             {
-                                <tr>
-                                    <th scope="row">@tail.Label 
-                                    <button type="button" class="btn btn-sm btn-danger p-0" 
-                                            @onclick="(async() => { await NodeService.DeleteNode(tail.NodeId); await UpdateCanvas.InvokeAsync(true); })">X</button></th>
-                                    @foreach (Node head in Nodes)
+                            <tr>
+                                <th scope="row">
+                                    @tail.Label
+                                    <button type="button" class="btn btn-sm btn-danger p-0"
+                                            @onclick="(async() => { await NodeService.DeleteNode(tail.NodeId); await UpdateCanvas.InvokeAsync(true); })">
+                                        X
+                                    </button>
+                                </th>
+                                @foreach (Node head in Nodes)
+                                {
+                                    Edge edge = Adjacent(tail, head);
+                            <td class="p-0 m-0">
+                                @if (edge != null)
+                                {
+                                    if (Rep == Representation.Matrix)
                                     {
-                                        @if (Adjacent(tail, head))
-                                        {
-                                            <td class="p-0 m-0">
-                                                <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
-                                                                  Placeholder="Adjacent" @onchange="((e) => RemoveEdge(e, tail, head))"></SfNumericTextBox>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td class="m-0 p-0">
-                                                <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
-                                                                  Placeholder="Adjacent" @onchange="((e) => AddEdge(e, tail, head))"></SfNumericTextBox>
-                                            </td>
-                                        }
+                                        <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                          Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
                                     }
-                                </tr>
+                                    else
+                                    {
+                                        <SfNumericTextBox Value="@edge.Weight" Min=0 ShowSpinButton=false CssClass="shortInput"
+                                                          Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
+                                    }
+                                }
+                                else
+                                {
+                                    if (Rep == Representation.Matrix)
+                                    {
+                                        <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
+                                                          Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
+                                    }
+                                    else
+                                    {
+                                        <SfNumericTextBox Value="0" Min=0 ShowSpinButton=false CssClass="shortInput"
+                                                          Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
+                                    }
+
+
+                                }
+                            </td>
+                                    }
+                            </tr>
                             }
                         </tbody>
                     </table>

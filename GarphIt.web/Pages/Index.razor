@@ -49,7 +49,7 @@
             break;
     }
 }
-@if (Rep == Representation.Matrix)
+@if (Rep == Representation.Matrix || Rep == Representation.WeightedMatrix)
 {
     <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" UpdateCanvas="UpdateCanvas"></AdjMatrix>
 }

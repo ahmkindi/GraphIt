@@ -10,15 +10,15 @@
         Mode: @GraphMode
     </span>
     <span class="px-2 btn-group" role="group">
-        <button id="" type="button" class="btn NavNone shadow-none" @onclick="@(() => OnScaleClick(0.1))">-</button>
-        <span>Zoom</span>
+        <button id="" type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(0.1))">-</button>
+        Zoom
         @if (StopZoomIn)
         {
-            <button type="button" class="btn btn-secondary" disabled>+</button>
+            <button type="button" class="btn btn-secondary py-0" disabled>+</button>
         }
         else
         {
-            <button type="button" class="btn NavNone shadow-none" @onclick="@(() => OnScaleClick(-0.1))">-</button>
+            <button type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(-0.1))">+</button>
         }
     </span>
 </div>
