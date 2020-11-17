@@ -46,11 +46,7 @@ namespace GraphIt.web.Pages
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
         public SVGControl SVGControl { get; set; } = new SVGControl();
         private double[] origin = new double[2];
-        protected override async Task OnInitializedAsync()
-        {
-            Nodes = await NodeService.GetNodes();
-            Edges = await EdgeService.GetEdges();
-        }
+        public RectSelection RectSelection { get; set; } = new RectSelection();
         protected override async Task OnParametersSetAsync()
         {
             SVGControl.Scale = Scale;
@@ -138,28 +134,71 @@ namespace GraphIt.web.Pages
   
         public async Task OnMouseUp(MouseEventArgs e)
         {
-            if (e.Button == 2 && !e.CtrlKey)
+            if (e.Button == 2)
             {
-                if ((ActiveEdges.Count + ActiveNodes.Count > 1 && (ObjectClicked.NodeRight || ObjectClicked.EdgeRight)) 
-                    || (ActiveEdges.Count == 1 && ObjectClicked.EdgeRight))
+                RectSelection.Create = false;
+                if (!e.CtrlKey && RectSelection.Width <= 0 && RectSelection.Height <= 0)
                 {
-                    ObjectClicked.NodeRight = false;
-                    ObjectClicked.EdgeRight = false;
-                    ContextMenus.EdgeMenu.Open(e.ClientX, e.ClientY);
-                }
-                else if (ActiveNodes.Count == 1 && ObjectClicked.NodeRight)
-                {
-                    ObjectClicked.NodeRight = false;
-                    ContextMenus.NodeMenu.Open(e.ClientX, e.ClientY);
+                    if ((ActiveEdges.Count + ActiveNodes.Count > 1 && (ObjectClicked.NodeRight || ObjectClicked.EdgeRight))
+                                        || (ActiveEdges.Count == 1 && ObjectClicked.EdgeRight))
+                    {
+                        ObjectClicked.NodeRight = false;
+                        ObjectClicked.EdgeRight = false;
+                        ContextMenus.EdgeMenu.Open(e.ClientX, e.ClientY);
+                    }
+                    else if (ActiveNodes.Count == 1 && ObjectClicked.NodeRight)
+                    {
+                        ObjectClicked.NodeRight = false;
+                        ContextMenus.NodeMenu.Open(e.ClientX, e.ClientY);
+                    }
+                    else
+                    {
+                        ContextMenus.CanvasMenu.Open(e.ClientX, e.ClientY);
+                        origin[0] = e.ClientX;
+                        origin[1] = e.ClientY;
+                        await ActiveNodesChanged.InvokeAsync(new List<Node>());
+                        await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                    }
                 }
                 else
                 {
-                    ContextMenus.CanvasMenu.Open(e.ClientX, e.ClientY);
-                    origin[0] = e.ClientX;
-                    origin[1] = e.ClientY;
-                    await ActiveNodesChanged.InvokeAsync(new List<Node>());
-                    await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                    foreach (Node node in Nodes)
+                    {
+                        if (node.Xaxis <= RectSelection.X + RectSelection.Width
+                            && node.Xaxis >= RectSelection.X
+                            && node.Yaxis <= RectSelection.Y + RectSelection.Height
+                            && node.Yaxis >= RectSelection.Y)
+                        {
+                            if (!ActiveNodes.Contains(node))
+                            {
+                                ActiveNodes.Add(node);
+                            }
+                        }
+                        else ActiveNodes.Remove(node);
+                    }
+                    foreach (Edge edge in Edges)
+                    {
+                        var theta = Math.Atan2(edge.HeadNode.Yaxis - edge.TailNode.Yaxis, edge.HeadNode.Xaxis - edge.TailNode.Xaxis) - Math.PI / 2;
+                        var CurvePointX = ((edge.HeadNode.Xaxis + edge.TailNode.Xaxis) / 2) + (250 * edge.Curve) * Math.Cos(theta);
+                        var CurvePointY = ((edge.HeadNode.Yaxis + edge.TailNode.Yaxis) / 2) + (250 * edge.Curve) * Math.Sin(theta);
+                        var x = 0.25 * edge.HeadNode.Xaxis + 0.5 * CurvePointX + 0.25 * edge.TailNode.Xaxis;
+                        var y = 0.25 * edge.HeadNode.Yaxis + 0.5 * CurvePointY + 0.25 * edge.TailNode.Yaxis;
+                        if (x <= RectSelection.X + RectSelection.Width
+                            && x >= RectSelection.X
+                            && y <= RectSelection.Y + RectSelection.Height
+                            && y >= RectSelection.Y)
+                        {
+                            if (!ActiveEdges.Contains(edge))
+                            {
+                                ActiveEdges.Add(edge);
+                            }
+                        }
+                        else ActiveEdges.Remove(edge);
+                    }
+                    await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+                    await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
                 }
+                RectSelection = new RectSelection();
                 return;
             }
             if (ObjectClicked.Any)
@@ -192,10 +231,18 @@ namespace GraphIt.web.Pages
         {
             origin[0] = e.ClientX;
             origin[1] = e.ClientY;
-            if (!ObjectClicked.Any && e.Button != 2 && GraphMode != GraphMode.InsertNode)
+            if (!ObjectClicked.Any)
             {
-                SVGControl.Pan = true;
-                SvgClass = "grabbing";
+                if (e.Button != 2 && GraphMode != GraphMode.InsertNode)
+                {
+                    SVGControl.Pan = true;
+                    SvgClass = "grabbing";
+                }
+                else if (e.Button == 2)
+                {
+                    RectSelection.Create = true;
+                    SvgClass = "pointer";
+                }
             }
         }
         public void OnMove(MouseEventArgs e)
@@ -215,6 +262,15 @@ namespace GraphIt.web.Pages
             {
                 SVGControl.Xaxis = SVGControl.OldXaxis - ((e.ClientX - origin[0]) * SVGControl.Scale);
                 SVGControl.Yaxis = SVGControl.OldYaxis - ((e.ClientY - origin[1]) * SVGControl.Scale);
+            }
+            else if (RectSelection.Create)
+            {
+                RectSelection.Width = Math.Abs((e.ClientX - origin[0])) * SVGControl.Scale;
+                RectSelection.Height = Math.Abs((e.ClientY - origin[1])) * SVGControl.Scale;
+                if (e.ClientX > origin[0]) RectSelection.X = origin[0] * SVGControl.Scale + SVGControl.Xaxis;
+                else RectSelection.X = e.ClientX * SVGControl.Scale + SVGControl.Xaxis;
+                if (e.ClientY > origin[1]) RectSelection.Y = origin[1] * SVGControl.Scale + SVGControl.Yaxis;
+                else RectSelection.Y = e.ClientY * SVGControl.Scale + SVGControl.Yaxis;                
             }
         }
         public async Task OnEdgeClick(Edge edge)

@@ -48,6 +48,10 @@
                         OnNodeRightClick="OnNodeRightClick" AddActiveNode="AddActiveNode" RemoveActiveNode="RemoveActiveNode"></NodeCircle>
         }
     }
+    @if (RectSelection.Create)
+    {
+        <rect x="@RectSelection.X" y="@RectSelection.Y" width="@RectSelection.Width" height="@RectSelection.Height" stroke="#0c344d" fill="#008de6" fill-opacity="0.25"></rect>
+    }
 </svg>
 @if (NewEdge.GetEdgeWeight)
 {
