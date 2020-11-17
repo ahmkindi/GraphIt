@@ -12,10 +12,6 @@ namespace GraphIt.web.Pages
     {
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Inject] public INodeService NodeService { get; set; }
-        [Inject] public IEdgeService EdgeService { get; set; }
         public async Task OnMatrixClick()
         {
             Rep = Representation.Matrix;
@@ -25,10 +21,6 @@ namespace GraphIt.web.Pages
         {
             Rep = Representation.WeightedMatrix;
             await RepChanged.InvokeAsync(Rep);
-        }
-        public async Task OnSimpleChange()
-        {
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
     }
 }

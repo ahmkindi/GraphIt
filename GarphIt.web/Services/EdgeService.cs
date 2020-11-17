@@ -16,10 +16,7 @@ namespace GraphIt.web.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<IEnumerable<Edge>> Search(int headId, int tailId, bool directed)
-        {
-            return await httpClient.GetJsonAsync<Edge[]>($"api/edges/search?headId={headId}&tailId={tailId}&directed={directed}");
-        }
+
         public async Task<IEnumerable<Edge>> GetEdges()
         {
             return await httpClient.GetJsonAsync<Edge[]>("api/edges");

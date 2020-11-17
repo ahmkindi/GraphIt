@@ -15,6 +15,7 @@ namespace GraphIt.web.Pages
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public double Scale { get; set; }
         [Parameter] public EventCallback<double> ScaleChanged { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         public bool StopZoomIn { get; set; }

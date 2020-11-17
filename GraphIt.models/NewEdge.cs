@@ -11,5 +11,7 @@ namespace GraphIt.models
         public bool WaitingForNode { get; set; } = false;
         public bool GetEdgeWeight { get; set; } = false;
         public double Weight { get; set; } = 1;
+        public IEnumerable<Edge> MultiEdges { get; set; } = new List<Edge>();
+        public bool MultiGraph { get; set; } = false;
     }
 }

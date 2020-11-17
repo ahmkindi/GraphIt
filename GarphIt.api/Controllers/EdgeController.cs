@@ -33,21 +33,6 @@ namespace GarphIt.api.Controllers
                     "Error retrieving data from the database");
             }
         }
-        
-        [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<Edge>>> Search(int headId, int tailId, bool directed)
-        {
-            try
-            {
-                var result = await edgeRepository.Search(headId, tailId, directed);
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Edge>> GetEdge(int id)

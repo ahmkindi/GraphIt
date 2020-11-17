@@ -45,6 +45,11 @@ namespace GraphIt.web.Pages
                     Edge.TailNode = node;
                 }
             }
+            if (Edge.HeadNodeId == Edge.TailNodeId) 
+            {
+                ArrowOffset = 0;
+                return;
+            }
             ArrowOffset = 7 + Convert.ToDouble(Edge.HeadNode.Radius) / Edge.Width;
             var theta = Math.Atan2(Edge.HeadNode.Yaxis - Edge.TailNode.Yaxis, Edge.HeadNode.Xaxis - Edge.TailNode.Xaxis) - Math.PI / 2;
             CurvePoint[0] = ((Edge.HeadNode.Xaxis + Edge.TailNode.Xaxis) / 2) + (250 * Edge.Curve) * Math.Cos(theta);

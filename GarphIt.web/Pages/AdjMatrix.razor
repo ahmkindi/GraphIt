@@ -2,7 +2,16 @@
 
 <SfDialog Target="#target" Width="400px" Height="400px" AllowDragging="true">
     <DialogTemplates>
-        <Header> Adjacency Matrix </Header>
+        <Header>
+            @if(Rep == Representation.Matrix)
+            {
+                @("Adjacency Matrix")
+            }
+            else
+            {
+                @("Weighted Adjacency Matrix")
+            }
+        </Header>
         <Content>
             @if (Nodes == null || Edges == null)
             {

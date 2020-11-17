@@ -14,7 +14,7 @@
     switch (Choice)
     {
         case NavChoice.Home:
-            <Home @bind-Rep="Rep" @bind-DefaultOptions="DefaultOptions"></Home>
+            <Home @bind-Rep="Rep"></Home>
             break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode"></Insert>
@@ -56,4 +56,4 @@
 <Canvas ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged"
         ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged"
         ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-Scale="Scale"></Canvas>
-<Footer GraphMode="GraphMode" @bind-Scale="Scale"></Footer>
+<Footer GraphMode="GraphMode" @bind-Scale="Scale" DefaultOptions="DefaultOptions"></Footer>

@@ -30,9 +30,6 @@ namespace GarphIt.api.Migrations
                         .HasColumnType("float")
                         .HasDefaultValue(0.0);
 
-                    b.Property<bool>("Directed")
-                        .HasColumnType("bit");
-
                     b.Property<string>("EdgeColor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

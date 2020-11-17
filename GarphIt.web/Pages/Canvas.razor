@@ -24,12 +24,12 @@
                     continue;
                 }
                 <EdgeLine Edge="edge" Active="false" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
-                         RemoveActiveEdge="RemoveActiveEdge" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions"></EdgeLine>
+                          RemoveActiveEdge="RemoveActiveEdge" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions"></EdgeLine>
             }
             foreach (Edge edge in ActiveEdges)
             {
                 <EdgeLine Edge="edge" Active="true" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
-                         RemoveActiveEdge="RemoveActiveEdge" DefaultOptions="DefaultOptions"></EdgeLine>
+                          RemoveActiveEdge="RemoveActiveEdge" DefaultOptions="DefaultOptions"></EdgeLine>
             }
         }
         foreach (Node node in Nodes)
@@ -55,6 +55,22 @@
         <DialogTemplates>
             <Content>
                 <SfNumericTextBox Min=1 Placeholder="Edge Weight" FloatLabelType="@FloatLabelType.Auto" @bind-Value="NewEdge.Weight"></SfNumericTextBox>
+                @if (NewEdge.MultiEdges.Any())
+                {
+                    <SfCheckBox @bind-Checked="NewEdge.MultiGraph" Label="Multi-Graph"></SfCheckBox>
+                }
+                <SfButton CssClass="e-success" @onclick="(() => AddNewEdge(true))">Done</SfButton>
+                <SfButton CssClass="e-danger" @onclick="(() => AddNewEdge(false))">Cancel</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
+else if (NewEdge.MultiEdges.Any())
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <SfCheckBox @bind-Checked="NewEdge.MultiGraph" Label="Multi-Graph"></SfCheckBox>
                 <SfButton CssClass="e-success" @onclick="(() => AddNewEdge(true))">Done</SfButton>
                 <SfButton CssClass="e-danger" @onclick="(() => AddNewEdge(false))">Cancel</SfButton>
             </Content>

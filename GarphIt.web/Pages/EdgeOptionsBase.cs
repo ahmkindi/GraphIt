@@ -65,18 +65,6 @@ namespace GraphIt.web.Pages
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
 
-        public async Task OnManyDirectedChange(ChangeEventArgs e)
-        {
-            foreach (Edge edge in ActiveEdges)
-            {
-                edge.Directed = bool.Parse(e.Value.ToString());
-            }
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
-        }
-        public async Task OnDirectedChange()
-        {
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
-        }
         public async Task OnCurve(double x)
         {
             foreach (Edge edge in ActiveEdges)

@@ -253,18 +253,16 @@ namespace GraphIt.web.Pages
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
             if (NewEdge.WaitingForNode)
             {
-                if (!(!DefaultOptions.MultiGraph && NewEdge.Tail.NodeId == ActiveNodes.ElementAt(0).NodeId))
+                NewEdge.WaitingForNode = false;
+                NewEdge.Head = ActiveNodes.ElementAt(0);
+                NewEdge.MultiEdges = MultiGraphEdges();
+                if (DefaultOptions.Weighted == true)
                 {
-                    NewEdge.WaitingForNode = false;
-                    NewEdge.Head = ActiveNodes.ElementAt(0);
-                    if (DefaultOptions.Weighted == true)
-                    {
-                        NewEdge.GetEdgeWeight = true;
-                    }
-                    else
-                    {
-                        await AddNewEdge(true);
-                    }
+                    NewEdge.GetEdgeWeight = true;
+                }
+                else if (!NewEdge.MultiEdges.Any())
+                {
+                    await AddNewEdge(true);
                 }
             }
             else if (GraphMode == GraphMode.InsertEdge)
@@ -299,13 +297,13 @@ namespace GraphIt.web.Pages
         {
             if (done && NewEdge.Head != null && NewEdge.Tail != null)
             {
-                if (!DefaultOptions.MultiGraph)
+                if (NewEdge.MultiGraph == false && NewEdge.MultiEdges != null)
                 {
-                    IEnumerable<Edge> edgesToDelete = await EdgeService.Search(NewEdge.Head.NodeId, NewEdge.Tail.NodeId, DefaultOptions.Directed);
-                    foreach (Edge e in edgesToDelete)
-                    {
-                        await EdgeService.DeleteEdge(e.EdgeId);
-                    }
+                    foreach (Edge edge in NewEdge.MultiEdges) await EdgeService.DeleteEdge(edge.EdgeId);
+                }
+                else
+                {
+                    DefaultOptions.MultiGraph = true;
                 }
                 Edge newEdge = new Edge
                 {
@@ -314,7 +312,6 @@ namespace GraphIt.web.Pages
                     HeadNodeId = NewEdge.Head.NodeId,
                     TailNodeId = NewEdge.Tail.NodeId,
                     Width = DefaultOptions.EdgeWidth,
-                    Directed = DefaultOptions.Directed
                 };
                 if (DefaultOptions.Weighted)
                 {
@@ -326,6 +323,27 @@ namespace GraphIt.web.Pages
             NewEdge.GetEdgeWeight = false;
             Edges = await EdgeService.GetEdges();
             NewEdge = new NewEdge();
+        }
+
+        public IEnumerable<Edge> MultiGraphEdges()
+        {
+            IList<Edge> MultiEdges = new List<Edge>();
+            if (DefaultOptions.Directed)
+            {
+                foreach (Edge edge in Edges)
+                {
+                    if (edge.HeadNodeId == NewEdge.Head.NodeId && edge.TailNodeId == NewEdge.Tail.NodeId) MultiEdges.Add(edge);
+                }
+            }
+            else
+            {
+                foreach (Edge edge in Edges)
+                {
+                    if (edge.HeadNodeId == NewEdge.Head.NodeId && edge.TailNodeId == NewEdge.Tail.NodeId
+                        || (edge.HeadNodeId == NewEdge.Tail.NodeId && edge.TailNodeId == NewEdge.Head.NodeId)) MultiEdges.Add(edge);
+                }
+            }
+            return MultiEdges;
         }
 
         public void Dispose()

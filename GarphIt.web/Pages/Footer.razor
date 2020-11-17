@@ -21,4 +21,10 @@
             <button type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(-0.1))">+</button>
         }
     </span>
+    @if (DefaultOptions.MultiGraph)
+    {
+        <span class="px-2 text-danger">
+            @("MultiGraph")
+        </span>
+    }
 </div>

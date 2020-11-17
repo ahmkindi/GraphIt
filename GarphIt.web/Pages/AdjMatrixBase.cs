@@ -56,7 +56,7 @@ namespace GraphIt.web.Pages
             foreach (Edge edge in Edges)
             {
                 if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !edge.Directed))
+                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                 {
                     return edge;
                 }
@@ -69,9 +69,6 @@ namespace GraphIt.web.Pages
             double weight = Math.Round(double.Parse(e.Value.ToString()), 2);
             if (weight > 0)
             {
-                bool directed;
-                if (await RemoveEdge(head, tail)) directed = false;
-                else directed = true;
                 await RemoveEdge(tail, head);
                 Edge newEdge = new Edge
                 {
@@ -80,7 +77,6 @@ namespace GraphIt.web.Pages
                     HeadNodeId = head.NodeId,
                     TailNodeId = tail.NodeId,
                     Width = DefaultOptions.EdgeWidth,
-                    Directed = directed,
                     Weight = weight
                 };
                 await EdgeService.AddEdge(newEdge);
@@ -90,10 +86,10 @@ namespace GraphIt.web.Pages
                 foreach (Edge edge in Edges)
                 {
                     if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                        || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !edge.Directed))
+                        || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                     {
                         await EdgeService.DeleteEdge(edge.EdgeId);
-                        if (!edge.Directed)
+                        if (!DefaultOptions.Directed)
                         {
                             await AddEdge(head, tail, true, edge.Weight);
                         }
@@ -109,7 +105,7 @@ namespace GraphIt.web.Pages
             foreach (Edge edge in Edges)
             {
                 if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !edge.Directed))
+                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                 {
                     await EdgeService.DeleteEdge(edge.EdgeId);
                     Edges = await EdgeService.GetEdges();
@@ -128,7 +124,6 @@ namespace GraphIt.web.Pages
                 HeadNodeId = head.NodeId,
                 TailNodeId = tail.NodeId,
                 Width = DefaultOptions.EdgeWidth,
-                Directed = directed,
                 Weight = weight
             };
             await EdgeService.AddEdge(newEdge);

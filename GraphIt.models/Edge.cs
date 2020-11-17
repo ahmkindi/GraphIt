@@ -19,7 +19,6 @@ namespace GraphIt.models
         public double Weight { get; set; }
         public string Label { get; set; }
         public int Width { get; set; }
-        public bool Directed { get; set; }
         [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string LabelColor { get; set; }
