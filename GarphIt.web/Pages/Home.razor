@@ -17,13 +17,17 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="saveas">
                 <a class="dropdown-item">PNG</a>
-                <a class="dropdown-item">Graph File</a>
+                <a class="dropdown-item" @onclick="SaveGraphItFile">Graph File</a>
             </div>
         </div>
         <div class="px-1">
-            <button class="btn shadow-none NavNone" type="button">
+            <label for="FileUpload" class="btn shadow-none NavNone">
                 Open
-            </button>
+            </label>
+            <input type="file" id="FileUpload" accept=".graphit" @onclick="OpenGraphItFile">
+        </div>
+        <div class="px-1">
+            <button class="btn NavNone shadow-non" @onclick="NewGraph">New</button>
         </div>
     </div>
 </nav>

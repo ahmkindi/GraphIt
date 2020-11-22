@@ -162,6 +162,7 @@ namespace GraphIt.web.Pages
                 }
                 else
                 {
+                    await JSRuntime.InvokeAsync<string>("console.log", svgCanvas.ToString());
                     foreach (Node node in Nodes)
                     {
                         if (node.Xaxis <= RectSelection.X + RectSelection.Width
