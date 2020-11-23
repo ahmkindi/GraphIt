@@ -2,49 +2,28 @@
 
 <g class="pointer"
    @onmousedown="OnMouseDown">
-    @if (Edge.HeadNodeId == Edge.TailNodeId)
-    {
-    <g>
-        <path id="@Edge.EdgeId" d="M @Edge.HeadNode.Xaxis @(Edge.HeadNode.Yaxis+Edge.HeadNode.Radius)
-                               A @Edge.HeadNode.Radius @Edge.HeadNode.Radius 0 1 0 @(Edge.HeadNode.Xaxis+Edge.HeadNode.Radius) @Edge.HeadNode.Yaxis"
-              stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
-        <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="@(10+Edge.Width*2)" rotate="@Rotate">
-            <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowLabel</textPath>
-        </text>
-        @if (DefaultOptions.Weighted)
-        {
-            <text>
-                <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@Rotate">
-                    <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowWeight</textPath>
-                </text>
-            </text>
-        }
-    </g>
-    }
-    else
-    {
-<g>
-    <path id="@Edge.EdgeId" d="M @Edge.TailNode.Xaxis @Edge.TailNode.Yaxis Q @CurvePoint[0] @CurvePoint[1] @Edge.HeadNode.Xaxis @Edge.HeadNode.Yaxis"
-          stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
-    <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.LabelColor" dy="@(10+Edge.Width*2)" rotate="@Rotate">
-        <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowLabel</textPath>
+    <path id="@Edge.EdgeId" d="@ShowEdge.Path" stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" 
+          marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
+    <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.EdgeColor" dy="@ShowEdge.Yoffset" rotate="@ShowEdge.Rotate">
+        <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowEdge.Label</textPath>
     </text>
+
     @if (DefaultOptions.Weighted)
     {
         <text>
-            <text text-anchor="middle" font-size="@(15 + (Edge.Width * 1.5))" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@Rotate">
-                <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowWeight</textPath>
+            <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@ShowEdge.Rotate">
+                <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowEdge.Weight</textPath>
             </text>
         </text>
-    }
-</g>
     }
     @if (DefaultOptions.Directed)
     {
         <defs>
-            <marker id="@("arrowhead"+Edge.EdgeId)" markerWidth="7" markerHeight="5"
-                    refX="@(ArrowOffset)" refY="2.5" orient="auto">
-                <polygon points="0 0, 7 2.5, 0 5" fill="@(Edge.EdgeColor)" />
+            <marker id="@("arrowhead"+Edge.EdgeId)" markerWidth="@ShowEdge.EdgeArrow.Width" markerHeight="@ShowEdge.EdgeArrow.Height"
+                    refX="@ShowEdge.EdgeArrow.ArrowOffset[0]" refY="@ShowEdge.EdgeArrow.ArrowOffset[1]" orient="auto">
+                <polygon points=@($"{ShowEdge.EdgeArrow.Points[0]} {ShowEdge.EdgeArrow.Points[1]}, " +
+                                  $"{ShowEdge.EdgeArrow.Points[2]} {ShowEdge.EdgeArrow.Points[3]}, " +
+                                  $"{ShowEdge.EdgeArrow.Points[4]} {ShowEdge.EdgeArrow.Points[5]}") fill="@(Edge.EdgeColor)" />
             </marker>
         </defs>
     }

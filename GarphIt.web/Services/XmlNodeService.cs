@@ -1,4 +1,5 @@
 ﻿using GraphIt.models;
+using GraphIt.web.models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,102 @@ namespace GraphIt.web.Services
             writer.WriteStartElement("Width");
             writer.WriteString(edge.Width.ToString());
             writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        public void Draw(Node node, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("g");
+
+            writer.WriteStartElement("circle");
+            writer.WriteAttributeString("cx", node.Xaxis.ToString());
+            writer.WriteAttributeString("cy", node.Yaxis.ToString());
+            writer.WriteAttributeString("r", node.Radius.ToString());
+            writer.WriteAttributeString("stroke", node.NodeColor);
+            writer.WriteAttributeString("stroke-width", "2");
+            writer.WriteAttributeString("fill", node.NodeColor);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("text");
+            writer.WriteAttributeString("text-anchor", "middle");
+            writer.WriteAttributeString("x", node.Xaxis.ToString());
+            writer.WriteAttributeString("y", node.Yaxis.ToString());
+            writer.WriteAttributeString("stroke", node.NodeColor);
+            writer.WriteAttributeString("stroke-width", "1");
+            writer.WriteAttributeString("fill", node.LabelColor);
+            writer.WriteAttributeString("font-size", (node.Radius/2).ToString());
+            writer.WriteAttributeString("font-family", "Verdana");
+            writer.WriteString(node.Label);
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+        }
+
+        public void Draw(Edge edge, XmlTextWriter writer, bool weighted, bool directed)
+        {
+            var showEdge = new ShowEdge(edge);
+            writer.WriteStartElement("g");
+
+            writer.WriteStartElement("path");
+            writer.WriteAttributeString("id", edge.EdgeId.ToString());
+            writer.WriteAttributeString("stroke", edge.EdgeColor);
+            writer.WriteAttributeString("stroke-width", edge.Width.ToString());
+            writer.WriteAttributeString("fill", "none");
+            if (edge.HeadNodeId == edge.TailNodeId)
+            {
+                writer.WriteAttributeString("d", showEdge.Path);
+            }
+            else
+            {
+                writer.WriteAttributeString("d", showEdge.Path);
+            }
+            if (directed) writer.WriteAttributeString("marker-end", $"url(#arrowhead{edge.EdgeId})");
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("text");
+            writer.WriteAttributeString("text-anchor", "middle");
+            writer.WriteAttributeString("dy", (showEdge.Yoffset).ToString());
+            writer.WriteAttributeString("fill", edge.EdgeColor);
+            writer.WriteAttributeString("font-size", (showEdge.FontSize).ToString());
+            writer.WriteStartElement("textPath");
+            writer.WriteAttributeString("href", $"#{edge.EdgeId}");
+            writer.WriteAttributeString("startOffset", "50%");
+            writer.WriteString(showEdge.Label);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+
+            if (weighted)
+            {
+                writer.WriteStartElement("text");
+                writer.WriteAttributeString("text-anchor", "middle");
+                writer.WriteAttributeString("dy", (-edge.Width).ToString());
+                writer.WriteAttributeString("fill", edge.EdgeColor);
+                writer.WriteAttributeString("font-size", (showEdge.FontSize).ToString());
+                writer.WriteStartElement("textPath");
+                writer.WriteAttributeString("href", $"#{edge.EdgeId}");
+                writer.WriteAttributeString("startOffset", "50%");
+                writer.WriteString(showEdge.Weight);
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+
+            writer.WriteStartElement("defs");
+            writer.WriteStartElement("marker");
+            writer.WriteAttributeString("id", $"arrowhead{edge.EdgeId}");
+            writer.WriteAttributeString("markerWidth", showEdge.EdgeArrow.Width.ToString());
+            writer.WriteAttributeString("markerHeight", showEdge.EdgeArrow.Height.ToString());
+            writer.WriteAttributeString("refX", showEdge.EdgeArrow.ArrowOffset[0].ToString());
+            writer.WriteAttributeString("refY", showEdge.EdgeArrow.ArrowOffset[1].ToString());
+            writer.WriteAttributeString("orient", "auto");
+            writer.WriteStartElement("polygon");
+            writer.WriteAttributeString("points", $"{showEdge.EdgeArrow.Points[0]} {showEdge.EdgeArrow.Points[1]}, " +
+                                        $"{showEdge.EdgeArrow.Points[2]} {showEdge.EdgeArrow.Points[3]}, " +
+                                        $"{showEdge.EdgeArrow.Points[4]} {showEdge.EdgeArrow.Points[5]}");
+            writer.WriteAttributeString("fill", edge.EdgeColor);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+
             writer.WriteEndElement();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using GraphIt.models;
+using GraphIt.web.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -35,6 +36,28 @@ namespace GraphIt.web.Pages
         {
             Rep = Representation.WeightedMatrix;
             await RepChanged.InvokeAsync(Rep);
+        }
+
+        public async Task SaveSVGFile()
+        {
+            string result;
+            MemoryStream stream = new MemoryStream();
+            using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
+            {
+                writer.Formatting = Formatting.Indented;
+                writer.WriteStartDocument(false);
+                writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
+                writer.WriteAttributeString("version", "1.1");
+                foreach (Edge edge in await EdgeService.GetEdges()) XmlNodeService.Draw(edge, writer, DefaultOptions.Weighted, DefaultOptions.Directed);
+                foreach (Node node in await NodeService.GetNodes()) XmlNodeService.Draw(node, writer);
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Flush();
+                StreamReader reader = new StreamReader(stream, Encoding.UTF8, true);
+                stream.Seek(0, SeekOrigin.Begin);
+                result = reader.ReadToEnd();
+            }
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.svg", "image/svg+xml", Encoding.UTF8.GetBytes(result));
         }
 
         public async Task SaveGraphItFile()

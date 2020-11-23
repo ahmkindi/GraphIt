@@ -1,4 +1,5 @@
 ﻿using GraphIt.models;
+using GraphIt.web.models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -22,17 +23,11 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Edge> OnEdgeRightClick { get; set; }
         [Parameter] public bool Active { get; set; }
         public string ActiveEdgeCss { get; set; }
-        public double ArrowOffset { get; set; }
-        public int Rotate { get; set; }
-        public string ShowLabel { get; set; } = "";
-        public string ShowWeight { get; set; }
-        public double[] CurvePoint { get; set; } = new double[2];
+        public ShowEdge ShowEdge { get; set; }
         protected override void OnParametersSet()
         {
+            ShowEdge = new ShowEdge(Edge);
             ActiveEdgeCss = "";
-            Rotate = 0;
-            ShowLabel = Edge.Label;
-            ShowWeight = Edge.Weight.ToString();
             if (Active) ActiveEdgeCss = "activeEdge";
             foreach (Node node in ActiveNodes)
             {
@@ -45,28 +40,7 @@ namespace GraphIt.web.Pages
                     Edge.TailNode = node;
                 }
             }
-            if (Edge.HeadNodeId == Edge.TailNodeId) 
-            {
-                ArrowOffset = 0;
-                return;
-            }
-            ArrowOffset = 7 + Convert.ToDouble(Edge.HeadNode.Radius) / Edge.Width;
-            var theta = Math.Atan2(Edge.HeadNode.Yaxis - Edge.TailNode.Yaxis, Edge.HeadNode.Xaxis - Edge.TailNode.Xaxis) - Math.PI / 2;
-            CurvePoint[0] = ((Edge.HeadNode.Xaxis + Edge.TailNode.Xaxis) / 2) + (250 * Edge.Curve) * Math.Cos(theta);
-            CurvePoint[1] = ((Edge.HeadNode.Yaxis + Edge.TailNode.Yaxis) / 2) + (250 * Edge.Curve) * Math.Sin(theta);
-            if (Edge.HeadNode.Xaxis < Edge.TailNode.Xaxis)
-            {
-                Rotate = 180;
-                char[] temp = Edge.Weight.ToString().ToCharArray();
-                Array.Reverse(temp);
-                ShowWeight = new string(temp);
-                if (Edge.Label != null)
-                {
-                    temp = Edge.Label.ToCharArray();
-                    Array.Reverse(temp);
-                    ShowLabel = new string(temp);
-                }
-            }
+            
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {
