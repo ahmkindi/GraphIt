@@ -24,10 +24,34 @@
             <label for="FileUpload" class="btn shadow-none NavNone">
                 Open
             </label>
-            <input type="file" id="FileUpload" accept=".graphit" @onclick="OpenGraphItFile">
+            <InputFile id="FileUpload" OnChange="@OpenGraphItFile" accept=".graphit" />
         </div>
         <div class="px-1">
-            <button class="btn NavNone shadow-non" @onclick="NewGraph">New</button>
+            <button class="btn NavNone shadow-non" @onclick="(() => NewGraphCheck = true)">New</button>
         </div>
     </div>
 </nav>
+@if (ErrorOpening)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <p class="text-danger text-center">Oops, I couldn't read the file you chose</p>
+                <SfButton CssClass="e-success" @onclick="(() => ErrorOpening = false)">OK</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
+@if (NewGraphCheck)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <p class="text-danger text-center">Are you sure you want to restart? Make sure you save your progress</p>
+                <SfButton CssClass="e-success" @onclick="SaveGraphItFile">Save Graph</SfButton>
+                <SfButton CssClass="e-danger" @onclick="NewGraph">New Graph</SfButton>
+                <SfButton CssClass="e-warning" @onclick="(() => NewGraphCheck = false)">Cancel</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
