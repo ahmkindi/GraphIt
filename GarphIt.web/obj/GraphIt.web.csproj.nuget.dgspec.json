@@ -44,9 +44,13 @@
         "net5.0": {
           "targetAlias": "netcoreapp5.0",
           "dependencies": {
+            "Aspose.SVG": {
+              "target": "Package",
+              "version": "[20.11.0, )"
+            },
             "BlazorPro.BlazorSize": {
               "target": "Package",
-              "version": "[2.3.0, )"
+              "version": "[3.0.0, )"
             },
             "Microsoft.AspNetCore.Blazor.HttpClient": {
               "target": "Package",
@@ -54,7 +58,7 @@
             },
             "Syncfusion.Blazor": {
               "target": "Package",
-              "version": "[18.3.0.38, )"
+              "version": "[18.3.0.51, )"
             }
           },
           "imports": [

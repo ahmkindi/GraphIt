@@ -17,7 +17,7 @@
             <Home @bind-Rep="Rep" DefaultOptions="DefaultOptions"></Home>
             break;
         case NavChoice.Insert:
-            <Insert @bind-GraphMode="GraphMode"></Insert>
+            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions"></Insert>
             break;
         case NavChoice.Node:
             <NodeOptions ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged" @bind-DefaultOptions="DefaultOptions"></NodeOptions>

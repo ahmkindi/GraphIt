@@ -10,6 +10,7 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\ref\Grap
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\GraphIt.web.pdb
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\GraphIt.web.Views.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\GraphIt.web.Views.pdb
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\Aspose.SVG.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\BlazorPro.BlazorSize.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\Microsoft.AspNetCore.Blazor.HttpClient.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\bin\Debug\netcoreapp5.0\Microsoft.AspNetCore.Components.WebAssembly.dll
