@@ -13,8 +13,8 @@ namespace GraphIt.web.Pages
         public int NodeCount { get; set; } = 0;
         public int EdgeCount { get; set; } = 0;
         [Parameter] public GraphMode GraphMode { get; set; }
-        [Parameter] public double Scale { get; set; }
-        [Parameter] public EventCallback<double> ScaleChanged { get; set; }
+        [Parameter] public SVGControl SVGControl { get; set; }
+        [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
@@ -25,13 +25,13 @@ namespace GraphIt.web.Pages
             IEnumerable<Edge> edges = await EdgeService.GetEdges();
             NodeCount = nodes.Count();
             EdgeCount = edges.Count();
-            if (Scale <= 0.2) StopZoomIn = true;
+            if (SVGControl.Scale <= 0.2) StopZoomIn = true;
             else StopZoomIn = false;
         }
         public async Task OnScaleClick(double x)
         {
-            Scale += x;
-            await ScaleChanged.InvokeAsync(Scale);
+            SVGControl.Scale += x;
+            await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }
 }

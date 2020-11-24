@@ -1,4 +1,5 @@
-﻿using GraphIt.models;
+﻿using BlazorPro.BlazorSize;
+using GraphIt.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -9,18 +10,32 @@ using System.Threading.Tasks;
 
 namespace GraphIt.web.Pages
 {
-    public class IndexBase : ComponentBase
+    public class IndexBase : ComponentBase, IDisposable
     {
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] public ResizeListener Listener { get; set; }
+        public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public NavChoice? Choice { get; set; }
         public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
         public IList<Node> ActiveNodes { get; set; } = new List<Node>();
         public IList<Edge> ActiveEdges { get; set; } = new List<Edge>();
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public bool InitialModal { get; set; } = true;
-        public double Scale { get; set; } = 1;
         public Representation Rep { get; set; } = Representation.None;
+        public SVGControl SVGControl { get; set; } = new SVGControl();
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                Listener.OnResized += WindowResized;
+            }
+            SVGControl.Width = Browser.Width * SVGControl.Scale;
+            SVGControl.Height = Browser.Height * SVGControl.Scale;
+        }
+
         public void UpdateChoice(NavChoice? choice)
         {
             Choice = choice;
@@ -49,6 +64,18 @@ namespace GraphIt.web.Pages
                 await EdgeService.UpdateEdge(edge);
             }
             ActiveEdges = edges;
+        }
+
+
+        public void Dispose()
+        {
+            Listener.OnResized -= WindowResized;
+        }
+
+        public void WindowResized(object _, BrowserWindowSize window)
+        {
+            Browser = window;
+            StateHasChanged();
         }
     }
 }

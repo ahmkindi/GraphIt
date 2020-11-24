@@ -10,7 +10,7 @@
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 
-<svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @((int)((double)Browser.Width*SVGControl.Scale)) @((int)((double)Browser.Height*SVGControl.Scale))"
+<svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @SVGControl.Width @SVGControl.Height"
      tabindex="0" class="@SvgClass" @ref="svgCanvas" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp"
      @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
     @if (Nodes != null)

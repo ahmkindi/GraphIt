@@ -8,6 +8,8 @@ namespace GraphIt.models
     {
         public double Xaxis { get; set; } = 0;
         public double Yaxis { get; set; } = 0;
+        public double Width { get; set; } = 0;
+        public double Height { get; set; } = 0;
         public double OldXaxis { get; set; } = 0;
         public double OldYaxis { get; set; } = 0;
         public double Scale { get; set; } = 1;

@@ -1,6 +1,7 @@
 ﻿using GraphIt.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Newtonsoft.Json.Linq;
 using Syncfusion.Blazor.Inputs;
 using System;
@@ -21,7 +22,10 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
+        [Parameter] public SVGControl SVGControl { get; set; }
+        [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
@@ -99,6 +103,15 @@ namespace GraphIt.web.Pages
                     count++;
                 }
             }
+        }
+
+        public async Task OnRecenter()
+        {
+            SVGControl.Xaxis = ActiveNodes.ElementAt(0).Xaxis - (SVGControl.Width / 2);
+            SVGControl.Yaxis = ActiveNodes.ElementAt(0).Yaxis - (SVGControl.Height / 2);
+            SVGControl.OldXaxis = SVGControl.Xaxis;
+            SVGControl.OldYaxis = SVGControl.Yaxis;
+            await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }
 }

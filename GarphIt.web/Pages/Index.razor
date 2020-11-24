@@ -9,6 +9,7 @@
 
 <NavBar @bind-Choice="Choice"></NavBar>
 
+
 @if (Choice != null)
 {
     switch (Choice)
@@ -20,7 +21,7 @@
             <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions"></Insert>
             break;
         case NavChoice.Node:
-            <NodeOptions ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged" @bind-DefaultOptions="DefaultOptions"></NodeOptions>
+            <NodeOptions ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl"></NodeOptions>
             break;
         case NavChoice.Edge:
             <EdgeOptions ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
@@ -55,5 +56,5 @@
 }
 <Canvas ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged"
         ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged"
-        ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-Scale="Scale"></Canvas>
-<Footer GraphMode="GraphMode" @bind-Scale="Scale" DefaultOptions="DefaultOptions"></Footer>
+        ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" ></Canvas>
+<Footer GraphMode="GraphMode" @bind-SVGControl="SVGControl" DefaultOptions="DefaultOptions"></Footer>

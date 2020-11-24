@@ -4,24 +4,18 @@ using GraphIt.web.models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using Syncfusion.Blazor.Charts;
 using Syncfusion.Blazor.Data;
-using Syncfusion.Blazor.HeatMap;
 using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.SplitButtons;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace GraphIt.web.Pages
 {
-    public class CanvasBase : ComponentBase, IDisposable
+    public class CanvasBase : ComponentBase
     {
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
@@ -30,13 +24,11 @@ namespace GraphIt.web.Pages
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public IList<Edge> ActiveEdges { get; set; }
-        [Parameter] public double Scale { get; set; }
-        [Parameter] public EventCallback<double> ScaleChanged { get; set; }
+        [Parameter] public SVGControl SVGControl { get; set; }
+        [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
-        [Inject] public ResizeListener Listener { get; set; }
-        public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public string SvgClass { get; set; }
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public IEnumerable<Node> Nodes { get; set; }
@@ -44,12 +36,10 @@ namespace GraphIt.web.Pages
         public ElementReference svgCanvas;
         public ContextMenus ContextMenus { get; set; } = new ContextMenus();
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
-        public SVGControl SVGControl { get; set; } = new SVGControl();
         private double[] origin = new double[2];
         public RectSelection RectSelection { get; set; } = new RectSelection();
         protected override async Task OnParametersSetAsync()
         {
-            SVGControl.Scale = Scale;
             if (GraphMode == GraphMode.Default)
             {
                 SvgClass = "grab";
@@ -60,13 +50,6 @@ namespace GraphIt.web.Pages
             }
             Nodes = await NodeService.GetNodes();
             Edges = await EdgeService.GetEdges();
-        }
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-            {
-                Listener.OnResized += WindowResized;
-            }
         }
 
         public async Task Select(MenuEventArgs<MenuItem> e)
@@ -403,17 +386,6 @@ namespace GraphIt.web.Pages
             return MultiEdges;
         }
 
-        public void Dispose()
-        {
-            Listener.OnResized -= WindowResized;
-        }
-
-        public void WindowResized(object _, BrowserWindowSize window)
-        {
-            Browser = window;
-            StateHasChanged();
-        }
-
         public async Task InsertNode(double x, double y)
         {
             Node newNode = new Node
@@ -455,13 +427,13 @@ namespace GraphIt.web.Pages
             {
                 SVGControl.Scale -= 0.1;
             }
-            await ScaleChanged.InvokeAsync(SVGControl.Scale);
+            await SVGControlChanged.InvokeAsync(SVGControl);
         }
 
         public async Task ZoomOut()
         {
             SVGControl.Scale += 0.1;
-            await ScaleChanged.InvokeAsync(SVGControl.Scale);
+            await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }
 }
