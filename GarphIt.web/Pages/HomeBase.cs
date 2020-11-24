@@ -22,11 +22,13 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
+        [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Inject] public NavigationManager uriHelper { get; set; }
         public bool ErrorOpening { get; set; } = false;
+        public bool OpenPreference { get; set; } = false;
         public bool NewGraphCheck { get; set; } = false;
         public XmlNodeService XmlNodeService { get; set; } = new XmlNodeService();
         public async Task OnMatrixClick()
@@ -95,8 +97,9 @@ namespace GraphIt.web.Pages
             await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.graphit", "application/octet-stream", DeflateAndEncode(result));
         }
 
-        public async Task OpenGraphItFile(InputFileChangeEventArgs e)
+        public async Task OpenGraphItFile(InputFileChangeEventArgs e, bool overwrite)
         {
+            OpenPreference = false;
             try
             {
                 byte[] temp;
@@ -112,8 +115,22 @@ namespace GraphIt.web.Pages
                 string graph = DecodeAndInflate(temp);
                 XmlDocument xmlData = new XmlDocument();
                 xmlData.LoadXml(graph);
-                IEnumerable<Node> nodes = await NodeService.GetNodes();
-                Traverse(xmlData, newEdges, newNodes, nodes.Max(n => n.NodeId));
+                Node delLater = await NodeService.AddNode(new Node
+                {
+                    LabelColor = DefaultOptions.NodeLabelColor,
+                    NodeColor = DefaultOptions.NodeColor,
+                    Xaxis = 0,
+                    Yaxis = 0,
+                    Radius = DefaultOptions.NodeRadius,
+                    Label = ""
+                });
+                Traverse(xmlData, newEdges, newNodes, delLater.NodeId);
+                if (overwrite)
+                {
+                    foreach (Node node in await NodeService.GetNodes()) await NodeService.DeleteNode(node.NodeId);
+                    foreach (Edge edge in await EdgeService.GetEdges()) await EdgeService.DeleteEdge(edge.EdgeId);
+                }
+                await NodeService.DeleteNode(delLater.NodeId);
                 foreach (Node node in newNodes) await NodeService.AddNode(node);
                 foreach (Edge edge in newEdges) await EdgeService.AddEdge(edge);
             }
@@ -121,6 +138,7 @@ namespace GraphIt.web.Pages
             {
                 ErrorOpening = true;
             }
+            await UpdateCanvas.InvokeAsync(true);
         }
 
         public async Task NewGraph()

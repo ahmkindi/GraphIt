@@ -23,10 +23,7 @@
             </div>
         </div>
         <div class="px-1">
-            <label for="FileUpload" class="btn shadow-none NavNone">
-                Open
-            </label>
-            <InputFile id="FileUpload" OnChange="@OpenGraphItFile" accept=".graphit" />
+            <button class="btn NavNone shadow-non" @onclick="(() => OpenPreference = true)">Open</button>
         </div>
         <div class="px-1">
             <button class="btn NavNone shadow-non" @onclick="(() => NewGraphCheck = true)">New</button>
@@ -53,6 +50,24 @@
                 <SfButton CssClass="e-success" @onclick="SaveGraphItFile">Save Graph</SfButton>
                 <SfButton CssClass="e-danger" @onclick="NewGraph">New Graph</SfButton>
                 <SfButton CssClass="e-warning" @onclick="(() => NewGraphCheck = false)">Cancel</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
+@if (OpenPreference)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <p class="text-info text-center">Would you like to overwrite the current graph? or open it with the current graph?</p>
+                <label for="FileUpload" class="btn shadow-none btn-danger">
+                    Overwrite
+                </label>
+                <InputFile id="FileUpload" OnChange="(e) => OpenGraphItFile(e, true)" accept=".graphit" />
+                <label for="FileUpload2" class="btn shadow-none btn-info">
+                    Together
+                </label>
+                <InputFile id="FileUpload2" OnChange="(e) => OpenGraphItFile(e, false)" accept=".graphit" />
             </Content>
         </DialogTemplates>
     </SfDialog>

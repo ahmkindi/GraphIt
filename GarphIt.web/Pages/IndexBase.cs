@@ -26,7 +26,7 @@ namespace GraphIt.web.Pages
         public Representation Rep { get; set; } = Representation.None;
         public SVGControl SVGControl { get; set; } = new SVGControl();
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender)
             {
