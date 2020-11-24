@@ -21,6 +21,7 @@ namespace GraphIt.web.Pages
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public SVGControl SVGControl { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
@@ -39,18 +40,21 @@ namespace GraphIt.web.Pages
             await RepChanged.InvokeAsync(Rep);
         }
 
-        public async Task SaveSVGFile()
+        public async Task SaveSVGFile(bool screenView)
         {
             string result;
             MemoryStream stream = new MemoryStream();
+            IEnumerable<Node> nodes = await NodeService.GetNodes();
             using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
             {
                 writer.Formatting = Formatting.Indented;
                 writer.WriteStartDocument(false);
                 writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
                 writer.WriteAttributeString("version", "1.1");
+                if (screenView) writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
+                else writer.WriteAttributeString("viewBox", FullView(nodes));
                 foreach (Edge edge in await EdgeService.GetEdges()) XmlNodeService.Draw(edge, writer, DefaultOptions.Weighted, DefaultOptions.Directed);
-                foreach (Node node in await NodeService.GetNodes()) XmlNodeService.Draw(node, writer);
+                foreach (Node node in nodes) XmlNodeService.Draw(node, writer);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -59,6 +63,15 @@ namespace GraphIt.web.Pages
                 result = reader.ReadToEnd();
             }
             await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.svg", "image/svg+xml", Encoding.UTF8.GetBytes(result));
+        }
+
+        public string FullView(IEnumerable<Node> nodes)
+        {
+            var x = nodes.Min(n => n.Xaxis - n.Radius);
+            var y = nodes.Min(n => n.Yaxis - n.Radius);
+            var width = nodes.Max(n => n.Xaxis + n.Radius) - x;
+            var height = nodes.Max(n => n.Yaxis + n.Radius) - y;
+            return $"{x} {y} {width} {height}";
         }
 
         public async Task SaveGraphItFile()
