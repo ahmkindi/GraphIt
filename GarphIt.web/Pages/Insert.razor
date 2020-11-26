@@ -13,12 +13,12 @@
                 Common Graphs
             </button>
             <div class="dropdown-menu" aria-labelledby="saveas">
-                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Complete)">Complete</a>
-                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.CBipartite)">Complete Bipartite</a>
+                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Cyclic)">Single Cyclic</a>
+                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Tree)">Tree (straight line)</a>
+                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Complete)">Clique</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Regular)">Regular</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.RBipartite)">Regular Bipartite</a>
-                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Cyclic)">Cyclic</a>
-                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Tree)">Tree</a>
+                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.CBipartite)">Complete Bipartite</a>
             </div>
         </div>
     </div>

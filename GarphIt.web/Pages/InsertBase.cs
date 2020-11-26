@@ -88,6 +88,9 @@ namespace GraphIt.web.Pages
                     if (numNodes % 2 == 0 && KValue <= numNodes / 2) CreateRBipartite();
                     else ErrorCreatingGraph = "k-Regular Bipartite graph must satisfy: Even number of nodes AND K is at most half the number of nodes";
                     break;
+                case CommonGraph.Tree:
+                    CreateTree();
+                    break;
 
             }
             WantedGraph = null;
@@ -138,21 +141,19 @@ namespace GraphIt.web.Pages
 
         private void CreateCBipartite()
         {
-            double x = (SVGControl.Xaxis + SVGControl.Width / 2);
+            double x;
             double y = (SVGControl.Yaxis + SVGControl.Height / 2) + DefaultOptions.NodeRadius * 3;
-            int[] zigzag = { 1, -1 };
             IList<Node> addedNodes1 = new List<Node>();
             IList<Node> addedNodes2 = new List<Node>();
             for (int i=0; i<numNodes; i++)
             {
-                x += zigzag[i % 2] * DefaultOptions.NodeRadius * 3 * i;
+                x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
                 addedNodes1.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             y = (SVGControl.Yaxis + SVGControl.Height / 2) - DefaultOptions.NodeRadius * 3;
-            x = (SVGControl.Xaxis + SVGControl.Width / 2);
             for (int i = 0; i < KValue; i++)
             {
-                x += zigzag[i % 2] * DefaultOptions.NodeRadius * 3 * i;
+                x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
                 addedNodes2.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             if (DefaultOptions.Directed)
@@ -196,21 +197,19 @@ namespace GraphIt.web.Pages
 
         private void CreateRBipartite()
         {
-            double x = (SVGControl.Xaxis + SVGControl.Width / 2);
+            double x;
             double y = (SVGControl.Yaxis + SVGControl.Height / 2) + DefaultOptions.NodeRadius * 3;
-            int[] zigzag = { 1, -1 };
             IList<Node> addedNodes1 = new List<Node>();
             IList<Node> addedNodes2 = new List<Node>();
             for (int i = 0; i < numNodes / 2; i++)
             {
-                x += zigzag[i % 2] * DefaultOptions.NodeRadius * 3 * i;
+                x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
                 addedNodes1.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             y = (SVGControl.Yaxis + SVGControl.Height / 2) - DefaultOptions.NodeRadius * 3;
-            x = (SVGControl.Xaxis + SVGControl.Width / 2);
             for (int i = 0; i < numNodes / 2; i++)
             {
-                x += zigzag[i % 2] * DefaultOptions.NodeRadius * 3 * i;
+                x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
                 addedNodes2.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             for (int i = 0; i < numNodes / 2; i++)
@@ -218,7 +217,7 @@ namespace GraphIt.web.Pages
                 for (int j = 0; j < KValue; j++)
                 {
                     EdgeService.AddEdge(Edges, DefaultOptions, addedNodes1[i].NodeId, addedNodes2[j].NodeId);
-                    if (DefaultOptions.Directed) EdgeService.AddEdge(Edges, DefaultOptions, addedNodes2[i].NodeId, addedNodes2[j].NodeId);
+                    if (DefaultOptions.Directed) EdgeService.AddEdge(Edges, DefaultOptions, addedNodes2[i].NodeId, addedNodes1[j].NodeId);
                 }
             }
         }
@@ -240,6 +239,18 @@ namespace GraphIt.web.Pages
                 EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[i].NodeId, addedNodes[i+1].NodeId);
             }
             EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[(int)numNodes - 1].NodeId, addedNodes[0].NodeId);
+        }
+
+        private void CreateTree()
+        {
+            double x;
+            double y = (SVGControl.Yaxis + SVGControl.Height / 2);
+            IList<Node> addedNodes = new List<Node>();
+            for (int i = 0; i < numNodes; i++)
+            {
+                x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes/2 - i);
+                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+            }
         }
     }
 }
