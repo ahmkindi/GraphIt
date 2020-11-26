@@ -105,7 +105,7 @@ namespace GraphIt.web.Pages
             }
             else
             {
-                IList<Node> notConnected = addedNodes;
+                List<Node> notConnected = addedNodes.Select(n => new Node(n.NodeId, n.Xaxis, n.Yaxis)).ToList();
                 foreach (Node node1 in addedNodes)
                 {
                     notConnected.Remove(node1);

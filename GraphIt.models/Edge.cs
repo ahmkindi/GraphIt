@@ -12,7 +12,7 @@ namespace GraphIt.models
         public int HeadNodeId { get; set; }
         public int TailNodeId { get; set; }
         public double Curve { get; set; }
-        public double Weight { get; set; }
+        public double Weight { get; set; } = 1;
         public string Label { get; set; }
         public int Width { get; set; }
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]

@@ -24,7 +24,6 @@ namespace GraphIt.web.Pages
         [Parameter] public List<Edge> Edges { get; set; }
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
-        public int NodeCount { get; set; }
         public bool TextView { get; set; }
         public bool ValidInput { get; set; }
         public bool GetInitText { get; set; }
@@ -107,7 +106,7 @@ namespace GraphIt.web.Pages
             TextMatrix = input;
             if (ValidInput)
             {
-                int difference = weights.GetLength(0) - NodeCount;
+                int difference = weights.GetLength(0) - Nodes.Count;
                 if (difference > 0)
                 {
                     for (int i = 1; i <= difference; i++)
@@ -180,7 +179,7 @@ namespace GraphIt.web.Pages
                         else value += edge.Weight.ToString();
                     }
                     else value += "0";
-                    if (count < NodeCount) value += ",";
+                    if (count < Nodes.Count) value += ",";
                     count++;
                 }
                 value += "\n";
