@@ -18,7 +18,7 @@
             <Home @bind-Rep="Rep" DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></Home>
             break;
         case NavChoice.Insert:
-            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></Insert>
+            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
             break;
         case NavChoice.Node:
             <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>

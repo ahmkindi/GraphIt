@@ -25,10 +25,26 @@
 </nav>
 @if (WantedGraph != null && !Loading)
 {
+    string Klabel = "Nodes: ";
+    @if (WantedGraph == CommonGraph.CBipartite)
+    {
+        Klabel = "Left Nodes: ";
+    }
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <SfNumericTextBox Min=1 Max=20 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
+                @Klabel
+                <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
+                @if (WantedGraph == CommonGraph.CBipartite)
+                {
+                    @("Right Nodes: ")
+                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue2"></SfNumericTextBox>
+                }
+                else if (WantedGraph == CommonGraph.Regular)
+                {
+                    @("Degree (k): ")
+                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue2"></SfNumericTextBox>
+                }
                 <SfButton CssClass="e-success" @onclick="CreateGraph">Done</SfButton>
                 <SfButton CssClass="e-success" @onclick="(() => WantedGraph = null)">Cancel</SfButton>
             </Content>
@@ -40,4 +56,15 @@
     <div class="spinner-border" role="status">
         <span class="sr-only">Graph In Making...</span>
     </div>
+}
+@if (ErrorCreatingGraph)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <p class="text-danger text-center">There was a problem making the graph, make sure the nodes specified makes sense for your the graph.</p>
+                <SfButton CssClass="e-success" @onclick="(() => ErrorCreatingGraph = false)">OK</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
 }
