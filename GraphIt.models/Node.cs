@@ -7,26 +7,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GraphIt.models
 {
-    public class Node
+    public class Node : IEquatable<Node>
     {
-        [Key]
         public int NodeId { get; set; }
-        [Required]
         public double Xaxis { get; set; }
-        [Required]
         public double Yaxis { get; set; }
-        [Required]
         public int Radius { get; set; }
         public string Label { get; set; }
-        [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string LabelColor { get; set; }
-        [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string NodeColor { get; set; }
-        [InverseProperty(nameof(Edge.HeadNode))]
-        public virtual ICollection<Edge> HeadEdges { get; set; } = new List<Edge>();
-        [InverseProperty(nameof(Edge.TailNode))]
-        public virtual ICollection<Edge> TailEdges { get; set; } = new List<Edge>();
+
+        public bool Equals(Node other)
+        {
+            if (this.NodeId == other.NodeId) return true;
+            return false;
+        }
+        public Node()
+        {
+        }
+        public Node(int id, double x, double y)
+        {
+            NodeId = id;
+            Xaxis = x;
+            Yaxis = y;
+        }
     }
 }

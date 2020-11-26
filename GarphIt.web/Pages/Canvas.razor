@@ -11,7 +11,7 @@
 </SfContextMenu>
 
 <svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @SVGControl.Width @SVGControl.Height"
-     tabindex="0" class="@SvgClass" @ref="svgCanvas" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp"
+     tabindex="0" class="@SvgClass" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp"
      @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
     @if (Nodes != null)
     {
@@ -24,12 +24,12 @@
                     continue;
                 }
                 <EdgeLine Edge="edge" Active="false" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
-                          RemoveActiveEdge="RemoveActiveEdge" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions"></EdgeLine>
+                          RemoveActiveEdge="RemoveActiveEdge" OnEdgeRightClick="OnEdgeRightClick" DefaultOptions="DefaultOptions" Nodes="Nodes"></EdgeLine>
             }
             foreach (Edge edge in ActiveEdges)
             {
                 <EdgeLine Edge="edge" Active="true" ActiveNodes="ActiveNodes" @bind-ObjectClicked="ObjectClicked" OnEdgeClick="OnEdgeClick" AddActiveEdge="AddActiveEdge"
-                          RemoveActiveEdge="RemoveActiveEdge" DefaultOptions="DefaultOptions"></EdgeLine>
+                          RemoveActiveEdge="RemoveActiveEdge" DefaultOptions="DefaultOptions" Nodes="Nodes"></EdgeLine>
             }
         }
         foreach (Node node in Nodes)

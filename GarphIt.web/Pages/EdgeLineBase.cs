@@ -17,6 +17,7 @@ namespace GraphIt.web.Pages
         [Parameter] public ObjectClicked ObjectClicked { get; set; }
         [Parameter] public EventCallback<ObjectClicked> ObjectClickedChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeClick { get; set; }
         [Parameter] public EventCallback<Edge> AddActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> RemoveActiveEdge { get; set; }
@@ -26,21 +27,21 @@ namespace GraphIt.web.Pages
         public ShowEdge ShowEdge { get; set; }
         protected override void OnParametersSet()
         {
-            ShowEdge = new ShowEdge(Edge);
+            ShowEdge = null;
             ActiveEdgeCss = "";
             if (Active) ActiveEdgeCss = "activeEdge";
             foreach (Node node in ActiveNodes)
             {
                 if (Edge.HeadNodeId == node.NodeId)
                 {
-                    Edge.HeadNode = node;
+                    ShowEdge = new ShowEdge(Edge, node, Edge.TailNode(Nodes));
                 }
                 else if (Edge.TailNodeId == node.NodeId)
                 {
-                    Edge.TailNode = node;
+                    ShowEdge = new ShowEdge(Edge, Edge.HeadNode(Nodes), node);
                 }
             }
-            
+            if (ShowEdge == null) ShowEdge = new ShowEdge(Edge, Edge.HeadNode(Nodes), Edge.TailNode(Nodes));
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {

@@ -10,35 +10,54 @@ namespace GraphIt.web.Services
 {
     public class NodeService : INodeService
     {
-        private readonly HttpClient httpClient;
-
-        public NodeService(HttpClient httpClient)
+        public Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y, string label)
         {
-            this.httpClient = httpClient;
-        }
-        public async Task<IEnumerable<Node>> GetNodes()
-        {
-            return await httpClient.GetJsonAsync<Node[]>("api/nodes");
-        }
-
-        public async Task<Node> GetNode(int id)
-        {
-            return await httpClient.GetJsonAsync<Node>($"api/nodes/{id}");
-        }
-
-        public async Task<Node> UpdateNode(Node updatedNode)
-        {
-            return await httpClient.PutJsonAsync<Node>("api/nodes", updatedNode);
+            Node node = new Node
+            {
+                LabelColor = d.NodeLabelColor,
+                NodeColor = d.NodeColor,
+                Xaxis = x,
+                Yaxis = y,
+                Radius = d.NodeRadius,
+                Label = label
+            };
+            nodes.Add(node);
+            return node;
         }
 
-        public async Task<Node> AddNode(Node newNode)
+        public Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y)
         {
-            return await httpClient.PostJsonAsync<Node>("api/nodes", newNode);
+            Node node = new Node
+            {
+                NodeId = NextId(nodes),
+                LabelColor = d.NodeLabelColor,
+                NodeColor = d.NodeColor,
+                Xaxis = x,
+                Yaxis = y,
+                Radius = d.NodeRadius,
+                Label = (nodes.Count + 1).ToString()
+            };
+            nodes.Add(node);
+            return node;
         }
 
-        public async Task DeleteNode(int id)
+        public void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node)
         {
-            await httpClient.DeleteAsync($"api/nodes/{id}");
+            nodes.Remove(node);
+            foreach (Edge e in edges)
+            {
+                if (e.TailNodeId == node.NodeId || e.HeadNodeId == node.NodeId) edges.Remove(e);
+            }
         }
+
+        public int NextId(IList<Node> nodes)
+        {
+            if (nodes.Any())
+            {
+                return nodes.Max(n => n.NodeId) + 1;
+            }
+            return 0;
+        }
+
     }
 }

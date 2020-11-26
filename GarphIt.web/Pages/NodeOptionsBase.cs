@@ -22,6 +22,8 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
@@ -81,34 +83,31 @@ namespace GraphIt.web.Pages
 
         public async Task OnRelabel()
         {
-            Node newNode;
             int count = 1;
             if (ActiveNodes.Any())
             {
                 foreach (Node node in ActiveNodes)
                 {
-                    newNode = node;
-                    newNode.Label = count.ToString();
-                    await NodeService.UpdateNode(newNode);
+                    node.Label = count.ToString();
                     count++;
                 }
+                await ActiveNodesChanged.InvokeAsync(ActiveNodes);
             }
             else
             {
-                foreach (Node node in await NodeService.GetNodes())
+                foreach (Node node in Nodes)
                 {
-                    newNode = node;
-                    newNode.Label = count.ToString();
-                    await NodeService.UpdateNode(newNode);
+                    node.Label = count.ToString();
                     count++;
                 }
+                await NodesChanged.InvokeAsync(Nodes);
             }
         }
 
         public async Task OnRecenter()
         {
-            SVGControl.Xaxis = ActiveNodes.ElementAt(0).Xaxis - (SVGControl.Width / 2);
-            SVGControl.Yaxis = ActiveNodes.ElementAt(0).Yaxis - (SVGControl.Height / 2);
+            SVGControl.Xaxis = ActiveNodes[0].Xaxis - (SVGControl.Width / 2);
+            SVGControl.Yaxis = ActiveNodes[0].Yaxis - (SVGControl.Height / 2);
             SVGControl.OldXaxis = SVGControl.Xaxis;
             SVGControl.OldYaxis = SVGControl.Yaxis;
             await SVGControlChanged.InvokeAsync(SVGControl);

@@ -15,16 +15,16 @@
     switch (Choice)
     {
         case NavChoice.Home:
-            <Home @bind-Rep="Rep" DefaultOptions="DefaultOptions" SVGControl="SVGControl" UpdateCanvas="UpdateCanvas"></Home>
+            <Home @bind-Rep="Rep" DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></Home>
             break;
         case NavChoice.Insert:
-            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions"></Insert>
+            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></Insert>
             break;
         case NavChoice.Node:
-            <NodeOptions ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl"></NodeOptions>
+            <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>
             break;
         case NavChoice.Edge:
-            <EdgeOptions ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
+            <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
             break;
         case NavChoice.Algorithms:
             <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
@@ -52,9 +52,8 @@
 }
 @if (Rep == Representation.Matrix || Rep == Representation.WeightedMatrix)
 {
-    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" UpdateCanvas="UpdateCanvas"></AdjMatrix>
+    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></AdjMatrix>
 }
-<Canvas ActiveNodes="ActiveNodes" ActiveNodesChanged="ActiveNodesChanged"
-        ActiveEdges="ActiveEdges" ActiveEdgesChanged="ActiveEdgesChanged"
+<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" 
         ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" ></Canvas>
-<Footer GraphMode="GraphMode" @bind-SVGControl="SVGControl" DefaultOptions="DefaultOptions"></Footer>
+<Footer GraphMode="GraphMode" @bind-SVGControl="SVGControl" DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>

@@ -48,7 +48,7 @@
             <Content>
                 <p class="text-danger text-center">Are you sure you want to restart? Make sure you save your progress</p>
                 <SfButton CssClass="e-success" @onclick="SaveGraphItFile">Save Graph</SfButton>
-                <SfButton CssClass="e-danger" @onclick="NewGraph">New Graph</SfButton>
+                <SfButton CssClass="e-danger" @onclick="() => uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true)">New Graph</SfButton>
                 <SfButton CssClass="e-warning" @onclick="(() => NewGraphCheck = false)">Cancel</SfButton>
             </Content>
         </DialogTemplates>

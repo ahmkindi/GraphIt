@@ -8,10 +8,9 @@ namespace GraphIt.web.Services
 {
     public interface IEdgeService
     {
-        Task<IEnumerable<Edge>> GetEdges();
-        Task<Edge> GetEdge(int id);
-        Task<Edge> UpdateEdge(Edge updatedEdge);
-        Task<Edge> AddEdge(Edge newEdge);
-        Task DeleteEdge(int id);
+        Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail, double weight);
+        Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail);
+        IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed);
+        int NextId(IList<Edge> edges);
     }
 }

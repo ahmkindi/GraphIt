@@ -10,21 +10,15 @@ namespace GraphIt.web.Pages
 {
     public class FooterBase : ComponentBase
     {
-        public int NodeCount { get; set; } = 0;
-        public int EdgeCount { get; set; } = 0;
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Inject] public INodeService NodeService { get; set; }
-        [Inject] public IEdgeService EdgeService { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public List<Edge> Edges { get; set; }
         public bool StopZoomIn { get; set; }
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
-            IEnumerable<Node> nodes = await NodeService.GetNodes();
-            IEnumerable<Edge> edges = await EdgeService.GetEdges();
-            NodeCount = nodes.Count();
-            EdgeCount = edges.Count();
             if (SVGControl.Scale <= 0.2) StopZoomIn = true;
             else StopZoomIn = false;
         }

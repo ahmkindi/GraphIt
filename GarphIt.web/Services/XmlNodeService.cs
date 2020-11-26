@@ -13,6 +13,9 @@ namespace GraphIt.web.Services
         public void CreateNode(Node node, XmlTextWriter writer)
         {
             writer.WriteStartElement("Node");
+            writer.WriteStartElement("NodeId");
+            writer.WriteString(node.NodeId.ToString());
+            writer.WriteEndElement();
             writer.WriteStartElement("Label");
             writer.WriteString(node.Label);
             writer.WriteEndElement();
@@ -34,9 +37,12 @@ namespace GraphIt.web.Services
             writer.WriteEndElement();
         }
 
-        public void CreateNode(Edge edge, XmlTextWriter writer, int smallestId)
+        public void CreateNode(Edge edge, XmlTextWriter writer)
         {
             writer.WriteStartElement("Edge");
+            writer.WriteStartElement("EdgeId");
+            writer.WriteString(edge.EdgeId.ToString());
+            writer.WriteEndElement();
             writer.WriteStartElement("Label");
             writer.WriteString(edge.Label);
             writer.WriteEndElement();
@@ -50,10 +56,10 @@ namespace GraphIt.web.Services
             writer.WriteString(edge.Curve.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("HeadNodeId");
-            writer.WriteString((edge.HeadNodeId - smallestId).ToString());
+            writer.WriteString(edge.HeadNodeId.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("TailNodeId");
-            writer.WriteString((edge.TailNodeId - smallestId).ToString());
+            writer.WriteString(edge.TailNodeId.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Weight");
             writer.WriteString(edge.Weight.ToString());
@@ -92,9 +98,9 @@ namespace GraphIt.web.Services
             writer.WriteEndElement();
         }
 
-        public void Draw(Edge edge, XmlTextWriter writer, bool weighted, bool directed)
+        public void Draw(Edge edge, Node head, Node tail, XmlTextWriter writer, bool weighted, bool directed)
         {
-            var showEdge = new ShowEdge(edge);
+            var showEdge = new ShowEdge(edge, head, tail);
             writer.WriteStartElement("g");
 
             writer.WriteStartElement("path");

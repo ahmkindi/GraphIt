@@ -54,7 +54,7 @@
                             <tr>
                                 <th scope="col">Node 
                                 <button type="button" class="btn btn-sm btn-success p-0" 
-                                        @onclick="(async() => { await AddNode(NodeCount.ToString()); await UpdateCanvas.InvokeAsync(true); })">+</button></th>
+                                        @onclick="(async() => { NodeService.AddNode(Nodes, DefaultOptions, 0, 0); await NodesChanged.InvokeAsync(Nodes); })">+</button></th>
                                 @foreach (Node node in Nodes)
                                 {
                                     <th scope="col">@node.Label</th>
@@ -68,7 +68,7 @@
                                 <th scope="row">
                                     @tail.Label
                                     <button type="button" class="btn btn-sm btn-danger p-0"
-                                            @onclick="(async() => { await NodeService.DeleteNode(tail.NodeId); await UpdateCanvas.InvokeAsync(true); })">
+                                            @onclick="(async() => { NodeService.DeleteNode(Nodes, Edges, tail); await NodesChanged.InvokeAsync(Nodes); await EdgesChanged.InvokeAsync(Edges); })">
                                         X
                                     </button>
                                 </th>

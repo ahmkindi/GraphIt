@@ -6,27 +6,42 @@ using System.Text;
 
 namespace GraphIt.models
 {
-    public class Edge
+    public class Edge : IEquatable<Edge>
     {
-        [Key]
         public int EdgeId { get; set; }
-        [ForeignKey(nameof(HeadNode))]
         public int HeadNodeId { get; set; }
-        [ForeignKey(nameof(TailNode))]
         public int TailNodeId { get; set; }
         public double Curve { get; set; }
-        [Required]
         public double Weight { get; set; }
         public string Label { get; set; }
         public int Width { get; set; }
-        [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string LabelColor { get; set; }
-        [Required]
         [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
         public string EdgeColor { get; set; }
-        
-        public virtual Node HeadNode { get; set; }
-        public virtual Node TailNode { get; set; }
+
+        public bool Equals(Edge other)
+        {
+            if (this.EdgeId == other.EdgeId) return true;
+            return false;
+        }
+
+        public Node HeadNode(IEnumerable<Node> nodes)
+        {
+            foreach (Node n in nodes)
+            {
+                if (n.NodeId == HeadNodeId) return n;
+            }
+            return null;
+        }
+
+        public Node TailNode(IEnumerable<Node> nodes)
+        {
+            foreach (Node n in nodes)
+            {
+                if (n.NodeId == TailNodeId) return n;
+            }
+            return null;
+        }
     }
 }

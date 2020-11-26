@@ -18,7 +18,10 @@ namespace GraphIt.web.Pages
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
-        [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
+        [Parameter] public List<Edge> Edges { get; set; }
+        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
         public bool InsertNode { get; set; }
         public bool InsertEdge { get; set; }
         public bool Loading { get; set; } = false;
@@ -64,14 +67,16 @@ namespace GraphIt.web.Pages
             switch (WantedGraph)
             {
                 case CommonGraph.Complete:
-                    await CreateComplete();
+                    CreateComplete();
                     break;
             }
             WantedGraph = null;
             Loading = false;
+            await NodesChanged.InvokeAsync(Nodes);
+            await EdgesChanged.InvokeAsync(Edges);
         }
 
-        public async Task CreateComplete()
+        public void CreateComplete()
         {
             double[] center = { 0, 0 };
             double x, y;
@@ -86,7 +91,7 @@ namespace GraphIt.web.Pages
                 theta = (i % Math.Pow(2,2+level)) * (90/Math.Pow(2, level)) * Math.PI / 180;
                 x = center[0] + radius * Math.Cos(theta);
                 y = center[1] + radius * Math.Sin(theta);
-                addedNodes.Add(await AddNode(x, y, (i + 1).ToString()));
+                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             if (DefaultOptions.Directed)
             {
@@ -94,7 +99,7 @@ namespace GraphIt.web.Pages
                 {
                     foreach (Node node2 in addedNodes)
                     {
-                        if (node1.NodeId != node2.NodeId) await AddEdge(node1.NodeId, node2.NodeId);
+                        if (node1.NodeId != node2.NodeId) EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
                     }
                 }
             }
@@ -106,36 +111,10 @@ namespace GraphIt.web.Pages
                     notConnected.Remove(node1);
                     foreach (Node node2 in notConnected)
                     {
-                        await AddEdge(node1.NodeId, node2.NodeId);
+                        EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
                     }
                 }
             }
-        }
-
-        public async Task<Node> AddNode(double x, double y, string label)
-        {
-            Node node = new Node()
-            {
-                Label = label,
-                LabelColor = DefaultOptions.NodeLabelColor,
-                Xaxis = x,
-                Yaxis = y,
-                NodeColor = DefaultOptions.NodeColor,
-                Radius = DefaultOptions.NodeRadius,
-            };
-            return await NodeService.AddNode(node);
-        }
-        public async Task AddEdge(int headId, int tailId)
-        {
-            Edge edge = new Edge()
-            {
-                HeadNodeId = headId,
-                TailNodeId = tailId,
-                EdgeColor = DefaultOptions.EdgeColor,
-                Width = DefaultOptions.EdgeWidth,
-                LabelColor = DefaultOptions.EdgeLabelColor
-            };
-            await EdgeService.AddEdge(edge);
         }
     }
 }

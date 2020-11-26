@@ -10,36 +10,64 @@ namespace GraphIt.web.Services
 {
     public class EdgeService : IEdgeService
     {
-        private readonly HttpClient httpClient;
-
-        public EdgeService(HttpClient httpClient)
+        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail, double weight)
         {
-            this.httpClient = httpClient;
+            Edge edge = new Edge
+            {
+                EdgeId = NextId(edges),
+                LabelColor = d.EdgeLabelColor,
+                EdgeColor = d.EdgeColor,
+                HeadNodeId = head,
+                TailNodeId = tail,
+                Width = d.EdgeWidth,
+                Weight = weight
+            };
+            edges.Add(edge);
+            return edge;
+        }
+        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail)
+        {
+            Edge edge = new Edge
+            {
+                EdgeId = NextId(edges),
+                LabelColor = d.EdgeLabelColor,
+                EdgeColor = d.EdgeColor,
+                HeadNodeId = head,
+                TailNodeId = tail,
+                Width = d.EdgeWidth,
+            };
+            edges.Add(edge);
+            return edge;
         }
 
-        public async Task<IEnumerable<Edge>> GetEdges()
+        public IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed)
         {
-            return await httpClient.GetJsonAsync<Edge[]>("api/edges");
+            IList<Edge> MultiEdges = new List<Edge>();
+            if (directed)
+            {
+                foreach (Edge edge in edges)
+                {
+                    if (edge.HeadNodeId == head && edge.TailNodeId == tail) MultiEdges.Add(edge);
+                }
+            }
+            else
+            {
+                foreach (Edge edge in edges)
+                {
+                    if (edge.HeadNodeId == head && edge.TailNodeId == tail
+                        || (edge.HeadNodeId == tail && edge.TailNodeId == head)) MultiEdges.Add(edge);
+                }
+            }
+            return MultiEdges;
         }
 
-        public async Task<Edge> GetEdge(int id)
+        public int NextId(IList<Edge> edges)
         {
-            return await httpClient.GetJsonAsync<Edge>($"api/edges/{id}");
-        }
-
-        public async Task<Edge> UpdateEdge(Edge updatedEdge)
-        {
-            return await httpClient.PutJsonAsync<Edge>("api/edges", updatedEdge);
-        }
-
-        public async Task<Edge> AddEdge(Edge newEdge)
-        {
-            return await httpClient.PostJsonAsync<Edge>("api/edges", newEdge);
-        }
-
-        public async Task DeleteEdge(int id)
-        {
-            await httpClient.DeleteAsync($"api/edges/{id}");
+            if (edges.Any())
+            {
+                return edges.Max(n => n.EdgeId) + 1;
+            }
+            return 0;
         }
     }
 }

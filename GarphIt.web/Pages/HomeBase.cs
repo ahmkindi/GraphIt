@@ -23,6 +23,10 @@ namespace GraphIt.web.Pages
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public List<Edge> Edges { get; set; }
+        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
+        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
@@ -46,7 +50,6 @@ namespace GraphIt.web.Pages
         {
             string result;
             MemoryStream stream = new MemoryStream();
-            IEnumerable<Node> nodes = await NodeService.GetNodes();
             using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
             {
                 writer.Formatting = Formatting.Indented;
@@ -54,9 +57,9 @@ namespace GraphIt.web.Pages
                 writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
                 writer.WriteAttributeString("version", "1.1");
                 if (screenView) writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
-                else writer.WriteAttributeString("viewBox", FullView(nodes));
-                foreach (Edge edge in await EdgeService.GetEdges()) XmlNodeService.Draw(edge, writer, DefaultOptions.Weighted, DefaultOptions.Directed);
-                foreach (Node node in nodes) XmlNodeService.Draw(node, writer);
+                else writer.WriteAttributeString("viewBox", FullView(Nodes));
+                foreach (Edge edge in Edges) XmlNodeService.Draw(edge, edge.HeadNode(Nodes), edge.TailNode(Nodes), writer, DefaultOptions.Weighted, DefaultOptions.Directed);
+                foreach (Node node in Nodes) XmlNodeService.Draw(node, writer);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -75,7 +78,6 @@ namespace GraphIt.web.Pages
             var height = nodes.Max(n => n.Yaxis + n.Radius) - y;
             return $"{x} {y} {width} {height}";
         }
-
         public async Task SaveGraphItFile()
         {
             string result;
@@ -84,9 +86,8 @@ namespace GraphIt.web.Pages
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Graph");
-                IEnumerable<Node> nodes = await NodeService.GetNodes();
-                foreach (Node node in nodes) XmlNodeService.CreateNode(node, writer);
-                foreach (Edge edge in await EdgeService.GetEdges()) XmlNodeService.CreateNode(edge, writer, nodes.Min(n => n.NodeId));
+                foreach (Node node in Nodes) XmlNodeService.CreateNode(node, writer);
+                foreach (Edge edge in Edges) XmlNodeService.CreateNode(edge, writer);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -115,36 +116,19 @@ namespace GraphIt.web.Pages
                 string graph = DecodeAndInflate(temp);
                 XmlDocument xmlData = new XmlDocument();
                 xmlData.LoadXml(graph);
-                Node delLater = await NodeService.AddNode(new Node
-                {
-                    LabelColor = DefaultOptions.NodeLabelColor,
-                    NodeColor = DefaultOptions.NodeColor,
-                    Xaxis = 0,
-                    Yaxis = 0,
-                    Radius = DefaultOptions.NodeRadius,
-                    Label = ""
-                });
-                Traverse(xmlData, newEdges, newNodes, delLater.NodeId);
                 if (overwrite)
                 {
-                    foreach (Node node in await NodeService.GetNodes()) await NodeService.DeleteNode(node.NodeId);
-                    foreach (Edge edge in await EdgeService.GetEdges()) await EdgeService.DeleteEdge(edge.EdgeId);
+                    Nodes.Clear();
+                    Edges.Clear();
                 }
-                await NodeService.DeleteNode(delLater.NodeId);
-                foreach (Node node in newNodes) await NodeService.AddNode(node);
-                foreach (Edge edge in newEdges) await EdgeService.AddEdge(edge);
+                Traverse(xmlData, NodeService.NextId(Nodes), EdgeService.NextId(Edges));
             }
             catch (Exception)
             {
                 ErrorOpening = true;
             }
-            await UpdateCanvas.InvokeAsync(true);
-        }
-
-        public async Task NewGraph()
-        {
-            foreach (Node node in await NodeService.GetNodes()) await NodeService.DeleteNode(node.NodeId);
-            uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+            await NodesChanged.InvokeAsync(Nodes);
+            await EdgesChanged.InvokeAsync(Edges);
         }
 
         private byte[] DeflateAndEncode(string str)
@@ -177,7 +161,7 @@ namespace GraphIt.web.Pages
             }
         }
 
-        private static void Traverse(XmlDocument xmlData, IList<Edge> newEdges, IList<Node> newNodes, int largestId)
+        private void Traverse(XmlDocument xmlData, int nextNodeId, int nextEdgeId)
         {
             foreach (XmlNode i in xmlData.DocumentElement.ChildNodes)
             {
@@ -188,6 +172,9 @@ namespace GraphIt.web.Pages
                     {
                         switch (node.Name)
                         {
+                            case "NodeId":
+                                newNode.NodeId = int.Parse(node.InnerText) + nextNodeId;
+                                break;
                             case "NodeColor":
                                 newNode.NodeColor = node.InnerText;
                                 break;
@@ -208,7 +195,7 @@ namespace GraphIt.web.Pages
                                 break;
                         }
                     }
-                    newNodes.Add(newNode);
+                    Nodes.Add(newNode);
                 }
                 else if (i.Name == "Edge")
                 {
@@ -217,6 +204,9 @@ namespace GraphIt.web.Pages
                     {
                         switch (edge.Name)
                         {
+                            case "EdgeId":
+                                newEdge.EdgeId = int.Parse(edge.InnerText) + nextEdgeId;
+                                break;
                             case "Label":
                                 newEdge.Label = edge.InnerText;
                                 break;
@@ -227,10 +217,10 @@ namespace GraphIt.web.Pages
                                 newEdge.Width = int.Parse(edge.InnerText);
                                 break;
                             case "HeadNodeId":
-                                newEdge.HeadNodeId = int.Parse(edge.InnerText) + largestId + 1;
+                                newEdge.HeadNodeId = int.Parse(edge.InnerText) + nextNodeId;
                                 break;
                             case "TailNodeId":
-                                newEdge.TailNodeId = int.Parse(edge.InnerText) + largestId + 1;
+                                newEdge.TailNodeId = int.Parse(edge.InnerText) + nextNodeId;
                                 break;
                             case "Curve":
                                 newEdge.Curve = double.Parse(edge.InnerText);
@@ -243,7 +233,7 @@ namespace GraphIt.web.Pages
                                 break;
                         }
                     }
-                    newEdges.Add(newEdge);
+                    Edges.Add(newEdge);
                 }
             }
         }

@@ -20,8 +20,10 @@ namespace GraphIt.web.Pages
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
-        public IEnumerable<Node> Nodes { get; set; }
-        public IEnumerable<Edge> Edges { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public List<Edge> Edges { get; set; }
+        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
+        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
         public int NodeCount { get; set; }
         public bool TextView { get; set; }
         public bool ValidInput { get; set; }
@@ -34,12 +36,7 @@ namespace GraphIt.web.Pages
             GetInitText = true;
             ValidInput = true;
         }
-        protected override async Task OnParametersSetAsync()
-        {
-            Nodes = await NodeService.GetNodes();
-            Edges = await EdgeService.GetEdges();
-            NodeCount = Nodes.Count();
-        }
+
         protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender) GetInitText = true;
@@ -69,17 +66,8 @@ namespace GraphIt.web.Pages
             double weight = Math.Round(double.Parse(e.Value.ToString()), 2);
             if (weight > 0)
             {
-                await RemoveEdge(tail, head);
-                Edge newEdge = new Edge
-                {
-                    LabelColor = DefaultOptions.EdgeLabelColor,
-                    EdgeColor = DefaultOptions.EdgeColor,
-                    HeadNodeId = head.NodeId,
-                    TailNodeId = tail.NodeId,
-                    Width = DefaultOptions.EdgeWidth,
-                    Weight = weight
-                };
-                await EdgeService.AddEdge(newEdge);
+                RemoveEdge(tail, head);
+                EdgeService.AddEdge(Edges, DefaultOptions, head.NodeId, tail.NodeId, weight);
             }
             else if (weight == 0)
             {
@@ -88,62 +76,30 @@ namespace GraphIt.web.Pages
                     if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
                         || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                     {
-                        await EdgeService.DeleteEdge(edge.EdgeId);
+                        Edges.Remove(edge);
                         if (!DefaultOptions.Directed)
                         {
-                            await AddEdge(head, tail, true, edge.Weight);
+                            EdgeService.AddEdge(Edges, DefaultOptions, head.NodeId, tail.NodeId, edge.Weight);
                         }
                         break;
                     }
                 }
             }
-            await UpdateCanvas.InvokeAsync(true);
+            await EdgesChanged.InvokeAsync(Edges);
         }
 
-        public async Task<bool> RemoveEdge(Node tail, Node head)
+        public void RemoveEdge(Node tail, Node head)
         {
             foreach (Edge edge in Edges)
             {
                 if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
                     || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                 {
-                    await EdgeService.DeleteEdge(edge.EdgeId);
-                    Edges = await EdgeService.GetEdges();
-                    return true;
+                    Edges.Remove(edge);
                 }
             }
-            return false;
         }
 
-        public async Task AddEdge(Node tail, Node head, bool directed, double weight)
-        {
-            Edge newEdge = new Edge
-            {
-                LabelColor = DefaultOptions.EdgeLabelColor,
-                EdgeColor = DefaultOptions.EdgeColor,
-                HeadNodeId = head.NodeId,
-                TailNodeId = tail.NodeId,
-                Width = DefaultOptions.EdgeWidth,
-                Weight = weight
-            };
-            await EdgeService.AddEdge(newEdge);
-            Edges = await EdgeService.GetEdges();
-        }
-
-        public async Task AddNode(string label)
-        {
-            Node newNode = new Node
-            {
-                NodeColor = DefaultOptions.NodeColor,
-                Label = label,
-                LabelColor = DefaultOptions.NodeLabelColor,
-                Radius = DefaultOptions.NodeRadius,
-                Xaxis = 0,
-                Yaxis = 0
-            };
-            await NodeService.AddNode(newNode);
-            Nodes = await NodeService.GetNodes();
-        }
         public async Task OnChangeText(ChangeEventArgs e)
         {
             string input = e.Value.ToString();
@@ -156,39 +112,26 @@ namespace GraphIt.web.Pages
                 {
                     for (int i = 1; i <= difference; i++)
                     {
-                        await AddNode((NodeCount + i).ToString());
+                        NodeService.AddNode(Nodes, DefaultOptions, 0, 0);
                     }
                 }
                 else if (difference < 0)
                 {
                     for (int i = difference; i < 0; i++)
                     {
-                        await NodeService.DeleteNode(Nodes.ElementAt(NodeCount + i).NodeId);
+                        Nodes.Remove(Nodes[Nodes.Count + i]);
                     }
-                    Nodes = await NodeService.GetNodes();
                 }
-                foreach (Edge edge in Edges)
-                {
-                    await EdgeService.DeleteEdge(edge.EdgeId);
-                }
-                Edges = await EdgeService.GetEdges();
+                Edges.Clear();
                 for (int i = 0; i < weights.GetLength(0); i++)
                 {
-                    Node tail = Nodes.ElementAt(i);
                     for (int j = 0; j < weights.GetLength(1); j++)
                     {
-                        Node head = Nodes.ElementAt(j);
-                        if (weights[i,j] != 0)
-                        {
-                            if (await RemoveEdge(head, tail))
-                            {
-                                await AddEdge(tail, head, false, weights[i,j]);
-                            }
-                            else await AddEdge(tail, head, true, weights[i,j]);
-                        }
+                        if (weights[i,j] != 0) EdgeService.AddEdge(Edges, DefaultOptions, Nodes[j].NodeId, Nodes[i].NodeId, weights[i,j]);
                     }
                 }
-                await UpdateCanvas.InvokeAsync(true);
+                await NodesChanged.InvokeAsync(Nodes);
+                await EdgesChanged.InvokeAsync(Edges);
             }
         }
 

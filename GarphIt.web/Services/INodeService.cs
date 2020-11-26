@@ -8,10 +8,10 @@ namespace GraphIt.web.Services
 {
     public interface INodeService
     {
-        Task<IEnumerable<Node>> GetNodes();
-        Task<Node> GetNode(int id);
-        Task<Node> UpdateNode(Node updatedNode);
-        Task<Node> AddNode(Node newNode);
-        Task DeleteNode(int id);
+        Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y, string label);
+        Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y);
+        void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node);
+        int NextId(IList<Node> nodes);
+
     }
 }
