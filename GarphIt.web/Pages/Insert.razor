@@ -34,16 +34,16 @@
         <DialogTemplates>
             <Content>
                 @Klabel
-                <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
+                <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@numNodes"></SfNumericTextBox>
                 @if (WantedGraph == CommonGraph.CBipartite)
                 {
                     @("Right Nodes: ")
-                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue2"></SfNumericTextBox>
+                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
                 }
-                else if (WantedGraph == CommonGraph.Regular)
+                else if (WantedGraph == CommonGraph.Regular || WantedGraph == CommonGraph.RBipartite)
                 {
                     @("Degree (k): ")
-                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue2"></SfNumericTextBox>
+                    <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
                 }
                 <SfButton CssClass="e-success" @onclick="CreateGraph">Done</SfButton>
                 <SfButton CssClass="e-success" @onclick="(() => WantedGraph = null)">Cancel</SfButton>
@@ -57,13 +57,15 @@
         <span class="sr-only">Graph In Making...</span>
     </div>
 }
-@if (ErrorCreatingGraph)
+@if (ErrorCreatingGraph != "")
 {
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <p class="text-danger text-center">There was a problem making the graph, make sure the nodes specified makes sense for your the graph.</p>
-                <SfButton CssClass="e-success" @onclick="(() => ErrorCreatingGraph = false)">OK</SfButton>
+                <div class="text-center">
+                    <p class="text-danger text-center">@ErrorCreatingGraph</p>
+                    <SfButton CssClass="e-success" @onclick='(() => ErrorCreatingGraph = "")'>OK</SfButton>
+                </div>
             </Content>
         </DialogTemplates>
     </SfDialog>
