@@ -16,7 +16,7 @@
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Cyclic)">Single Cyclic</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Tree)">Tree (straight line)</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Complete)">Clique</a>
-                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Regular)">Regular</a>
+                <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Star)">Star</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.RBipartite)">Regular Bipartite</a>
                 <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.CBipartite)">Complete Bipartite</a>
             </div>
@@ -40,7 +40,7 @@
                     @("Right Nodes: ")
                     <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>
                 }
-                else if (WantedGraph == CommonGraph.Regular || WantedGraph == CommonGraph.RBipartite)
+                else if (WantedGraph == CommonGraph.RBipartite)
                 {
                     @("Degree (k): ")
                     <SfNumericTextBox Min=1 Step=1 CssClass="shortInput" TValue="int?" @bind-Value="@KValue"></SfNumericTextBox>

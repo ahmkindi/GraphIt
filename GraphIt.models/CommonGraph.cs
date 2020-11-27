@@ -7,7 +7,7 @@ namespace GraphIt.models
     public enum CommonGraph
     {
         Complete,
-        Regular,
+        Star,
         Cyclic,
         Tree,
         CBipartite,

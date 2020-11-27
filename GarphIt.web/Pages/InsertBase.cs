@@ -76,9 +76,8 @@ namespace GraphIt.web.Pages
                 case CommonGraph.CBipartite:
                     CreateCBipartite();
                     break;
-                case CommonGraph.Regular:
-                    if (KValue < numNodes && (numNodes % 2 == 0 || KValue % 2 == 0)) CreateRegular();
-                    else ErrorCreatingGraph = "for a K-Regular to exist it must satisfy: K < n AND if K is odd then n is even ";
+                case CommonGraph.Star:
+                    CreateStar();
                     break;
                 case CommonGraph.Cyclic:
                     if (numNodes > 2) CreateCyclic();
@@ -101,20 +100,8 @@ namespace GraphIt.web.Pages
 
         private void CreateComplete()
         {
-            double x, y;
-            int radius;
-            double theta;
-            int level = 0;
             IList<Node> addedNodes = new List<Node>();
-            for (int i=0; i<numNodes; i++)
-            {
-                if ((i % 4) == 0 && (i + 4 & (i + 3)) == 0 && i!=0) level++;
-                radius = (1 + level) * DefaultOptions.NodeRadius * 4;
-                theta = (i % Math.Pow(2,2+level)) * (90/Math.Pow(2, level)) * Math.PI / 180;
-                x = SVGControl.Xaxis + SVGControl.Width/2 + radius * Math.Cos(theta);
-                y = SVGControl.Yaxis + SVGControl.Height/2 + radius * Math.Sin(theta);
-                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
-            }
+            CreateCircle(addedNodes);
             if (DefaultOptions.Directed)
             {
                 foreach (Node node1 in addedNodes)
@@ -179,20 +166,22 @@ namespace GraphIt.web.Pages
             }
         }
 
-        private void CreateRegular()
+        private void CreateStar()
         {
             double x, y;
-            double radius = (DefaultOptions.NodeRadius/2) * (double)numNodes;
+            double midX = SVGControl.Xaxis + SVGControl.Width / 2;
+            double midY = SVGControl.Yaxis + SVGControl.Height / 2;
+            double radius = DefaultOptions.NodeRadius / 2 * (double)numNodes;
             double theta = (360.0 / (double)numNodes) * Math.PI / 180;
-            IList<Node> evenNodes = new List<Node>();
-            IList<Node> oddNodes = new List<Node>();
-            for (int i = 0; i < numNodes; i++)
+            IList<Node> addedNodes = new List<Node>();
+            Node root = NodeService.AddNode(Nodes, DefaultOptions, midX, midY, "1");
+            for (int i = 1; i < numNodes; i++)
             {
-                x = SVGControl.Xaxis + SVGControl.Width / 2 + radius * Math.Cos(theta*i);
-                y = SVGControl.Yaxis + SVGControl.Height / 2 + radius * Math.Sin(theta*i);
-                if (i%2 == 0) evenNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
-                else oddNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                x = midX + radius * Math.Cos(theta * i);
+                y = midY + radius * Math.Sin(theta * i);
+                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
+            foreach (Node node in addedNodes) EdgeService.AddEdge(Edges, DefaultOptions, node.NodeId, root.NodeId);
         }
 
         private void CreateRBipartite()
@@ -224,16 +213,8 @@ namespace GraphIt.web.Pages
 
         private void CreateCyclic()
         {
-            double x, y;
-            double radius = DefaultOptions.NodeRadius/1.5 * (double)numNodes;
-            double theta = (360.0 / (double)numNodes) * Math.PI / 180;
             IList<Node> addedNodes = new List<Node>();
-            for (int i = 0; i < numNodes; i++)
-            {
-                x = SVGControl.Xaxis + SVGControl.Width / 2 + radius * Math.Cos(theta * i);
-                y = SVGControl.Yaxis + SVGControl.Height / 2 + radius * Math.Sin(theta * i);
-                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
-            }
+            CreateCircle(addedNodes);
             for (int i =0; i < numNodes-1; i++)
             {
                 EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[i].NodeId, addedNodes[i+1].NodeId);
@@ -249,6 +230,23 @@ namespace GraphIt.web.Pages
             for (int i = 0; i < numNodes; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes/2 - i);
+                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+            }
+            for (int i = 0; i < numNodes-1; i++)
+            {
+                EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[i].NodeId, addedNodes[i + 1].NodeId);
+            }
+        }
+
+        private void CreateCircle(IList<Node> addedNodes)
+        {
+            double x, y;
+            double radius = DefaultOptions.NodeRadius / 1.5 * (double)numNodes;
+            double theta = (360.0 / (double)numNodes) * Math.PI / 180;
+            for (int i = 0; i < numNodes; i++)
+            {
+                x = SVGControl.Xaxis + SVGControl.Width / 2 + radius * Math.Cos(theta * i);
+                y = SVGControl.Yaxis + SVGControl.Height / 2 + radius * Math.Sin(theta * i);
                 addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
         }
