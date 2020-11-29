@@ -35,6 +35,8 @@ namespace GraphIt.web
             services.AddScoped<ResizeListener>();
             services.AddScoped<INodeService, NodeService>();
             services.AddScoped<IEdgeService, EdgeService>();
+            services.AddScoped<IXmlNodeService, XmlNodeService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

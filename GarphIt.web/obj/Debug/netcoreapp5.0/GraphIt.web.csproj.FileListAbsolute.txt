@@ -79,3 +79,5 @@ C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\GraphIt.
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\ref\GraphIt.web.dll
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\GraphIt.web.pdb
 C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\GraphIt.web.genruntimeconfig.cache
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\File.razor.g.cs
+C:\Users\ahmki\source\repos\GarphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\File.razor.g.cs

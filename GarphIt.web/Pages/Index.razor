@@ -14,11 +14,16 @@
 {
     switch (Choice)
     {
+        case NavChoice.File:
+            <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
+            break;
         case NavChoice.Home:
-            <Home @bind-Rep="Rep" DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></Home>
+            <Home @bind-Rep="Rep"></Home>
             break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
+            break;
+        case NavChoice.View:
             break;
         case NavChoice.Node:
             <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>
@@ -26,27 +31,7 @@
         case NavChoice.Edge:
             <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
             break;
-        case NavChoice.Algorithms:
-            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-                <div class="collapse navbar-collapse mx-0" id="navbarNav">
-                    <ul class="navbar-nav mx-0">
-                        <li class="nav-item">
-                            <button type="button" class="btn">Save</button>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            break;
         case NavChoice.About:
-            <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-                <div class="collapse navbar-collapse mx-0" id="navbarNav">
-                    <ul class="navbar-nav mx-0">
-                        <li class="nav-item">
-                            <button type="button" class="btn">Save</button>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
             break;
     }
 }

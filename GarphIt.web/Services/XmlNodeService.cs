@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace GraphIt.web.Services
 {
-    public class XmlNodeService
+    public class XmlNodeService : IXmlNodeService
     {
         public void CreateNode(Node node, XmlTextWriter writer)
         {

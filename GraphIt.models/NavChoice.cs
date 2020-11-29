@@ -4,11 +4,12 @@ namespace GraphIt.models
 {
     public enum NavChoice
     {
+        File,
         Home,
         Insert,
+        View,
         Node,
         Edge,
-        Algorithms,
-        About
+        About,
     }
 }
