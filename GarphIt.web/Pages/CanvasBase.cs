@@ -30,6 +30,8 @@ namespace GraphIt.web.Pages
         [Parameter] public List<Edge> Edges { get; set; }
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
+        [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
+        [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
@@ -284,6 +286,11 @@ namespace GraphIt.web.Pages
         }
         public async Task OnNodeClick(Node node)
         {
+            if (StartAlgorithm.Algorithm != Algorithm.None && StartAlgorithm.StartNode == null)
+            {
+                StartAlgorithm.StartNode = node;
+                await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+            }
             ActiveNodes.Clear();
             ActiveNodes.Add(node);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);

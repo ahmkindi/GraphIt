@@ -18,7 +18,7 @@
             <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
             break;
         case NavChoice.Home:
-            <Home @bind-Rep="Rep"></Home>
+            <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm"></Home>
             break;
         case NavChoice.Insert:
             <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
@@ -40,5 +40,5 @@
     <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></AdjMatrix>
 }
 <Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" 
-        ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" ></Canvas>
+        ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm"></Canvas>
 <Footer GraphMode="GraphMode" @bind-SVGControl="SVGControl" DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>

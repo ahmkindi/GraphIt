@@ -12,12 +12,10 @@ namespace GraphIt.web.Pages
 {
     public class IndexBase : ComponentBase, IDisposable
     {
-        [Inject] public INodeService NodeService { get; set; }
-        [Inject] public IEdgeService EdgeService { get; set; }
-        [Inject] public IJSRuntime JSRuntime { get; set; }
         [Inject] public ResizeListener Listener { get; set; }
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public NavChoice? Choice { get; set; }
+        public StartAlgorithm StartAlgorithm { get; set; } = new StartAlgorithm();
         public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
         public IList<Node> ActiveNodes { get; set; } = new List<Node>();
         public IList<Edge> ActiveEdges { get; set; } = new List<Edge>();

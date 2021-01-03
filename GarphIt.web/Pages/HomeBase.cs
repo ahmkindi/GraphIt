@@ -20,7 +20,10 @@ namespace GraphIt.web.Pages
     {
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
+        [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
+        [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
 
+        public Algorithm[] RequiresEnd { get; set; } = { };
         public async Task OnMatrixClick()
         {
             Rep = Representation.Matrix;
@@ -30,6 +33,10 @@ namespace GraphIt.web.Pages
         {
             Rep = Representation.WeightedMatrix;
             await RepChanged.InvokeAsync(Rep);
+        }
+        public async Task OnAlgoChanged(Algorithm a)
+        {
+            await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm(a));
         }
     }
 }

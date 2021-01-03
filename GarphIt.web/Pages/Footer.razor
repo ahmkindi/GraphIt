@@ -10,15 +10,15 @@
         Mode: @GraphMode
     </span>
     <span class="px-2 btn-group" role="group">
-        <button id="" type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(0.1))">-</button>
+        <button class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(0.1))"><span class="oi oi-zoom-out"></span></button>
         Zoom
         @if (StopZoomIn)
         {
-            <button type="button" class="btn btn-secondary py-0" disabled>+</button>
+            <button class="btn btn-secondary py-0" disabled><span class="oi oi-zoom-in"></span></button>
         }
         else
         {
-            <button type="button" class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(-0.1))">+</button>
+            <button class="btn NavNone shadow-none py-0" @onclick="@(() => OnScaleClick(-0.1))"><span class="oi oi-zoom-in"></span></button>
         }
     </span>
     @if (DefaultOptions.MultiGraph)
