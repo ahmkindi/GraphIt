@@ -375,7 +375,40 @@ namespace GraphIt.web.Pages
                 await OnDelete();
             }
         }
-        
+
+        public void OnKeyDown(KeyboardEventArgs e)
+        {
+
+            if (e.Key == "ArrowRight")
+            {
+                foreach (Node node in ActiveNodes)
+                {
+                    node.Xaxis+=5*SVGControl.Scale;
+                }
+            }
+            else if (e.Key == "ArrowLeft")
+            {
+                foreach (Node node in ActiveNodes)
+                {
+                    node.Xaxis -= 5 * SVGControl.Scale;
+                }
+            }
+            else if (e.Key == "ArrowUp")
+            {
+                foreach (Node node in ActiveNodes)
+                {
+                    node.Yaxis -= 5 * SVGControl.Scale;
+                }
+            }
+            else if (e.Key == "ArrowDown")
+            {
+                foreach (Node node in ActiveNodes)
+                {
+                    node.Yaxis += 5 * SVGControl.Scale;
+                }
+            }
+        }
+
         public async Task ZoomIn()
         {
             if (SVGControl.Scale > 0.2)
