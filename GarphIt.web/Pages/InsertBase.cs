@@ -25,6 +25,8 @@ namespace GraphIt.web.Pages
         [Parameter] public SVGControl SVGControl { get; set; }
         public bool InsertNode { get; set; }
         public bool InsertEdge { get; set; }
+        public string NodeCss { get; set; }
+        public string EdgeCss { get; set; }
         public bool Loading { get; set; } = false;
         public CommonGraph? WantedGraph { get; set; }
         public int? numNodes { get; set; } = 1;

@@ -2,37 +2,37 @@
 
 <SfContextMenu @ref="ObjectContextMenu" TValue="MenuItem">
     <MenuItems>
-        <MenuItem Text="Copy" Disabled="@(!ActiveNodes.Any())"></MenuItem>
-        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())"></MenuItem>
+        <MenuItem Text="Copy" Disabled="@(!ActiveNodes.Any())" IconCss="oi oi-layers"></MenuItem>
+        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())" IconCss="oi oi-clipboard"></MenuItem>
         <MenuItem Separator="true"></MenuItem>
-        <MenuItem Text="Insert Edge"></MenuItem>
-        <MenuItem Text="Align" Disabled="@(ActiveNodes.Count < 2)">
+        <MenuItem Text="Insert Edge" IconCss="oi oi-transfer"></MenuItem>
+        <MenuItem Text="Align" Disabled="@(ActiveNodes.Count < 2)" IconCss="oi oi-project">
             <MenuItems>
-                <MenuItem Text="Top"></MenuItem>
-                <MenuItem Text="Bottom"></MenuItem>
-                <MenuItem Text="Left"></MenuItem>
-                <MenuItem Text="Right"></MenuItem>
+                <MenuItem Text="Top" IconCss="oi oi-vertical-align-top"></MenuItem>
+                <MenuItem Text="Bottom" IconCss="oi oi-vertical-align-bottom"></MenuItem>
+                <MenuItem Text="Left" IconCss="oi oi-align-left"></MenuItem>
+                <MenuItem Text="Right" IconCss="oi oi-align-right"></MenuItem>
             </MenuItems>
         </MenuItem>
-        <MenuItem Text="Edit" Hidden="@(ActiveNodes.Any() && ActiveEdges.Any())"></MenuItem>
-        <MenuItem Text="Edit" Hidden="@(!(ActiveNodes.Any() && ActiveEdges.Any()))">
+        <MenuItem Text="Edit" Hidden="@(ActiveNodes.Any() && ActiveEdges.Any())" IconCss="oi oi-pencil"></MenuItem>
+        <MenuItem Text="Edit" Hidden="@(!(ActiveNodes.Any() && ActiveEdges.Any()))" IconCss="oi oi-pencil">
         <MenuItems>
-            <MenuItem Text="Nodes"></MenuItem>
-            <MenuItem Text="Edges"></MenuItem>
+            <MenuItem Text="Nodes" IconCss="oi oi-media-record"></MenuItem>
+            <MenuItem Text="Edges" IconCss="oi oi-transfer"></MenuItem>
         </MenuItems>
         </MenuItem>
-        <MenuItem Text="Delete"></MenuItem>
+        <MenuItem Text="Delete" IconCss="oi oi-trash"></MenuItem>
     </MenuItems>
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 <SfContextMenu @ref="CanvasContextMenu" TValue="MenuItem">
     <MenuItems>
-        <MenuItem Text="Copy" Disabled="true"></MenuItem>
-        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())"></MenuItem>
+        <MenuItem Text="Copy" Disabled="true" IconCss="oi oi-layers"></MenuItem>
+        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())" IconCss="oi oi-clipboard"></MenuItem>
         <MenuItem Separator="true"></MenuItem>
-        <MenuItem Text="Insert Node"></MenuItem>
-        <MenuItem Text="Zoom In"></MenuItem>
-        <MenuItem Text="Zoom Out"></MenuItem>
+        <MenuItem Text="Insert Node" IconCss="oi oi-plus"></MenuItem>
+        <MenuItem Text="Zoom In" IconCss="oi oi-zoom-in"></MenuItem>
+        <MenuItem Text="Zoom Out" IconCss="oi oi-zoom-out"></MenuItem>
     </MenuItems>
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>

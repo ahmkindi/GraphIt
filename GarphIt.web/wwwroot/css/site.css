@@ -12,6 +12,11 @@
     z-index: 1000;
 }
 
+.scrollable-menu {
+    max-height: 150px;
+    overflow: auto;
+}
+
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
@@ -89,6 +94,22 @@ svg text {
 
 .NavNone:hover {
     background-color: #ededed;
+}
+
+.NavNone:active::after {
+    content: '';
+    display: inherit;
+    width: 50%;
+    margin: auto;
+    border-top: 2px solid black;
+}
+
+.NavNone:active:hover::after {
+    content: '';
+    display: inherit;
+    width: 100%;
+    margin: auto;
+    border-top: 2px solid black;
 }
 
 .NavActive::after {
