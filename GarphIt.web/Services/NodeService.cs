@@ -42,6 +42,38 @@ namespace GraphIt.web.Services
             return node;
         }
 
+        public Node AddNode(IList<Node> nodes, Node n)
+        {
+            Node node = new Node
+            {
+                NodeId = NextId(nodes),
+                LabelColor = n.LabelColor,
+                NodeColor = n.NodeColor,
+                Xaxis = n.Xaxis,
+                Yaxis = n.Yaxis,
+                Radius = n.Radius,
+                Label = n.Label
+            };
+            nodes.Add(node);
+            return node;
+        }
+
+        public Node AddNode(IList<Node> nodes, Node n, double offset)
+        {
+            Node node = new Node
+            {
+                NodeId = NextId(nodes),
+                LabelColor = n.LabelColor,
+                NodeColor = n.NodeColor,
+                Xaxis = n.Xaxis + offset,
+                Yaxis = n.Yaxis + offset,
+                Radius = n.Radius,
+                Label = n.Label
+            };
+            nodes.Add(node);
+            return node;
+        }
+
         public void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node)
         {
             nodes.Remove(node);

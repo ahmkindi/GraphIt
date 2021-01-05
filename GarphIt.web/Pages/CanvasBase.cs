@@ -36,10 +36,14 @@ namespace GraphIt.web.Pages
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         public string SvgClass { get; set; }
+        public IList<Node> CopiedNodes { get; set; } = new List<Node>();
+        public IList<Edge> CopiedEdges { get; set; } = new List<Edge>();
+        public double PasteOffset { get; set; } = 0;
         private IList<Node> oldNodes { get; set; }
         public bool ActiveNodesMoved { get; set; } = false;
         public NewEdge NewEdge { get; set; } = new NewEdge();
-        public ContextMenus ContextMenus { get; set; } = new ContextMenus();
+        public SfContextMenu<MenuItem> ObjectContextMenu { get; set; }
+        public SfContextMenu<MenuItem> CanvasContextMenu { get; set; }
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
         private double[] origin = new double[2];
         public RectSelection RectSelection { get; set; } = new RectSelection();
@@ -59,12 +63,36 @@ namespace GraphIt.web.Pages
         {
             switch (e.Item.Text)
             {
+                case "Copy":
+                    Copy();
+                    break;
+                case "Paste":
+                    await Paste();
+                    break;
+                case "Top":
+                    Align("Top");
+                    break;
+                case "Bottom":
+                    Align("Bottom");
+                    break;
+                case "Left":
+                    Align("Left");
+                    break;
+                case "Right":
+                    Align("Right");
+                    break;
                 case "Delete":
                     await OnDelete();
                     break;
                 case "Edit":
-                    if (ActiveNodes.Any()) await ChangeMenu.InvokeAsync(NavChoice.Node);
-                    else await ChangeMenu.InvokeAsync(NavChoice.Edge);
+                    if (ActiveNodes.Count == 1) await ChangeMenu.InvokeAsync(NavChoice.Node);
+                    else if (ActiveEdges.Count == 1) await ChangeMenu.InvokeAsync(NavChoice.Edge);
+                    break;
+                case "Nodes":
+                    await ChangeMenu.InvokeAsync(NavChoice.Node);
+                    break;
+                case "Edges":
+                    await ChangeMenu.InvokeAsync(NavChoice.Edge);
                     break;
                 case "Insert Edge":
                     InsertEdge();
@@ -121,21 +149,14 @@ namespace GraphIt.web.Pages
                 RectSelection.Create = false;
                 if (!e.CtrlKey && RectSelection.Width <= 0 && RectSelection.Height <= 0)
                 {
-                    if ((ActiveEdges.Count + ActiveNodes.Count > 1 && (ObjectClicked.NodeRight || ObjectClicked.EdgeRight))
-                                        || (ActiveEdges.Count == 1 && ObjectClicked.EdgeRight))
+                    if (ObjectClicked.Right)
                     {
-                        ObjectClicked.NodeRight = false;
-                        ObjectClicked.EdgeRight = false;
-                        ContextMenus.EdgeMenu.Open(e.ClientX, e.ClientY);
-                    }
-                    else if (ActiveNodes.Count == 1 && ObjectClicked.NodeRight)
-                    {
-                        ObjectClicked.NodeRight = false;
-                        ContextMenus.NodeMenu.Open(e.ClientX, e.ClientY);
+                        ObjectClicked.Right = false;
+                        ObjectContextMenu.Open(e.ClientX, e.ClientY);
                     }
                     else
                     {
-                        ContextMenus.CanvasMenu.Open(e.ClientX, e.ClientY);
+                        CanvasContextMenu.Open(e.ClientX, e.ClientY);
                         origin[0] = e.ClientX;
                         origin[1] = e.ClientY;
                         if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
@@ -185,9 +206,9 @@ namespace GraphIt.web.Pages
                 RectSelection = new RectSelection();
                 return;
             }
-            if (ObjectClicked.Any)
+            if (ObjectClicked.Left)
             {
-                ObjectClicked.Any = false;
+                ObjectClicked.Left = false;
                 if (GraphMode == GraphMode.InsertNode) SvgClass = "pointer";
                 else SvgClass = "grab";
             }
@@ -214,7 +235,7 @@ namespace GraphIt.web.Pages
             origin[0] = e.ClientX;
             origin[1] = e.ClientY;
             oldNodes = ActiveNodes.Select(n => new Node(n.NodeId, n.Xaxis, n.Yaxis)).ToList();
-            if (!ObjectClicked.Any)
+            if (!ObjectClicked.Left)
             {
                 if (e.Button != 2 && GraphMode != GraphMode.InsertNode)
                 {
@@ -230,7 +251,7 @@ namespace GraphIt.web.Pages
         }
         public void OnMove(MouseEventArgs e)
         {
-            if (ObjectClicked.Any && ActiveNodes.Any())
+            if (ObjectClicked.Left && ActiveNodes.Any())
             {
                 Node oldNode;
                 SvgClass = "moveNode";
@@ -376,39 +397,88 @@ namespace GraphIt.web.Pages
             }
         }
 
-        public void OnKeyDown(KeyboardEventArgs e)
+        public async Task OnKeyDown(KeyboardEventArgs e)
         {
 
             if (e.Key == "ArrowRight")
             {
-                foreach (Node node in ActiveNodes)
-                {
-                    node.Xaxis+=5*SVGControl.Scale;
-                }
+                foreach (Node node in ActiveNodes) node.Xaxis+=5*SVGControl.Scale;
             }
             else if (e.Key == "ArrowLeft")
             {
-                foreach (Node node in ActiveNodes)
-                {
-                    node.Xaxis -= 5 * SVGControl.Scale;
-                }
+                foreach (Node node in ActiveNodes) node.Xaxis -= 5 * SVGControl.Scale;
             }
             else if (e.Key == "ArrowUp")
             {
-                foreach (Node node in ActiveNodes)
-                {
-                    node.Yaxis -= 5 * SVGControl.Scale;
-                }
+                foreach (Node node in ActiveNodes) node.Yaxis -= 5 * SVGControl.Scale;
             }
             else if (e.Key == "ArrowDown")
             {
-                foreach (Node node in ActiveNodes)
+                foreach (Node node in ActiveNodes) node.Yaxis += 5 * SVGControl.Scale;
+            }
+            else if (e.CtrlKey) 
+            {
+                if (e.Key == "c") Copy();
+                if (e.Key == "v" && CopiedNodes.Any()) await Paste();
+             
+            } 
+        }
+
+        public void Align(string pos)
+        {
+            double newAxis;
+            switch (pos)
+            {
+                case "Top":
+                    newAxis = ActiveNodes.Min(n => n.Yaxis);
+                    foreach (Node node in ActiveNodes) node.Yaxis = newAxis;
+                    break;
+                case "Bottom":
+                    newAxis = ActiveNodes.Max(n => n.Yaxis);
+                    foreach (Node node in ActiveNodes) node.Yaxis = newAxis;
+                    break;
+                case "Left":
+                    newAxis = ActiveNodes.Min(n => n.Xaxis);
+                    foreach (Node node in ActiveNodes) node.Xaxis = newAxis;
+                    break;
+                case "Right":
+                    newAxis = ActiveNodes.Max(n => n.Xaxis);
+                    foreach (Node node in ActiveNodes) node.Xaxis = newAxis;
+                    break;
+            }
+        }
+        public void Copy()
+        {
+            CopiedNodes.Clear();
+            CopiedEdges.Clear();
+            int minNodeId = ActiveNodes.Min(n => n.NodeId);
+            PasteOffset = 0;
+            foreach (Node node in ActiveNodes)
+            {
+                NodeService.AddNode(CopiedNodes, node);
+            }
+            foreach (Edge edge in ActiveEdges)
+            {
+                if (ActiveNodes.Where(n => n.NodeId == edge.HeadNodeId || n.NodeId == edge.TailNodeId).Count() == 2)
                 {
-                    node.Yaxis += 5 * SVGControl.Scale;
+                    EdgeService.AddEdge(CopiedEdges, edge, minNodeId, false);
                 }
             }
         }
 
+        public async Task Paste()
+        {
+            int nextNodeId = NodeService.NextId(Nodes);
+            PasteOffset += 5 * SVGControl.Scale;
+            ActiveNodes.Clear();
+            ActiveEdges.Clear();
+            foreach (Node node in CopiedNodes) ActiveNodes.Add(NodeService.AddNode(Nodes, node, PasteOffset));
+            foreach (Edge edge in CopiedEdges) ActiveEdges.Add(EdgeService.AddEdge(Edges, edge, nextNodeId, true));
+            await NodesChanged.InvokeAsync(Nodes);
+            await EdgesChanged.InvokeAsync(Edges);
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+        }
         public async Task ZoomIn()
         {
             if (SVGControl.Scale > 0.2)

@@ -47,13 +47,13 @@ namespace GraphIt.web.Pages
         {
             if (e.Button == 2 && !e.CtrlKey)
             {
-                ObjectClicked.EdgeRight = true;
+                ObjectClicked.Right = true;
                 await ObjectClickedChanged.InvokeAsync(ObjectClicked);
                 await OnEdgeRightClick.InvokeAsync(Edge);
             }
             else
             {
-                ObjectClicked.Any = true;
+                ObjectClicked.Left = true;
                 await ObjectClickedChanged.InvokeAsync(ObjectClicked);
                 if (e.CtrlKey)
                 {

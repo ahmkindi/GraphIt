@@ -7,3 +7,12 @@ C:\Users\ahmki\source\repos\GarphIt\GraphIt.models\obj\Debug\netstandard2.0\Grap
 C:\Users\ahmki\source\repos\GarphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.csproj.CoreCompileInputs.cache
 C:\Users\ahmki\source\repos\GarphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.dll
 C:\Users\ahmki\source\repos\GarphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.pdb
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\bin\Debug\netstandard2.0\GraphIt.models.deps.json
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\bin\Debug\netstandard2.0\GraphIt.models.dll
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\bin\Debug\netstandard2.0\GraphIt.models.pdb
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.csprojAssemblyReference.cache
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.AssemblyInfoInputs.cache
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.AssemblyInfo.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.csproj.CoreCompileInputs.cache
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.dll
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.models\obj\Debug\netstandard2.0\GraphIt.models.pdb

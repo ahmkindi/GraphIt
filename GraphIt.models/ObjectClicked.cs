@@ -6,8 +6,7 @@ namespace GraphIt.models
 {
     public class ObjectClicked
     {
-        public bool Any { get; set; } = false;
-        public bool EdgeRight { get; set; } = false;
-        public bool NodeRight { get; set; } = false;
+        public bool Left { get; set; } = false;
+        public bool Right { get; set; } = false;
     }
 }

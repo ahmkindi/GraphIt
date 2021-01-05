@@ -1,12 +1,39 @@
 ﻿@inherits CanvasBase
 
-<SfContextMenu Items="@ContextMenus.NodeItems" @ref="ContextMenus.NodeMenu">
+<SfContextMenu @ref="ObjectContextMenu" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Copy" Disabled="@(!ActiveNodes.Any())"></MenuItem>
+        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())"></MenuItem>
+        <MenuItem Separator="true"></MenuItem>
+        <MenuItem Text="Insert Edge"></MenuItem>
+        <MenuItem Text="Align" Disabled="@(ActiveNodes.Count < 2)">
+            <MenuItems>
+                <MenuItem Text="Top"></MenuItem>
+                <MenuItem Text="Bottom"></MenuItem>
+                <MenuItem Text="Left"></MenuItem>
+                <MenuItem Text="Right"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text="Edit" Hidden="@(ActiveNodes.Any() && ActiveEdges.Any())"></MenuItem>
+        <MenuItem Text="Edit" Hidden="@(!(ActiveNodes.Any() && ActiveEdges.Any()))">
+        <MenuItems>
+            <MenuItem Text="Nodes"></MenuItem>
+            <MenuItem Text="Edges"></MenuItem>
+        </MenuItems>
+        </MenuItem>
+        <MenuItem Text="Delete"></MenuItem>
+    </MenuItems>
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
-<SfContextMenu Items="@ContextMenus.CanvasItems" @ref="ContextMenus.CanvasMenu">
-    <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
-</SfContextMenu>
-<SfContextMenu Items="@ContextMenus.EdgeItems" @ref="ContextMenus.EdgeMenu">
+<SfContextMenu @ref="CanvasContextMenu" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Copy" Disabled="true"></MenuItem>
+        <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())"></MenuItem>
+        <MenuItem Separator="true"></MenuItem>
+        <MenuItem Text="Insert Node"></MenuItem>
+        <MenuItem Text="Zoom In"></MenuItem>
+        <MenuItem Text="Zoom Out"></MenuItem>
+    </MenuItems>
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>
 

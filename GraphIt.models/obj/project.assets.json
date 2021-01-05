@@ -284,11 +284,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ahmki\\source\\repos\\GarphIt\\GraphIt.models\\GraphIt.models.csproj",
+      "projectUniqueName": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj",
       "projectName": "GraphIt.models",
-      "projectPath": "C:\\Users\\ahmki\\source\\repos\\GarphIt\\GraphIt.models\\GraphIt.models.csproj",
+      "projectPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj",
       "packagesPath": "C:\\Users\\ahmki\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ahmki\\source\\repos\\GarphIt\\GraphIt.models\\obj\\",
+      "outputPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ahmki\\AppData\\Roaming\\NuGet\\NuGet.Config",

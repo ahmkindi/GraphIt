@@ -10,6 +10,8 @@ namespace GraphIt.web.Services
     {
         Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y, string label);
         Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y);
+        Node AddNode(IList<Node> nodes, Node n);
+        Node AddNode(IList<Node> nodes, Node n, double offset);
         void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node);
         int NextId(IList<Node> nodes);
 
