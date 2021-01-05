@@ -451,7 +451,6 @@ namespace GraphIt.web.Pages
         {
             CopiedNodes.Clear();
             CopiedEdges.Clear();
-            int minNodeId = ActiveNodes.Min(n => n.NodeId);
             PasteOffset = 0;
             foreach (Node node in ActiveNodes)
             {
@@ -461,7 +460,7 @@ namespace GraphIt.web.Pages
             {
                 if (ActiveNodes.Where(n => n.NodeId == edge.HeadNodeId || n.NodeId == edge.TailNodeId).Count() == 2)
                 {
-                    EdgeService.AddEdge(CopiedEdges, edge, minNodeId, false);
+                    EdgeService.AddEdge(CopiedEdges, edge);
                 }
             }
         }
@@ -473,7 +472,7 @@ namespace GraphIt.web.Pages
             ActiveNodes.Clear();
             ActiveEdges.Clear();
             foreach (Node node in CopiedNodes) ActiveNodes.Add(NodeService.AddNode(Nodes, node, PasteOffset));
-            foreach (Edge edge in CopiedEdges) ActiveEdges.Add(EdgeService.AddEdge(Edges, edge, nextNodeId, true));
+            foreach (Edge edge in CopiedEdges) ActiveEdges.Add(EdgeService.AddEdge(Edges, edge, nextNodeId));
             await NodesChanged.InvokeAsync(Nodes);
             await EdgesChanged.InvokeAsync(Edges);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);

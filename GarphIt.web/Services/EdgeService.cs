@@ -39,7 +39,8 @@ namespace GraphIt.web.Services
             edges.Add(edge);
             return edge;
         }
-        public Edge AddEdge(IList<Edge> edges, Edge e, int id, bool add)
+
+        public Edge AddEdge(IList<Edge> edges, Edge e)
         {
             Edge edge = new Edge
             {
@@ -52,16 +53,23 @@ namespace GraphIt.web.Services
                 Curve = e.Curve,
                 Weight = e.Weight
             };
-            if (add)
+            edges.Add(edge);
+            return edge;
+        }
+
+        public Edge AddEdge(IList<Edge> edges, Edge e, int id)
+        {
+            Edge edge = new Edge
             {
-                edge.HeadNodeId += id;
-                edge.TailNodeId += id;
-            }
-            else
-            {
-                edge.HeadNodeId -= id;
-                edge.TailNodeId -= id;
-            }
+                EdgeId = NextId(edges),
+                LabelColor = e.LabelColor,
+                EdgeColor = e.EdgeColor,
+                HeadNodeId = id + e.HeadNodeId,
+                TailNodeId = id + e.TailNodeId,
+                Width = e.Width,
+                Curve = e.Curve,
+                Weight = e.Weight
+            };
             edges.Add(edge);
             return edge;
         }

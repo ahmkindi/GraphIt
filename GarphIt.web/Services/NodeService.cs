@@ -62,7 +62,7 @@ namespace GraphIt.web.Services
         {
             Node node = new Node
             {
-                NodeId = NextId(nodes),
+                NodeId = n.NodeId + NextId(nodes),
                 LabelColor = n.LabelColor,
                 NodeColor = n.NodeColor,
                 Xaxis = n.Xaxis + offset,
