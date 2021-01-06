@@ -8,52 +8,58 @@
                 <div class="px-2">
                     Default:
                 </div>
+                <div class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
+                    <button class="btn shadow-none dropdown-toggle" style="background-color:@(DefaultOptions.NodeColor); color:@(DefaultOptions.NodeLabelColor);"
+                            id="nodedefcolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Color
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="nodedefcolor">
+                        <span class="dropdown-item">Fill <SfColorPicker Value="@DefaultOptions.NodeColor" ValueChange="OnDefNodeColorChange"></SfColorPicker></span>
+                        <span class="dropdown-item">Label <SfColorPicker Value="@DefaultOptions.NodeLabelColor" ValueChange="OnDefNodeLabelColorChange"></SfColorPicker></span>
+                    </div>
+                </div>
                 <div class="px-1">
                     Radius <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
                                              Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
                 </div>
-                <div class="px-1">
-                    Color <SfColorPicker Value="@DefaultOptions.NodeColor" ValueChange="OnDefNodeColorChange"></SfColorPicker>
-                </div>
-                <div class="px-1">
-                    Label <SfColorPicker Value="@DefaultOptions.NodeLabelColor" ValueChange="OnDefNodeLabelColorChange"></SfColorPicker>
-                </div>
-            }
-            else if (ActiveNodes.Count == 1)
-            {
-                <div class="px-2">
-                    Selected:
-                </div>
-                <div class="px-1">
-                    Radius <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
-                                             @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
-                </div>
-                <div class="px-1">
-                    Color <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker>
-                </div>
-                <div class="px-1">
-                    Label
-                    <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
-                    <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker>
-                </div>
-                <button type="button" class="btn NavNone shadow-none" @onclick="OnRecenter">Re-Center</button>
             }
             else
             {
                 <div class="px-2">
                     Selected:
                 </div>
-                <div class="px-1">
-                    Radius <SfNumericTextBox TValue="int?" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                <div class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
+                    <button class="btn shadow-none dropdown-toggle" style="background-color: @(ActiveNodes[0].NodeColor); color: @(ActiveNodes[0].LabelColor);"
+                            id="mnodecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Color
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="mnodecolor">
+                        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker></span>
+                        <span class="dropdown-item">Label <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker></span>
+                    </div>
                 </div>
-                <div class="px-1">
-                    Color <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker>
-                </div>
-                <div class="px-1">
-                    Label
-                    <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
-                    <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker>
-                </div>
+                if (ActiveNodes.Count == 1)
+                {
+                    <div class="px-1">
+                        Radius <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
+                                                 @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                    </div>
+                    <div class="px-1">
+                        Label
+                        <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
+                    </div>
+                    <button type="button" class="btn NavNone shadow-none" @onclick="OnRecenter">Re-Center</button>
+                }
+                else
+                {
+                    <div class="px-1">
+                        Radius <SfNumericTextBox TValue="int?" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                    </div>
+                    <div class="px-1">
+                        Label
+                        <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
+                    </div>
+                }
             }
             <button type="button" class="btn NavNone shadow-none" @onclick="OnRelabel">Re-label</button>
         </div>

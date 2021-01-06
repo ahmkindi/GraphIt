@@ -1,5 +1,15 @@
 ﻿@page "/"
 @inherits IndexBase
+@if (Browser == null)
+{
+    SVGControl.Width = 0;
+    SVGControl.Height = 0;
+}
+else
+{
+    SVGControl.Width = Browser.Width * SVGControl.Scale;
+    SVGControl.Height = Browser.Height * SVGControl.Scale;
+}
 
 @if (InitialModal)
 {
@@ -24,6 +34,7 @@
             <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
             break;
         case NavChoice.View:
+            <View @bind-SVGControl="SVGControl" Nodes="Nodes" Browser="Browser"></View>
             break;
         case NavChoice.Node:
             <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>
@@ -39,6 +50,6 @@
 {
     <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></AdjMatrix>
 }
-<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" 
+<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges"
         ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm"></Canvas>
-<Footer GraphMode="GraphMode" @bind-SVGControl="SVGControl" DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>
+<Footer GraphMode="GraphMode" DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>

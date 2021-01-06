@@ -32,8 +32,6 @@ namespace GraphIt.web.Pages
             {
                 Listener.OnResized += WindowResized;
             }
-            SVGControl.Width = Browser.Width * SVGControl.Scale;
-            SVGControl.Height = Browser.Height * SVGControl.Scale;
         }
 
         public void UpdateChoice(NavChoice? choice)

@@ -9,23 +9,6 @@
     <span class="px-2">
         Mode: @GraphMode
     </span>
-    <span class="px-2 btn-group" role="group">
-        <button class="btn NavNone shadow-none p-0 oi oi-zoom-out" @onclick="@(() => OnScaleClick(0.1))"></button>
-        <select class="form-control shadow-none scrollable-menu p-0">
-            @for (int i = -9; i < 10; i++)
-            {
-                <option>@(100+i*10)%</option>
-            }
-        </select>
-        @if (StopZoomIn)
-        {
-            <button class="btn btn-secondary p-0 oi oi-zoom-in" disabled></button>
-        }
-        else
-        {
-            <button class="btn NavNone shadow-none p-0 oi oi-zoom-in" @onclick="@(() => OnScaleClick(-0.1))"></button>
-        }
-    </span>
     @if (DefaultOptions.MultiGraph)
     {
         <span class="px-2 text-danger">

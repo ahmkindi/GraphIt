@@ -96,22 +96,6 @@ svg text {
     background-color: #ededed;
 }
 
-.NavNone:active::after {
-    content: '';
-    display: inherit;
-    width: 50%;
-    margin: auto;
-    border-top: 2px solid black;
-}
-
-.NavNone:active:hover::after {
-    content: '';
-    display: inherit;
-    width: 100%;
-    margin: auto;
-    border-top: 2px solid black;
-}
-
 .NavActive::after {
     content: '';
     display: inherit;
@@ -179,7 +163,9 @@ input[type="file"] {
         -webkit-transition: .4s;
         transition: .4s;
     }
-
+.colorpicker{
+    display:none;
+}
 input:checked + .slider {
     background-color: #2196F3;
 }
