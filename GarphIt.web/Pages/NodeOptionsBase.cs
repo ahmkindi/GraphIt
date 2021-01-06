@@ -26,8 +26,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
-        [Inject] public INodeService NodeService { get; set; }
-        [Inject] public IJSRuntime JSRuntime { get; set; }
+
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {

@@ -37,15 +37,5 @@ namespace GraphIt.web.Pages
             NavElements[(int)this.Choice] = NavCss.NavActive;
             await ChoiceChanged.InvokeAsync(Choice);
         }
-
-        public async Task Reset()
-        {
-            if (Choice != null)
-            {
-                NavElements[(int)this.Choice] = NavCss.NavNone;
-                Choice = null;
-            }
-            await ChoiceChanged.InvokeAsync(Choice);
-        }
     }
 }

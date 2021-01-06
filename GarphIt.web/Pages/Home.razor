@@ -1,42 +1,39 @@
 ﻿@inherits HomeBase
 
-<nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-    <div class="d-flex">
-        <div class="dropdown px-1">
-            <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Representations
-            </button>
-            <div class="dropdown-menu" aria-labelledby="repre">
-                <a class="dropdown-item" @onclick="OnMatrixClick">Adjacency Matrix</a>
-                <a class="dropdown-item" @onclick="OnWeightMatrixClick">Weighted Matrix</a>
-            </div>
-        </div>
-        <div class="dropdown px-1">
-            <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Algorithms
-            </button>
-            <div class="dropdown-menu" aria-labelledby="repre">
-                <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
-                <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
-            </div>
-        </div>
-        @if (StartAlgorithm.Algorithm != Algorithm.None)
-        {
-            @if (StartAlgorithm.StartNode == null)
-            {
-                <p>Choose Start Node</p>
-            }
-            else if (RequiresEnd.Contains(StartAlgorithm.Algorithm) && StartAlgorithm.EndNode == null)
-            {
-                <p>Choose End Node</p>
-            }
-            else
-            {
-                <button class="btn"><span class="oi oi-x"></span></button>
-                <button class="btn"><span class="oi oi-media-stop"></span></button>
-                <button class="btn"><span class="oi oi-media-skip-forward"></span></button>
-                <button class="btn"><span class="oi oi-media-step-forward"></span></button>
-            }
-        }
+
+<li class="dropdown px-1">
+    <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Representations
+    </button>
+    <div class="dropdown-menu" aria-labelledby="repre">
+        <a class="dropdown-item" @onclick="OnMatrixClick">Adjacency Matrix</a>
+        <a class="dropdown-item" @onclick="OnWeightMatrixClick">Weighted Matrix</a>
     </div>
-</nav>
+</li>
+<li class="dropdown px-1">
+    <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Algorithms
+    </button>
+    <div class="dropdown-menu" aria-labelledby="repre">
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
+    </div>
+</li>
+@if (StartAlgorithm.Algorithm != Algorithm.None)
+{
+    @if (StartAlgorithm.StartNode == null)
+    {
+        <li>Choose Start Node</li>
+    }
+    else if (RequiresEnd.Contains(StartAlgorithm.Algorithm) && StartAlgorithm.EndNode == null)
+    {
+        <li>Choose End Node</li>
+    }
+    else
+    {
+        <li><button class="btn"><span class="oi oi-x"></span></button></li>
+        <li><button class="btn"><span class="oi oi-media-stop"></span></button></li>
+        <li><button class="btn"><span class="oi oi-media-skip-forward"></span></button></li>
+        <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
+    }
+}

@@ -1,86 +1,82 @@
 ﻿@inherits EdgeOptionsBase
 
-<nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
-    <div class="d-flex">
-        @if (!ActiveEdges.Any())
+@if (!ActiveEdges.Any())
+{
+    <li class="px-2">
+        Default:
+    </li>
+    <li class="px-1">
+        <SfCheckBox @bind-Checked="DefaultOptions.Weighted" Label="Weighted" @onchange="OnDefWeightedChange" CssClass="e-small"></SfCheckBox>
+        <SfCheckBox @bind-Checked="DefaultOptions.Directed" Label="Directed" @onchange="OnDefDirectedChange" CssClass="e-small"></SfCheckBox>
+    </li>
+    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none dropdown-toggle" style="background-color:@(DefaultOptions.EdgeColor); color:@(DefaultOptions.EdgeLabelColor);"
+                id="defedgecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Color
+        </button>
+        <div class="dropdown-menu" aria-labelledby="defedgecolor">
+            <span class="dropdown-item">Fill <SfColorPicker Value="@DefaultOptions.EdgeColor" ValueChange="OnDefEdgeColorChange"></SfColorPicker></span>
+            <span class="dropdown-item">Label <SfColorPicker Value="@DefaultOptions.EdgeLabelColor" ValueChange="OnDefEdgeLabelColorChange"></SfColorPicker></span>
+        </div>
+    </li>
+    <li class="px-1">
+        Width <SfNumericTextBox TValue="int?" Value="@DefaultOptions.EdgeWidth" Min=1 Max=15 Step=1 CssClass="shortInput"
+                                @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
+    </li>
+}
+else
+{
+    <li class="px-2">
+        Selected:
+    </li>
+    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none dropdown-toggle" style="background-color: @ActiveEdges[0].EdgeColor; color: @ActiveEdges[0].LabelColor;"
+                id="nodecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Color
+        </button>
+        <div class="dropdown-menu" aria-labelledby="nodecolor">
+            <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].EdgeColor" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
+            <span class="dropdown-item">Label <SfColorPicker Value="@ActiveEdges[0].LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker></span>
+        </div>
+    </li>
+    <li class="px-1">
+        <span class="btn-group" role="group">
+            <button type="button" class="btn NavNone shadow-none p-0 oi oi-minus" @onclick="@(() => OnCurve(0.1))"></button>
+            Curve
+            <button type="button" class="btn NavNone shadow-none p-0 oi oi-plus" @onclick="@(() => OnCurve(-0.1))"></button>
+        </span>
+    </li>
+    if (ActiveEdges.Count == 1)
+    {
+        <li class="px-1">
+            Width <SfNumericTextBox TValue="int?" Value="@ActiveEdges.ElementAt(0).Width" Min=1 Max=15 Step=1 CssClass="shortInput"
+                                    @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+        </li>
+        <li class="px-1">
+            Label
+            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdges[0].Label"></SfTextBox>
+        </li>
+        @if (DefaultOptions.Weighted)
         {
-            <div class="px-2">
-                Default:
-            </div>
-            <div class="px-1">
-                <SfCheckBox @bind-Checked="DefaultOptions.Weighted" Label="Weighted" @onchange="OnDefWeightedChange" CssClass="e-small"></SfCheckBox>
-                <SfCheckBox @bind-Checked="DefaultOptions.Directed" Label="Directed" @onchange="OnDefDirectedChange" CssClass="e-small"></SfCheckBox>
-            </div>
-            <div class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-                <button class="btn shadow-none dropdown-toggle" style="background-color:@(DefaultOptions.EdgeColor); color:@(DefaultOptions.EdgeLabelColor);"
-                        id="defedgecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Color
-                </button>
-                <div class="dropdown-menu" aria-labelledby="defedgecolor">
-                    <span class="dropdown-item">Fill <SfColorPicker Value="@DefaultOptions.EdgeColor" ValueChange="OnDefEdgeColorChange"></SfColorPicker></span>
-                    <span class="dropdown-item">Label <SfColorPicker Value="@DefaultOptions.EdgeLabelColor" ValueChange="OnDefEdgeLabelColorChange"></SfColorPicker></span>
-                </div>
-            </div>
-            <div class="px-1">
-                Width <SfNumericTextBox TValue="int?" Value="@DefaultOptions.EdgeWidth" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                        @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
-            </div>
+            <li class="px-1">
+                Weight <SfNumericTextBox Value="@ActiveEdges[0].Weight" Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+            </li>
         }
-        else
+    }
+    else
+    {
+        <li class="px-1">
+            Width <SfNumericTextBox TValue="int?" Min=1 Max=15 Step=1 CssClass="shortInput" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+        </li>
+        <li class="px-1">
+            Label
+            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange"></SfTextBox>
+        </li>
+        @if (DefaultOptions.Weighted)
         {
-            <div class="px-2">
-                Selected:
-            </div>
-            <div class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-                <button class="btn shadow-none dropdown-toggle" style="background-color: @ActiveEdges[0].EdgeColor; color: @ActiveEdges[0].LabelColor;"
-                        id="nodecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Color
-                </button>
-                <div class="dropdown-menu" aria-labelledby="nodecolor">
-                    <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].EdgeColor" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
-                    <span class="dropdown-item">Label <SfColorPicker Value="@ActiveEdges[0].LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker></span>
-                </div>
-            </div>
-            <div class="px-1">
-                <span class="btn-group" role="group">
-                    <button type="button" class="btn NavNone shadow-none p-0 oi oi-minus" @onclick="@(() => OnCurve(0.1))"></button>
-                    Curve
-                    <button type="button" class="btn NavNone shadow-none p-0 oi oi-plus" @onclick="@(() => OnCurve(-0.1))"></button>
-                </span>
-            </div>
-            if (ActiveEdges.Count == 1)
-            {
-                <div class="px-1">
-                    Width <SfNumericTextBox TValue="int?" Value="@ActiveEdges.ElementAt(0).Width" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                            @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
-                </div>
-                <div class="px-1">
-                    Label
-                    <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdges[0].Label"></SfTextBox>
-                </div>
-                @if (DefaultOptions.Weighted)
-                {
-                    <div class="px-1">
-                        Weight <SfNumericTextBox Value="@ActiveEdges[0].Weight" Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="px-1">
-                    Width <SfNumericTextBox TValue="int?" Min=1 Max=15 Step=1 CssClass="shortInput" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
-                </div>
-                <div class="px-1">
-                    Label
-                    <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange"></SfTextBox>
-                </div>
-                @if (DefaultOptions.Weighted)
-                {
-                    <div class="px-1">
-                        Weight <SfNumericTextBox Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
-                    </div>
-                }
-            }
+            <li class="px-1">
+                Weight <SfNumericTextBox Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+            </li>
         }
-    </div>
-</nav>
+    }
+}

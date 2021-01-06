@@ -22,29 +22,34 @@ else
 
 @if (Choice != null)
 {
-    switch (Choice)
-    {
-        case NavChoice.File:
-            <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
-            break;
-        case NavChoice.Home:
-            <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm"></Home>
-            break;
-        case NavChoice.Insert:
-            <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
-            break;
-        case NavChoice.View:
-            <View @bind-SVGControl="SVGControl" Nodes="Nodes" Browser="Browser"></View>
-            break;
-        case NavChoice.Node:
-            <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>
-            break;
-        case NavChoice.Edge:
-            <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
-            break;
-        case NavChoice.About:
-            break;
-    }
+    <nav class="navbar sticky-top navbar-expand navbar-custom py-0 px-0">
+        <ul class="navbar-nav mr-auto mx-0">
+            @switch (Choice)
+            {
+                case NavChoice.File:
+                    <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
+                    break;
+                case NavChoice.Home:
+                    <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm"></Home>
+                    break;
+                case NavChoice.Insert:
+                    <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
+                    break;
+                case NavChoice.View:
+                    <View  @bind-SVGControl="SVGControl" Nodes="Nodes" Browser="Browser"></View>
+                    break;
+                case NavChoice.Node:
+                    <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>
+                    break;
+                case NavChoice.Edge:
+                    <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
+                    break;
+                case NavChoice.About:
+                    break;
+            }
+        </ul>
+        <button class="btn shadow-none NavNone oi oi-x" @onclick="(() => Choice = null)"></button>
+    </nav>
 }
 @if (Rep == Representation.Matrix || Rep == Representation.WeightedMatrix)
 {
