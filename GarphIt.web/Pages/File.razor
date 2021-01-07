@@ -1,8 +1,8 @@
 ﻿@inherits FileBase
 
 
-<li class="dropdown px-1">
-    <button class="btn shadow-none NavNone dropdown-toggle oi oi-share-boxed" type="button" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<li class="navbar-text NavNone dropdown">
+    <button class="btn shadow-none dropdown-toggle oi oi-share-boxed" type="button" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Export As
     </button>
     <div class="dropdown-menu" aria-labelledby="saveas">
@@ -12,11 +12,9 @@
         <a class="dropdown-item" @onclick="SaveGraphItFile">Graph File</a>
     </div>
 </li>
-<li class="px-1">
-    <button class="btn NavNone shadow-none oi oi-envelope-open" @onclick="(() => OpenPreference = true)">Open</button>
-</li>
-<li class="px-1">
-    <button class="btn NavNone shadow-none oi oi-reload" @onclick="(() => NewGraphCheck = true)">New</button>
+<li class="navbar-text NavNone" @onclick="(() => OpenPreference = true)"><span class="oi oi-envelope-open"></span>Open</li>
+<li class="navbar-text NavNone">
+    <button class="btn shadow-none oi oi-reload" @onclick="(() => NewGraphCheck = true)">New</button>
 </li>
 @if (ErrorOpening)
 {

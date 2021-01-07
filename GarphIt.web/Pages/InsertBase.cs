@@ -205,10 +205,11 @@ namespace GraphIt.web.Pages
             }
             for (int i = 0; i < numNodes / 2; i++)
             {
-                for (int j = 0; j < KValue; j++)
+                for (int k = 0; k < KValue; k++)
                 {
-                    EdgeService.AddEdge(Edges, DefaultOptions, addedNodes1[i].NodeId, addedNodes2[j].NodeId);
-                    if (DefaultOptions.Directed) EdgeService.AddEdge(Edges, DefaultOptions, addedNodes2[i].NodeId, addedNodes1[j].NodeId);
+                    var xx = (i + k) % addedNodes2.Count;
+                    EdgeService.AddEdge(Edges, DefaultOptions, addedNodes1[i].NodeId, addedNodes2[xx].NodeId);
+                    if (DefaultOptions.Directed) EdgeService.AddEdge(Edges, DefaultOptions, addedNodes2[i].NodeId, addedNodes1[xx].NodeId);
                 }
             }
         }

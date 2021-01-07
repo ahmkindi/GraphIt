@@ -48,12 +48,12 @@ else
                     break;
             }
         </ul>
-        <button class="btn shadow-none NavNone oi oi-x" @onclick="(() => Choice = null)"></button>
+        <div class="navbar-text NavNone"><button class="btn shadow-none oi oi-x" @onclick="(() => Choice = null)"></button></div>
     </nav>
 }
 @if (Rep == Representation.Matrix || Rep == Representation.WeightedMatrix)
 {
-    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges"></AdjMatrix>
+    <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></AdjMatrix>
 }
 <Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges"
         ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm"></Canvas>

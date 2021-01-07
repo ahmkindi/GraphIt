@@ -77,9 +77,9 @@ namespace GraphIt.web.Services
         public void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node)
         {
             nodes.Remove(node);
-            foreach (Edge e in edges)
+            for (int i = edges.Count - 1; i >= 0; i--)
             {
-                if (e.TailNodeId == node.NodeId || e.HeadNodeId == node.NodeId) edges.Remove(e);
+                if (edges[i].TailNodeId == node.NodeId || edges[i].HeadNodeId == node.NodeId) edges.RemoveAt(i);
             }
         }
 

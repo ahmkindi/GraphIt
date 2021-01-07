@@ -18,29 +18,21 @@ namespace GraphIt.web.Pages
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
+        [Parameter] public SVGControl SVGControl { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
         [Parameter] public List<Edge> Edges { get; set; }
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
         public bool TextView { get; set; }
+        public string ShowText { get; set; } = "";
         public bool ValidInput { get; set; }
-        public bool GetInitText { get; set; }
-        public Edge AdjEdge { get; set; }
-        public string TextMatrix { get; set; } = "";
         protected override void OnInitialized()
         {
             TextView = false;
-            GetInitText = true;
             ValidInput = true;
         }
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender) GetInitText = true;
-            else GetInitText = false;
-        }
         public async Task CloseMatrix()
         {
             Rep = Representation.None;
@@ -76,10 +68,6 @@ namespace GraphIt.web.Pages
                         || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
                     {
                         Edges.Remove(edge);
-                        if (!DefaultOptions.Directed)
-                        {
-                            EdgeService.AddEdge(Edges, DefaultOptions, head.NodeId, tail.NodeId, edge.Weight);
-                        }
                         break;
                     }
                 }
@@ -103,7 +91,6 @@ namespace GraphIt.web.Pages
         {
             string input = e.Value.ToString();
             double[,] weights = ParseInput(input);
-            TextMatrix = input;
             if (ValidInput)
             {
                 int difference = weights.GetLength(0) - Nodes.Count;
@@ -111,7 +98,7 @@ namespace GraphIt.web.Pages
                 {
                     for (int i = 1; i <= difference; i++)
                     {
-                        NodeService.AddNode(Nodes, DefaultOptions, 0, 0);
+                        NodeService.AddNode(Nodes, DefaultOptions, GetRandom(true), GetRandom(false));
                     }
                 }
                 else if (difference < 0)
@@ -131,6 +118,7 @@ namespace GraphIt.web.Pages
                 }
                 await NodesChanged.InvokeAsync(Nodes);
                 await EdgesChanged.InvokeAsync(Edges);
+                ShowText = GetText();
             }
         }
 
@@ -185,6 +173,31 @@ namespace GraphIt.web.Pages
                 value += "\n";
             }
             return value;
+        }
+
+        public async Task OnTableDelete(Node node)
+        {
+            NodeService.DeleteNode(Nodes, Edges, node); 
+            await EdgesChanged.InvokeAsync(Edges); 
+            await NodesChanged.InvokeAsync(Nodes);
+        }
+
+        public double GetRandom(bool Xaxis)
+        {
+            Random random = new Random();
+            double maximum;
+            double minimum;
+            if (Xaxis)
+            {
+                maximum = SVGControl.Xaxis + SVGControl.Width;
+                minimum = SVGControl.Xaxis;
+            }
+            else
+            {
+                maximum = SVGControl.Yaxis + SVGControl.Height;
+                minimum = SVGControl.Yaxis;
+            }
+            return random.NextDouble() * (maximum - minimum) + minimum;
         }
     }
 }
