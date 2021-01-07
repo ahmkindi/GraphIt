@@ -14,6 +14,7 @@ namespace GraphIt.web.Pages
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Parameter] public BrowserWindowSize Browser { get; set; }
+        [Parameter] public IList<Node> ActiveNodes { get; set; }
         public bool StopZoomIn { get; set; }
         protected override void OnParametersSet()
         {
@@ -34,11 +35,21 @@ namespace GraphIt.web.Pages
 
         public async Task Fit()
         {
-            SVGControl.Xaxis = Nodes.Min(n => n.Xaxis - n.Radius) + 30;
-            SVGControl.Yaxis = Nodes.Min(n => n.Yaxis - n.Radius) + 30;
+            SVGControl.Xaxis = Nodes.Min(n => n.Xaxis - n.Radius);
+            SVGControl.Yaxis = Nodes.Min(n => n.Yaxis - n.Radius) - 105;
+            SVGControl.OldXaxis = SVGControl.Xaxis;
+            SVGControl.OldYaxis = SVGControl.Yaxis;
             var width = Nodes.Max(n => n.Xaxis + n.Radius) - SVGControl.Xaxis;
-            var height = Nodes.Max(n => n.Yaxis + n.Radius) - SVGControl.Yaxis;
+            var height = Nodes.Max(n => n.Yaxis + n.Radius) - SVGControl.Yaxis + 30;
             SVGControl.Scale = Math.Max(width / Browser.Width, height / Browser.Height); 
+            await SVGControlChanged.InvokeAsync(SVGControl);
+        }
+        public async Task OnRecenter()
+        {
+            SVGControl.Xaxis = ActiveNodes[0].Xaxis - (SVGControl.Width / 2);
+            SVGControl.Yaxis = ActiveNodes[0].Yaxis - (SVGControl.Height / 2);
+            SVGControl.OldXaxis = SVGControl.Xaxis;
+            SVGControl.OldYaxis = SVGControl.Yaxis;
             await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }

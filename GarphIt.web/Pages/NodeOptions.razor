@@ -18,7 +18,7 @@
     </li>
     <li class="px-1">
         Radius <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
-                                    Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+                                 Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
     </li>
 }
 else
@@ -40,14 +40,15 @@ else
     {
         <li class="px-1">
             Radius <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
-                                        @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                                     @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+        </li>
+        <li>
+            (X:<SfNumericTextBox Value="@ActiveNodes[0].Xaxis" CssClass="medInput" @onchange="((e) => OnXaxisChange(e))"></SfNumericTextBox>,
+            Y:<SfNumericTextBox Value="@ActiveNodes[0].Yaxis" CssClass="medInput" @onchange="((e) => OnYaxisChange(e))"></SfNumericTextBox>)
         </li>
         <li class="px-1">
             Label
             <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
-        </li>
-        <li>
-            <button type="button" class="btn NavNone shadow-none" @onclick="OnRecenter">Re-Center</button>
         </li>
     }
     else

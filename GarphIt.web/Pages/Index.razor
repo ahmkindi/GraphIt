@@ -30,13 +30,13 @@ else
                     <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
                     break;
                 case NavChoice.Home:
-                    <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm"></Home>
+                    <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveNodes="ActiveNodes" @bind-ActiveEdges="ActiveEdges" Nodes="Nodes" Edges="Edges"></Home>
                     break;
                 case NavChoice.Insert:
                     <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
                     break;
                 case NavChoice.View:
-                    <View  @bind-SVGControl="SVGControl" Nodes="Nodes" Browser="Browser"></View>
+                    <View  @bind-SVGControl="SVGControl" Nodes="Nodes" Browser="Browser" ActiveNodes="ActiveNodes"></View>
                     break;
                 case NavChoice.Node:
                     <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-SVGControl="SVGControl" @bind-Nodes="Nodes"></NodeOptions>

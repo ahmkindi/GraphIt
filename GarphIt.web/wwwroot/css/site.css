@@ -48,6 +48,10 @@ html, body {
     max-width:90px;
 }
 
+.medInput {
+    max-width: 110px;
+}
+
 svg {
     position: fixed;
     top: 0;

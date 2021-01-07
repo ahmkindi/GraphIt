@@ -1,7 +1,7 @@
 ﻿@inherits HomeBase
 
 
-<li class="dropdown px-1">
+<li class="NavNone dropdown">
     <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Representations
     </button>
@@ -10,7 +10,7 @@
         <a class="dropdown-item" @onclick="OnWeightMatrixClick">Weighted Matrix</a>
     </div>
 </li>
-<li class="dropdown px-1">
+<li class="NavNone dropdown">
     <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Algorithms
     </button>
@@ -23,7 +23,7 @@
 {
     @if (StartAlgorithm.StartNode == null)
     {
-        <li>Choose Start Node</li>
+        <li class="nav-item">Choose Start Node</li>
     }
     else if (RequiresEnd.Contains(StartAlgorithm.Algorithm) && StartAlgorithm.EndNode == null)
     {
@@ -37,3 +37,4 @@
         <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
     }
 }
+<li class="NavNone"><button type="button" class="btn shadow-none" @onclick="OnSelectAll">Select All</button></li>

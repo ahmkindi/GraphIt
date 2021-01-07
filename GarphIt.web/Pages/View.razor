@@ -29,3 +29,9 @@
 <li class="NavNone">
     <button class="btn shadow-none" @onclick="Fit">Graph Fit</button>
 </li>
+@if (ActiveNodes.Count == 1)
+{
+    <li class="NavNone">
+        <button class="btn shadow-none" @onclick="OnRecenter">Re-Center</button>
+    </li>
+}

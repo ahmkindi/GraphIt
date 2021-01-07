@@ -40,7 +40,6 @@ namespace GraphIt.web.Pages
         public IList<Edge> CopiedEdges { get; set; } = new List<Edge>();
         public double PasteOffset { get; set; } = 0;
         private IList<Node> oldNodes { get; set; }
-        public bool ActiveNodesMoved { get; set; } = false;
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public SfContextMenu<MenuItem> ObjectContextMenu { get; set; }
         public SfContextMenu<MenuItem> CanvasContextMenu { get; set; }
@@ -249,7 +248,7 @@ namespace GraphIt.web.Pages
                 }
             }
         }
-        public void OnMove(MouseEventArgs e)
+        public async Task OnMove(MouseEventArgs e)
         {
             if (ObjectClicked.Left && ActiveNodes.Any())
             {
@@ -257,11 +256,11 @@ namespace GraphIt.web.Pages
                 SvgClass = "moveNode";
                 foreach (Node node in ActiveNodes)
                 {
-                    ActiveNodesMoved = true;
                     oldNode = oldNodes[oldNodes.IndexOf(node)];
                     node.Xaxis = (e.ClientX - origin[0]) * SVGControl.Scale + oldNode.Xaxis;
                     node.Yaxis = (e.ClientY - origin[1]) * SVGControl.Scale + oldNode.Yaxis;
                 }
+                if (ActiveNodes.Count == 1) await ActiveNodesChanged.InvokeAsync(ActiveNodes);
             }
             else if (SVGControl.Pan)
             {

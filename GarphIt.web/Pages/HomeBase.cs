@@ -22,6 +22,13 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
         [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
+        [Parameter] public IList<Node> ActiveNodes { get; set; }
+        [Parameter] public IList<Edge> ActiveEdges { get; set; }
+        [Parameter] public IList<Node> Nodes { get; set; }
+        [Parameter] public IList<Edge> Edges { get; set; }
+        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
+        [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
+
 
         public Algorithm[] RequiresEnd { get; set; } = { };
         public async Task OnMatrixClick()
@@ -37,6 +44,16 @@ namespace GraphIt.web.Pages
         public async Task OnAlgoChanged(Algorithm a)
         {
             await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm(a));
+        }
+
+        public async Task OnSelectAll()
+        {
+            ActiveNodes.Clear();
+            ActiveEdges.Clear();
+            foreach (Node node in Nodes) ActiveNodes.Add(node);
+            foreach (Edge edge in Edges) ActiveEdges.Add(edge);
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
     }
 }

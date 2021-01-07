@@ -36,6 +36,18 @@ namespace GraphIt.web.Pages
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
+        public async Task OnXaxisChange(ChangeEventArgs e)
+        {
+
+            ActiveNodes[0].Xaxis = double.Parse(e.Value.ToString());
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+        }
+        public async Task OnYaxisChange(ChangeEventArgs e)
+        {
+
+            ActiveNodes[0].Yaxis = double.Parse(e.Value.ToString());
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+        }
         public async Task OnNodeLabelChange(ChangedEventArgs e)
         {
             foreach (Node node in ActiveNodes)
@@ -101,15 +113,6 @@ namespace GraphIt.web.Pages
                 }
                 await NodesChanged.InvokeAsync(Nodes);
             }
-        }
-
-        public async Task OnRecenter()
-        {
-            SVGControl.Xaxis = ActiveNodes[0].Xaxis - (SVGControl.Width / 2);
-            SVGControl.Yaxis = ActiveNodes[0].Yaxis - (SVGControl.Height / 2);
-            SVGControl.OldXaxis = SVGControl.Xaxis;
-            SVGControl.OldYaxis = SVGControl.Yaxis;
-            await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }
 }
