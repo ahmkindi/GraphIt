@@ -24,9 +24,9 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public SVGControl SVGControl { get; set; }
-        [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
-
+        public string OpenCss { get; set; }
+        public bool Open { get; set; } = false;
+        public string NavCss { get; set; }
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {

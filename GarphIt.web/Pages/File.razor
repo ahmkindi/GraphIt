@@ -1,10 +1,10 @@
 ﻿@inherits FileBase
 
 
-<li class="navbar-text NavNone dropdown">
-    <button class="btn shadow-none dropdown-toggle oi oi-share-boxed" type="button" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Export As
-    </button>
+<li class="NavNone dropdown border-right border-dark">
+    <button class="btn shadow-none dropdown-toggle" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="oi oi-share-boxed pr-1"></span>Export As</button>
+
     <div class="dropdown-menu" aria-labelledby="saveas">
         <a class="dropdown-item" @onclick="() => SaveSVGFile(true)">screen view SVG</a>
         <a class="dropdown-item" @onclick="() => SaveSVGFile(false)">full view SVG</a>
@@ -12,10 +12,8 @@
         <a class="dropdown-item" @onclick="SaveGraphItFile">Graph File</a>
     </div>
 </li>
-<li class="navbar-text NavNone" @onclick="(() => OpenPreference = true)"><span class="oi oi-envelope-open"></span>Open</li>
-<li class="navbar-text NavNone">
-    <button class="btn shadow-none oi oi-reload" @onclick="(() => NewGraphCheck = true)">New</button>
-</li>
+<li class="NavNone p-2 border-right border-dark" @onclick="(() => OpenPreference = true)"><span class="pr-1 oi oi-envelope-open"></span>Open</li>
+<li class="NavNone p-2" @onclick="(() => NewGraphCheck = true)"><span class="pr-1 oi oi-reload"</span>New</li>
 @if (ErrorOpening)
 {
     <SfDialog Width="300px" IsModal="true">

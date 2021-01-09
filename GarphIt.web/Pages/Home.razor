@@ -1,8 +1,8 @@
 ﻿@inherits HomeBase
 
 
-<li class="NavNone dropdown">
-    <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<li class="NavNone dropdown border-right border-dark">
+    <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Representations
     </button>
     <div class="dropdown-menu" aria-labelledby="repre">
@@ -10,11 +10,11 @@
         <a class="dropdown-item" @onclick="OnWeightMatrixClick">Weighted Matrix</a>
     </div>
 </li>
-<li class="NavNone dropdown">
-    <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<li class="NavNone dropdown border-right border-dark">
+    <button class="btn shadow-none dropdown-toggle" id="algos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Algorithms
     </button>
-    <div class="dropdown-menu" aria-labelledby="repre">
+    <div class="dropdown-menu" aria-labelledby="algos">
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
     </div>
@@ -23,7 +23,7 @@
 {
     @if (StartAlgorithm.StartNode == null)
     {
-        <li class="nav-item">Choose Start Node</li>
+        <li class="navbar-text">Choose Start Node</li>
     }
     else if (RequiresEnd.Contains(StartAlgorithm.Algorithm) && StartAlgorithm.EndNode == null)
     {
@@ -37,4 +37,4 @@
         <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
     }
 }
-<li class="NavNone"><button type="button" class="btn shadow-none" @onclick="OnSelectAll">Select All</button></li>
+<li class="NavNone p-2" @onclick="OnSelectAll">Select All</li>

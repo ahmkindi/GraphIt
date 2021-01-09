@@ -1,37 +1,28 @@
 ﻿@inherits ViewBase
 
 
-<li class="btn-group" role="group">
-    <button class="btn NavNone shadow-none p-0 oi oi-zoom-out" @onclick="@(() => OnScaleClick(0.1))"></button>
-    <select class="form-control shadow-none scrollable-menu p-0" @onchange="SelectionZoom">
-        <option value="fit" hidden>@(Math.Round(SVGControl.Scale,1))</option>
-        @for (double i = 0.1; i < 2.0; i += 0.1)
-        {
-            if (Math.Round(i, 1) == Math.Round(SVGControl.Scale, 1))
+<li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>
+<li class="d-flex flex-row px-2">
+    <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(0.1))"><span class="oi oi-zoom-out"></span></div>
+    <div>
+        <select class="form-control shadow-none scrollable-menu p-0" @onchange="SelectionZoom">
+            <option value="fit" hidden>@(Math.Round(SVGControl.Scale,1))</option>
+            @for (double i = 0.1; i < 2.0; i += 0.1)
             {
-                <option value="@(i)" selected>@(Math.Round(i,1))</option>
+                if (Math.Round(i, 1) == Math.Round(SVGControl.Scale, 1))
+                {
+                    <option value="@(i)" selected>@(Math.Round(i,1))</option>
+                }
+                else
+                {
+                    <option value="@(i)">@(Math.Round(i,1))</option>
+                }
             }
-            else
-            {
-                <option value="@(i)">@(Math.Round(i,1))</option>
-            }
-        }
-    </select>
-    @if (StopZoomIn)
-    {
-        <button class="btn p-0 oi oi-zoom-in" disabled></button>
-    }
-    else
-    {
-        <button class="btn NavNone shadow-none p-0 oi oi-zoom-in" @onclick="@(() => OnScaleClick(-0.1))"></button>
-    }
-</li>
-<li class="NavNone">
-    <button class="btn shadow-none" @onclick="Fit">Graph Fit</button>
+        </select>
+    </div>
+    <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(-0.1))"><span class="oi oi-zoom-in"></span></div>
 </li>
 @if (ActiveNodes.Count == 1)
 {
-    <li class="NavNone">
-        <button class="btn shadow-none" @onclick="OnRecenter">Re-Center</button>
-    </li>
+    <li class="NavNone p-2 border-dark border-left" @onclick="OnRecenter">Re-Center</li>
 }

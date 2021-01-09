@@ -16,20 +16,20 @@ else
 {
     EdgeCss = "NavNone";
 }
-<li class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class="btn @NodeCss shadow-none" @onclick="UpdateInsertNode">
-        <input type="checkbox" autocomplete="off"> @("Node")
+<li class="btn-group-toggle border-right border-dark mr-md-2" data-toggle="buttons">
+    <label class="btn @NodeCss shadow-none border-right" @onclick="UpdateInsertNode">
+        <input type="checkbox" autocomplete="off"> Node
     </label>
     <label class="btn @EdgeCss shadow-none" @onclick="UpdateInsertEdge">
-        <input type="checkbox" autocomplete="off"> @("Edge")
+        <input type="checkbox" autocomplete="off"> Edge
     </label>
 </li>
 
-<li class="dropdown px-1">
-    <button class="btn shadow-none NavNone dropdown-toggle" type="button" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<li class="NavNone dropdown">
+    <button class="btn shadow-none dropdown-toggle" id="common" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Common Graphs
     </button>
-    <div class="dropdown-menu" aria-labelledby="saveas">
+    <div class="dropdown-menu" aria-labelledby="common">
         <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Cyclic)">Single Cyclic</a>
         <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Tree)">Tree (straight line)</a>
         <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.Complete)">Clique</a>

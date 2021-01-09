@@ -1,65 +1,102 @@
 ﻿@inherits NodeOptionsBase
 
+@if (Open)
+{
+    NavCss = "NavActive";
+    OpenCss = "show";
+}
+else
+{
+    NavCss = "NavNone";
+    OpenCss = "";
+}
 
 @if (!ActiveNodes.Any())
 {
-    <li class="px-2">
-        Default:
-    </li>
-    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-        <button class="btn shadow-none dropdown-toggle" style="background-color:@(DefaultOptions.NodeColor); color:@(DefaultOptions.NodeLabelColor);"
-                id="nodedefcolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Color
+    <li class="navbar-text font-weight-bold pl-2 pr-custom border-dark border-right">Default</li>
+    <li class="dropdown border-dark border-right @OpenCss @NavCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="nodedefcolor" aria-haspopup="true" aria-expanded="@Open">
+            <span class="oi oi-brush" style="color:@DefaultOptions.NodeColor"></span><span class="oi oi-text" style="color:@DefaultOptions.NodeLabelColor"></span>
         </button>
-        <div class="dropdown-menu" aria-labelledby="nodedefcolor">
+        <div class="dropdown-menu @OpenCss" aria-labelledby="nodedefcolor">
             <span class="dropdown-item">Fill <SfColorPicker Value="@DefaultOptions.NodeColor" ValueChange="OnDefNodeColorChange"></SfColorPicker></span>
             <span class="dropdown-item">Label <SfColorPicker Value="@DefaultOptions.NodeLabelColor" ValueChange="OnDefNodeLabelColorChange"></SfColorPicker></span>
         </div>
     </li>
-    <li class="px-1">
-        Radius <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
-                                 Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Radius
+        </div>
+        <div class="p-custom">
+            <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
+                              Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+        </div>
     </li>
 }
 else
 {
-    <li class="px-2">
-        Selected:
-    </li>
-    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-        <button class="btn shadow-none dropdown-toggle" style="background-color: @(ActiveNodes[0].NodeColor); color: @(ActiveNodes[0].LabelColor);"
-                id="mnodecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Color
+    <li class="navbar-text font-weight-bold pl-2 pr-custom-1 border-dark border-right">Selected</li>
+    <li class="dropdown border-dark border-right @OpenCss @NavCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="mnodecolor" aria-haspopup="true" aria-expanded="@Open">
+            <span class="oi oi-brush" style="color:@ActiveNodes[0].NodeColor"></span><span class="oi oi-text" style="color:@ActiveNodes[0].LabelColor"></span>
         </button>
-        <div class="dropdown-menu" aria-labelledby="mnodecolor">
+        <div class="dropdown-menu @OpenCss" aria-labelledby="mnodecolor">
             <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker></span>
             <span class="dropdown-item">Label <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker></span>
         </div>
     </li>
     if (ActiveNodes.Count == 1)
     {
-        <li class="px-1">
-            Radius <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
-                                     @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Radius
+            </div>
+            <div class="p-custom">
+                <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
+                                  @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+            </div>
         </li>
-        <li>
-            (X:<SfNumericTextBox Value="@ActiveNodes[0].Xaxis" CssClass="medInput" @onchange="((e) => OnXaxisChange(e))"></SfNumericTextBox>,
-            Y:<SfNumericTextBox Value="@ActiveNodes[0].Yaxis" CssClass="medInput" @onchange="((e) => OnYaxisChange(e))"></SfNumericTextBox>)
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                X
+            </div>
+            <div class="p-custom pr-1">
+                <SfNumericTextBox Value="@ActiveNodes[0].Xaxis" CssClass="medInput" @onchange="((e) => OnXaxisChange(e))"></SfNumericTextBox>
+            </div>
+            <div class="pl-1 py-2">
+                Y
+            </div>
+            <div class="p-custom">
+                <SfNumericTextBox Value="@ActiveNodes[0].Yaxis" CssClass="medInput" @onchange="((e) => OnYaxisChange(e))"></SfNumericTextBox>
+            </div>
         </li>
-        <li class="px-1">
-            Label
-            <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Label
+            </div>
+            <div class="p-custom">
+                <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
+            </div>
         </li>
     }
     else
     {
-        <li class="px-1">
-            Radius <SfNumericTextBox TValue="int?" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Radius
+            </div>
+            <div class="p-custom">
+                <SfNumericTextBox TValue="int?" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+            </div>
         </li>
-        <li class="px-1">
-            Label
-            <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Label
+            </div>
+            <div class="p-custom">
+                <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
+            </div>
         </li>
     }
 }
-<li><button type="button" class="btn NavNone shadow-none" @onclick="OnRelabel">Re-label</button></li>
+<li class="NavNone p-2" @onclick="OnRelabel">Re-label</li>

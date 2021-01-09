@@ -1,82 +1,116 @@
 ﻿@inherits EdgeOptionsBase
 
+@if (Open)
+{
+    NavCss = "NavActive";
+    OpenCss = "show";
+}
+else
+{
+    NavCss = "NavNone";
+    OpenCss = "";
+}
+
 @if (!ActiveEdges.Any())
 {
-    <li class="px-2">
-        Default:
-    </li>
-    <li class="px-1">
-        <SfCheckBox @bind-Checked="DefaultOptions.Weighted" Label="Weighted" @onchange="OnDefWeightedChange" CssClass="e-small"></SfCheckBox>
-        <SfCheckBox @bind-Checked="DefaultOptions.Directed" Label="Directed" @onchange="OnDefDirectedChange" CssClass="e-small"></SfCheckBox>
-    </li>
-    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-        <button class="btn shadow-none dropdown-toggle" style="background-color:@(DefaultOptions.EdgeColor); color:@(DefaultOptions.EdgeLabelColor);"
-                id="defedgecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Color
+    <li class="navbar-text font-weight-bold pl-2 pr-custom border-dark border-right">Default</li>
+    <li class="dropdown border-dark border-right @NavCss @OpenCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="defedgecolor" aria-haspopup="true" aria-expanded="@Open">
+            <span class="oi oi-brush" style="color:@DefaultOptions.EdgeColor"></span><span class="oi oi-text" style="color:@DefaultOptions.EdgeLabelColor"></span>
         </button>
-        <div class="dropdown-menu" aria-labelledby="defedgecolor">
+        <div class="dropdown-menu @OpenCss" aria-labelledby="defedgecolor">
             <span class="dropdown-item">Fill <SfColorPicker Value="@DefaultOptions.EdgeColor" ValueChange="OnDefEdgeColorChange"></SfColorPicker></span>
             <span class="dropdown-item">Label <SfColorPicker Value="@DefaultOptions.EdgeLabelColor" ValueChange="OnDefEdgeLabelColorChange"></SfColorPicker></span>
         </div>
     </li>
-    <li class="px-1">
-        Width <SfNumericTextBox TValue="int?" Value="@DefaultOptions.EdgeWidth" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Width
+        </div>
+        <div class="p-custom">
+            <SfNumericTextBox TValue="int?" Value="@DefaultOptions.EdgeWidth" Min=1 Max=15 Step=1 CssClass="shortInput"
+                              @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
+        </div>
     </li>
 }
 else
 {
-    <li class="px-2">
-        Selected:
-    </li>
-    <li class="dropdown px-1" data-toggle="tooltip" data-placement="bottom" title="Color">
-        <button class="btn shadow-none dropdown-toggle" style="background-color: @ActiveEdges[0].EdgeColor; color: @ActiveEdges[0].LabelColor;"
-                id="nodecolor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Color
+    <li class="navbar-text font-weight-bold pl-2 pr-custom-1 border-dark border-right">Selected</li>
+    <li class="dropdown border-dark border-right @NavCss @OpenCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+        <button class="btn shadow-none" @onclick="(() => Open = !Open)"  id="medgecolor" aria-haspopup="true" aria-expanded="@Open">
+            <span class="oi oi-brush" style="color:@ActiveEdges[0].EdgeColor"></span><span class="oi oi-text" style="color:@ActiveEdges[0].LabelColor"></span>
         </button>
-        <div class="dropdown-menu" aria-labelledby="nodecolor">
+        <div class="dropdown-menu @OpenCss" aria-labelledby="medgecolor">
             <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].EdgeColor" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
             <span class="dropdown-item">Label <SfColorPicker Value="@ActiveEdges[0].LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker></span>
         </div>
     </li>
-    <li class="px-1">
-        <span class="btn-group" role="group">
-            <button type="button" class="btn NavNone shadow-none p-0 oi oi-minus" @onclick="@(() => OnCurve(0.1))"></button>
-            Curve
-            <button type="button" class="btn NavNone shadow-none p-0 oi oi-plus" @onclick="@(() => OnCurve(-0.1))"></button>
-        </span>
-    </li>
     if (ActiveEdges.Count == 1)
     {
-        <li class="px-1">
-            Width <SfNumericTextBox TValue="int?" Value="@ActiveEdges.ElementAt(0).Width" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                    @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Width
+            </div>
+            <div class="p-custom">
+                <SfNumericTextBox TValue="int?" Value="@ActiveEdges.ElementAt(0).Width" Min=1 Max=15 Step=1 CssClass="shortInput"
+                                  @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+            </div>
         </li>
-        <li class="px-1">
-            Label
-            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdges[0].Label"></SfTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Label
+            </div>
+            <div class="p-custom">
+                <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdges[0].Label"></SfTextBox>
+            </div>
         </li>
         @if (DefaultOptions.Weighted)
         {
-            <li class="px-1">
-                Weight <SfNumericTextBox Value="@ActiveEdges[0].Weight" Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+            <li class="d-flex flex-row px-2 border-dark border-right">
+                <div class="py-2">
+                    Weight
+                </div>
+                <div class="p-custom">
+                    <SfNumericTextBox Value="@ActiveEdges[0].Weight" Min=1 CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+                </div>
             </li>
         }
     }
     else
     {
-        <li class="px-1">
-            Width <SfNumericTextBox TValue="int?" Min=1 Max=15 Step=1 CssClass="shortInput" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Width
+            </div>
+            <div class="p-custom">
+                <SfNumericTextBox TValue="int?" Min=1 Max=15 Step=1 CssClass="shortInput" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+            </div>
         </li>
-        <li class="px-1">
-            Label
-            <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange"></SfTextBox>
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Label
+            </div>
+            <div class="p-custom">
+                <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange"></SfTextBox>
+            </div>
         </li>
         @if (DefaultOptions.Weighted)
         {
-            <li class="px-1">
-                Weight <SfNumericTextBox Min=1 ShowSpinButton=false CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+            <li class="d-flex flex-row px-2 border-dark border-right">
+                <div class="py-2">
+                    Weight
+                </div>
+                <div class="p-custom">
+                    <SfNumericTextBox Min=1 CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+                </div>
             </li>
         }
     }
+    <li class="d-flex flex-row px-2">
+        <div class="NavNone px-1 py-2" @onclick="@(() => OnCurve(-0.1))"><span class="oi oi-minus"></span></div>
+        <div class="py-2">
+            Curve
+        </div>
+        <div class="NavNone px-1 py-2" @onclick="@(() => OnCurve(0.1))"><span class="oi oi-plus"></span></div>
+    </li>
 }

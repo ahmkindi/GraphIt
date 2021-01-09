@@ -21,6 +21,9 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Edge> ActiveEdges { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
+        public string OpenCss { get; set; }
+        public bool Open { get; set; } = false;
+        public string NavCss { get; set; }
 
         public async Task OnWidthChange(ChangeEventArgs e)
         {
@@ -72,15 +75,6 @@ namespace GraphIt.web.Pages
                 edge.Curve += x;
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
-        }
-
-        public async Task OnDefWeightedChange()
-        {
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-        public async Task OnDefDirectedChange()
-        {
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
         public async Task OnDefEdgeColorChange(ColorPickerEventArgs e)
         {
