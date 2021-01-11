@@ -57,11 +57,15 @@ namespace GraphIt.web.Pages
 
         public string FullView(IEnumerable<Node> nodes)
         {
-            var x = nodes.Min(n => n.Xaxis - n.Radius);
-            var y = nodes.Min(n => n.Yaxis - n.Radius);
-            var width = nodes.Max(n => n.Xaxis + n.Radius) - x;
-            var height = nodes.Max(n => n.Yaxis + n.Radius) - y;
-            return $"{x} {y} {width} {height}";
+            if (nodes.Any())
+            {
+                var x = nodes.Min(n => n.Xaxis - n.Radius);
+                var y = nodes.Min(n => n.Yaxis - n.Radius);
+                var width = nodes.Max(n => n.Xaxis + n.Radius) - x;
+                var height = nodes.Max(n => n.Yaxis + n.Radius) - y;
+                return $"{x} {y} {width} {height}";
+            }
+            return "0 0 0 0";
         }
         public async Task SaveGraphItFile()
         {

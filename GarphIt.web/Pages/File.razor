@@ -3,7 +3,8 @@
 
 <li class="NavNone dropdown border-right border-dark">
     <button class="btn shadow-none dropdown-toggle" id="saveas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="oi oi-share-boxed pr-1"></span>Export As</button>
+        <span class="oi oi-share-boxed pr-1"></span>Export As
+    </button>
 
     <div class="dropdown-menu" aria-labelledby="saveas">
         <a class="dropdown-item" @onclick="() => SaveSVGFile(true)">screen view SVG</a>
@@ -19,39 +20,62 @@
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <p class="text-danger text-center">Oops, I couldn't read the file you chose</p>
-                <SfButton CssClass="e-success" @onclick="(() => ErrorOpening = false)">OK</SfButton>
-            </Content>
-        </DialogTemplates>
-    </SfDialog>
-}
-@if (NewGraphCheck)
-{
-    <SfDialog Width="300px" IsModal="true">
-        <DialogTemplates>
-            <Content>
-                <p class="text-danger text-center">Are you sure you want to restart? Make sure you save your progress</p>
-                <SfButton CssClass="e-success" @onclick="SaveGraphItFile">Save Graph</SfButton>
-                <SfButton CssClass="e-danger" @onclick="() => UriHelper.NavigateTo(UriHelper.Uri, forceLoad: true)">New Graph</SfButton>
-                <SfButton CssClass="e-warning" @onclick="(() => NewGraphCheck = false)">Cancel</SfButton>
+                <div class="text-center">
+                    <div class="row m-3 border-bottom border-dark">
+                        Oops, I couldn't read the file you chose
+                    </div>
+                    <button class="btn btn-outline-dark shadow-none btn-sm" @onclick="(() => ErrorOpening = false)">
+                        OK
+                    </button>
+                </div>
             </Content>
         </DialogTemplates>
     </SfDialog>
 }
 @if (OpenPreference)
 {
+<SfDialog Width="300px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="text-center">
+                <div class="row m-3 border-bottom border-dark">
+                    overwrite the current graph? or open it with the current graph?
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <label for="FileUpload2">
+                        <button class="btn btn-outline-success shadow-none btn-sm">
+                            Together
+                        </button>
+                    </label>
+                    <InputFile id="FileUpload2" OnChange="(e) => OpenGraphItFile(e, false)" accept=".graphit" />
+                    <label for="FileUpload">
+                        <button class="btn btn-outline-danger shadow-none btn-sm">Overwrite</button>
+                    </label>
+                    <InputFile id="FileUpload" OnChange="(e) => OpenGraphItFile(e, true)" accept=".graphit" />
+                    <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="(() => OpenPreference = false)">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+}
+@if (NewGraphCheck)
+{
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <p class="text-info text-center">Would you like to overwrite the current graph? or open it with the current graph?</p>
-                <label for="FileUpload" class="btn shadow-none btn-danger">
-                    Overwrite
-                </label>
-                <InputFile id="FileUpload" OnChange="(e) => OpenGraphItFile(e, true)" accept=".graphit" />
-                <label for="FileUpload2" class="btn shadow-none btn-info">
-                    Together
-                </label>
-                <InputFile id="FileUpload2" OnChange="(e) => OpenGraphItFile(e, false)" accept=".graphit" />
+                <div class="text-center">
+                    <div class="row m-3 border-bottom border-dark">
+                        Are you sure you want to restart?
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <button class="btn btn-outline-success shadow-none btn-sm" @onclick="SaveGraphItFile">Save</button>
+                        <button class="btn btn-outline-danger shadow-none btn-sm" @onclick="() => UriHelper.NavigateTo(UriHelper.Uri, forceLoad: true)">New</button>
+                        <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="(() => NewGraphCheck = false)">Cancel</button>
+                    </div>
+                </div>
             </Content>
         </DialogTemplates>
     </SfDialog>

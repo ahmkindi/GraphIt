@@ -2,7 +2,7 @@
 
 
 <li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>
-<li class="d-flex flex-row px-2">
+<li class="d-flex flex-row px-2 border-dark border-right">
     <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(0.1))"><span class="oi oi-zoom-out"></span></div>
     <div>
         <select class="form-control shadow-none scrollable-menu p-0" @onchange="SelectionZoom">
@@ -20,7 +20,43 @@
             }
         </select>
     </div>
-    <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(-0.1))"><span class="oi oi-zoom-in"></span></div>
+    @if (StopZoomIn)
+    {
+        <div class="btn disabled py-2 px-1"><span class="oi oi-zoom-in"></span></div>
+    }
+    else
+    {
+        <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(-0.1))"><span class="oi oi-zoom-in"></span></div>
+    }
+</li>
+<li class="d-flex flex-row px-2">
+    <div class="p-custom">
+        <input class="shortInput" placeholder="Label" value="@Filter" @oninput="OnLabelChange" /> 
+    </div>
+    @if (FilterNodes.Any())
+    {
+        <div class="NavNone py-2 px-1" @onclick="() => IterateNodes(FilterNodes.Count-1)">
+            <span class="oi oi-arrow-thick-bottom"></span>
+        </div>
+        <div class="NavNone py-2 px-1" @onclick="() => IterateNodes(1)">
+            <span class="oi oi-arrow-thick-top"></span>
+        </div>
+    }
+    else
+    {
+        <div class="btn disabled py-2 px-1">
+            <span class="oi oi-arrow-thick-bottom"></span>
+        </div>
+        <div class="btn disabled py-2 px-1">
+            <span class="oi oi-arrow-thick-top"></span>
+        </div>
+    }
+    @if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0]))
+    {
+        <div class="py-2">
+            @($"{Counter+1}/{FilterNodes.Count}")
+        </div>
+    }
 </li>
 @if (ActiveNodes.Count == 1)
 {
