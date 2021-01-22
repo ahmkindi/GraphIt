@@ -8,10 +8,13 @@
         <MenuItem Text="Insert Edge" IconCss="oi oi-transfer"></MenuItem>
         <MenuItem Text="Align" Disabled="@(ActiveNodes.Count < 2)" IconCss="oi oi-project">
             <MenuItems>
-                <MenuItem Text="Top" IconCss="oi oi-vertical-align-top"></MenuItem>
-                <MenuItem Text="Bottom" IconCss="oi oi-vertical-align-bottom"></MenuItem>
                 <MenuItem Text="Left" IconCss="oi oi-align-left"></MenuItem>
+                <MenuItem Text="Center" IconCss="oi oi-align-center"></MenuItem>
                 <MenuItem Text="Right" IconCss="oi oi-align-right"></MenuItem>
+                <MenuItem Separator="true"></MenuItem>
+                <MenuItem Text="Top" IconCss="oi oi-vertical-align-top"></MenuItem>
+                <MenuItem Text="Middle" IconCss="oi oi-vertical-align-center"></MenuItem>
+                <MenuItem Text="Bottom" IconCss="oi oi-vertical-align-bottom"></MenuItem>
             </MenuItems>
         </MenuItem>
         <MenuItem Text="Edit" Hidden="@(ActiveNodes.Any() && ActiveEdges.Any())" IconCss="oi oi-pencil"></MenuItem>

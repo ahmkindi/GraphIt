@@ -88,6 +88,43 @@ namespace GraphIt.web.Services
             foreach (Node node in nodesToDel) DeleteNode(nodes, edges, node);
         }
 
+        public void Align(IList<Node> nodes, string pos)
+        {
+            double minAxis;
+            double maxAxis;
+            switch (pos)
+            {
+                case "Left":
+                    minAxis = nodes.Min(n => n.Xaxis);
+                    foreach (Node node in nodes) node.Xaxis = minAxis;
+                    break;
+                case "Center":
+                    minAxis = nodes.Min(n => n.Xaxis);
+                    maxAxis = nodes.Max(n => n.Xaxis);
+                    var avg = (maxAxis + minAxis) / 2;
+                    foreach (Node node in nodes) node.Xaxis = avg;
+                    break;
+                case "Right":
+                    maxAxis = nodes.Max(n => n.Xaxis);
+                    foreach (Node node in nodes) node.Xaxis = maxAxis;
+                    break;
+                case "Top":
+                    minAxis = nodes.Min(n => n.Yaxis);
+                    foreach (Node node in nodes) node.Yaxis = minAxis;
+                    break;
+                case "Middle":
+                    minAxis = nodes.Min(n => n.Yaxis);
+                    maxAxis = nodes.Max(n => n.Yaxis);
+                    var avg2 = (maxAxis + minAxis) / 2;
+                    foreach (Node node in nodes) node.Yaxis = avg2;
+                    break;
+                case "Bottom":
+                    maxAxis = nodes.Max(n => n.Yaxis);
+                    foreach (Node node in nodes) node.Yaxis = maxAxis;
+                    break;
+            }
+        }
+
         public int NextId(IList<Node> nodes)
         {
             if (nodes.Any())

@@ -68,17 +68,13 @@ namespace GraphIt.web.Pages
                 case "Paste":
                     await Paste();
                     break;
-                case "Top":
-                    Align("Top");
-                    break;
-                case "Bottom":
-                    Align("Bottom");
-                    break;
                 case "Left":
-                    Align("Left");
-                    break;
+                case "Center":
                 case "Right":
-                    Align("Right");
+                case "Top":
+                case "Middle":
+                case "Bottom":
+                    NodeService.Align(ActiveNodes, e.Item.Text);
                     break;
                 case "Delete":
                     await OnDelete();
@@ -413,29 +409,6 @@ namespace GraphIt.web.Pages
             } 
         }
 
-        public void Align(string pos)
-        {
-            double newAxis;
-            switch (pos)
-            {
-                case "Top":
-                    newAxis = ActiveNodes.Min(n => n.Yaxis);
-                    foreach (Node node in ActiveNodes) node.Yaxis = newAxis;
-                    break;
-                case "Bottom":
-                    newAxis = ActiveNodes.Max(n => n.Yaxis);
-                    foreach (Node node in ActiveNodes) node.Yaxis = newAxis;
-                    break;
-                case "Left":
-                    newAxis = ActiveNodes.Min(n => n.Xaxis);
-                    foreach (Node node in ActiveNodes) node.Xaxis = newAxis;
-                    break;
-                case "Right":
-                    newAxis = ActiveNodes.Max(n => n.Xaxis);
-                    foreach (Node node in ActiveNodes) node.Xaxis = newAxis;
-                    break;
-            }
-        }
         public void Copy()
         {
             CopiedNodes.Clear();

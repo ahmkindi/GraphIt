@@ -1,6 +1,20 @@
 ﻿@inherits ViewBase
-
-
+@if (MatchCase.Active)
+{
+    MatchCase.Css = "NavActive";
+}
+else
+{
+    MatchCase.Css = "NavNone";
+}
+@if (MatchExact.Active)
+{
+    MatchExact.Css = "NavActive";
+}
+else
+{
+    MatchExact.Css = "NavNone";
+}
 <li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>
 <li class="d-flex flex-row px-2 border-dark border-right">
     <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(0.1))"><span class="oi oi-zoom-out"></span></div>
@@ -30,8 +44,12 @@
     }
 </li>
 <li class="d-flex flex-row px-2">
+    <div class="py-2 px-1 @MatchCase.Css font-weight-bold" data-toggle="tooltip" data-placement="bottom" title="Match case" 
+         @onclick="MatchCaseClicked">Aa</div>
+    <div class="py-2 px-1 @MatchExact.Css " data-toggle="tooltip" data-placement="bottom" title="Match whole word" 
+         @onclick="MatchExactClicked"><u>Ab|</u></div>
     <div class="p-custom">
-        <input class="shortInput" placeholder="Label" value="@Filter" @oninput="OnLabelChange" /> 
+        <input class="medInput" placeholder="Label" value="@Filter" @oninput="OnLabelChange" />
     </div>
     @if (FilterNodes.Any())
     {
@@ -62,3 +80,33 @@
 {
     <li class="NavNone p-2 border-dark border-left" @onclick="OnRecenter">Re-Center</li>
 }
+else if (ActiveNodes.Count > 1)
+{
+    <li class="NavNone dropdown border-dark border-left">
+        <button class="btn shadow-none dropdown-toggle" id="align" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Align Nodes
+        </button>
+        <div class="dropdown-menu" aria-labelledby="align">
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Left"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-align-left"></span>Left
+            </a>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Center"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-align-center"></span>Center
+            </a>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Right"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-align-right"></span>Right
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Top"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-vertical-align-top"></span>Top
+            </a>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Middle"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-vertical-align-center"></span>Middle
+            </a>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Bottom"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+                <span class="pr-1 oi oi-vertical-align-bottom"></span>Bottom
+            </a>
+        </div>
+    </li>
+}
+

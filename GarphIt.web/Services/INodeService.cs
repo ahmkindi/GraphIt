@@ -14,6 +14,7 @@ namespace GraphIt.web.Services
         Node AddNode(IList<Node> nodes, Node n, int nextNodeId, double offset);
         void DeleteNodes(IList<Node> nodes, IList<Edge> edges, IList<Node> nodesToDel);
         void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node);
+        void Align(IList<Node> nodes, string pos);
         int NextId(IList<Node> nodes);
 
     }
