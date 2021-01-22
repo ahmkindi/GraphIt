@@ -13,6 +13,8 @@ namespace GraphIt.web.Pages
     public class IndexBase : ComponentBase, IDisposable
     {
         [Inject] public ResizeListener Listener { get; set; }
+        [Inject] public INodeService NodeService { get; set; }
+        [Inject] public IEdgeService EdgeService { get; set; }
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public NavChoice? Choice { get; set; }
         public StartAlgorithm StartAlgorithm { get; set; } = new StartAlgorithm();
@@ -22,7 +24,6 @@ namespace GraphIt.web.Pages
         public List<Node> Nodes { get; set; } = new List<Node>();
         public List<Edge> Edges { get; set; } = new List<Edge>();
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
-        public bool InitialModal { get; set; } = true;
         public Representation Rep { get; set; } = Representation.None;
         public SVGControl SVGControl { get; set; } = new SVGControl();
 
@@ -38,9 +39,17 @@ namespace GraphIt.web.Pages
         {
             Choice = choice;
         }
-        public void OnInitialClose(bool b)
+
+        public void DeleteActiveNodes(bool _)
         {
-            InitialModal = b;
+            NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
+            ActiveNodes.Clear();
+        }
+
+        public void DeleteActiveEdges(bool _)
+        {
+            EdgeService.DeleteEdges(Edges, ActiveEdges);
+            ActiveEdges.Clear();
         }
 
         public void Dispose()

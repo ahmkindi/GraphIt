@@ -10,13 +10,6 @@ else
     SVGControl.Width = Browser.Width * SVGControl.Scale;
     SVGControl.Height = Browser.Height * SVGControl.Scale;
 }
-
-@if (InitialModal)
-{
-    <InitialModal DefaultOptions="DefaultOptions" OnClose="OnInitialClose"></InitialModal>
-}
-
-
 <NavBar @bind-Choice="Choice"></NavBar>
 
 
@@ -39,10 +32,10 @@ else
                 <View @bind-SVGControl="SVGControl" @bind-ActiveNodes="ActiveNodes" Nodes="Nodes" Browser="Browser"></View>
                 break;
             case NavChoice.Node:
-                <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-Nodes="Nodes"></NodeOptions>
+                <NodeOptions @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" DeleteActiveNodes="DeleteActiveNodes"></NodeOptions>
                 break;
             case NavChoice.Edge:
-                <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions"></EdgeOptions>
+                <EdgeOptions @bind-ActiveEdges="ActiveEdges" @bind-DefaultOptions="DefaultOptions" DeleteActiveEdges="DeleteActiveEdges"></EdgeOptions>
                 break;
             case NavChoice.About:
                 break;

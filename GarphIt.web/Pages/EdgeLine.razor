@@ -4,7 +4,7 @@
    @onmousedown="OnMouseDown">
     <path id="@Edge.EdgeId" d="@ShowEdge.Path" stroke-width="@Edge.Width" stroke="@Edge.EdgeColor" 
           marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" class="@ActiveEdgeCss" />
-    <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.EdgeColor" dy="@ShowEdge.Yoffset" rotate="@ShowEdge.Rotate">
+    <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.LabelColor" dy="@ShowEdge.Yoffset" rotate="@ShowEdge.Rotate">
         <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowEdge.Label</textPath>
     </text>
 

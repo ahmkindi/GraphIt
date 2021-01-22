@@ -24,35 +24,38 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
         [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
+        [Parameter] public EventCallback<bool> DeleteActiveNodes { get; set; }
         public string OpenCss { get; set; }
         public bool Open { get; set; } = false;
         public string NavCss { get; set; }
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
-            foreach(Node node in ActiveNodes) 
+            int r = (int) double.Parse(e.Value.ToString());
+            if (r < 10) r = 10;
+            else if (r > 100) r = 100;
+            foreach (Node node in ActiveNodes) 
             {
-                node.Radius = int.Parse(e.Value.ToString());
+                node.Radius = r; 
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnXaxisChange(ChangeEventArgs e)
         {
-
-            ActiveNodes[0].Xaxis = double.Parse(e.Value.ToString());
+            ActiveNodes[0].Xaxis = Math.Round(double.Parse(e.Value.ToString()), 2);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
         public async Task OnYaxisChange(ChangeEventArgs e)
         {
 
-            ActiveNodes[0].Yaxis = double.Parse(e.Value.ToString());
+            ActiveNodes[0].Yaxis = Math.Round(double.Parse(e.Value.ToString()), 2);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
-        public async Task OnNodeLabelChange(ChangedEventArgs e)
+        public async Task OnNodeLabelChange(ChangeEventArgs e)
         {
             foreach (Node node in ActiveNodes)
             {
-                node.Label = e.Value;
+                node.Label = e.Value.ToString();
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
@@ -88,7 +91,10 @@ namespace GraphIt.web.Pages
         }
         public async Task OnDefRadiusChange(ChangeEventArgs e)
         {
-            DefaultOptions.NodeRadius = int.Parse(e.Value.ToString());
+            int r = (int)double.Parse(e.Value.ToString());
+            if (r < 10) r = 10;
+            else if (r > 100) r = 100;
+            DefaultOptions.NodeRadius = r;
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
 

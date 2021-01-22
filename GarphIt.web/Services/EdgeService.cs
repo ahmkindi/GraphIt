@@ -74,6 +74,11 @@ namespace GraphIt.web.Services
             return edge;
         }
 
+        public void DeleteEdges(List<Edge> edges, IList<Edge> edgesToDel)
+        {
+            edges.RemoveAll(e => edgesToDel.Contains(e));
+        }
+
         public IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed)
         {
             IList<Edge> MultiEdges = new List<Edge>();

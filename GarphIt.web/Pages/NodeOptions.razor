@@ -28,8 +28,7 @@ else
             Radius
         </div>
         <div class="p-custom">
-            <SfNumericTextBox TValue="int?" Value="@DefaultOptions.NodeRadius" CssClass="shortInput"
-                              Min=10 Max=100 Step=1 Format="###" @onchange="((e) => OnDefRadiusChange(e))"></SfNumericTextBox>
+            <input class="shortInput" type="number" Min=10 Max=100 step=1 value="@DefaultOptions.NodeRadius" @onchange="OnDefRadiusChange" />
         </div>
     </li>
 }
@@ -52,8 +51,7 @@ else
                 Radius
             </div>
             <div class="p-custom">
-                <SfNumericTextBox TValue="int?" Value="@ActiveNodes[0].Radius" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput"
-                                  @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                <input class="shortInput" type="number" Min=10 Max=100 step=1 value="@ActiveNodes[0].Radius" @onchange="OnRadiusChange" />
             </div>
         </li>
         <li class="d-flex flex-row px-2 border-dark border-right">
@@ -61,13 +59,13 @@ else
                 X
             </div>
             <div class="p-custom pr-1">
-                <SfNumericTextBox Value="@ActiveNodes[0].Xaxis" CssClass="medInput" @onchange="((e) => OnXaxisChange(e))"></SfNumericTextBox>
+                <input class="medInput" type="number" value="@Math.Round(ActiveNodes[0].Xaxis, 2)" @onchange="OnXaxisChange" />
             </div>
             <div class="pl-1 py-2">
                 Y
             </div>
             <div class="p-custom">
-                <SfNumericTextBox Value="@ActiveNodes[0].Yaxis" CssClass="medInput" @onchange="((e) => OnYaxisChange(e))"></SfNumericTextBox>
+                <input class="medInput" type="number" value="@Math.Round(ActiveNodes[0].Yaxis, 2)" @onchange="OnYaxisChange" />
             </div>
         </li>
         <li class="d-flex flex-row px-2 border-dark border-right">
@@ -75,7 +73,7 @@ else
                 Label
             </div>
             <div class="p-custom">
-                <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange" Value="@ActiveNodes.ElementAt(0).Label"></SfTextBox>
+                <input class="shortInput" value="@ActiveNodes[0].Label" @onchange="OnNodeLabelChange" />
             </div>
         </li>
     }
@@ -86,7 +84,7 @@ else
                 Radius
             </div>
             <div class="p-custom">
-                <SfNumericTextBox TValue="int?" Min=10 Max=100 Step=1 Format="###" CssClass="shortInput" @onchange="((e) => OnRadiusChange(e))"></SfNumericTextBox>
+                <input class="shortInput" type="number" Min=10 Max=100 step=1 @onchange="OnRadiusChange" />
             </div>
         </li>
         <li class="d-flex flex-row px-2 border-dark border-right">
@@ -94,9 +92,13 @@ else
                 Label
             </div>
             <div class="p-custom">
-                <SfTextBox CssClass="shortInput" ValueChange="OnNodeLabelChange"></SfTextBox>
+                <input class="shortInput" @onchange="OnNodeLabelChange" />
             </div>
         </li>
     }
 }
 <li class="NavNone p-2" @onclick="OnRelabel">Re-label</li>
+@if (ActiveNodes.Any())
+{
+    <li class="NavNone p-2 border-dark border-left" @onclick="async () => await DeleteActiveNodes.InvokeAsync(true)"><span class="oi oi-trash"></span></li>
+}

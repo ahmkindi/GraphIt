@@ -45,11 +45,11 @@ html, body {
 }
 
 .shortInput{
-    max-width:90px;
+    max-width:70px;
 }
 
 .medInput {
-    max-width: 105px;
+    max-width: 90px;
 }
 
 svg {
@@ -154,6 +154,10 @@ svg text {
     color: black;
     background-color: #D0CECE;
     width: 100%
+}
+
+.navbar{
+    z-index:1;
 }
 
 input[type="file"] {

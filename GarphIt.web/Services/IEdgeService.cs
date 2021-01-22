@@ -12,6 +12,7 @@ namespace GraphIt.web.Services
         Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail);
         Edge AddEdge(IList<Edge> edges, Edge e);
         Edge AddEdge(IList<Edge> edges, Edge e, int nextNodeId);
+        void DeleteEdges(List<Edge> edges, IList<Edge> edgesToDel);
         IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed);
         int NextId(IList<Edge> edges);
     }

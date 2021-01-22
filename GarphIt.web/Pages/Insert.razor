@@ -16,14 +16,8 @@ else
 {
     EdgeCss = "NavNone";
 }
-<li class="btn-group-toggle border-right border-dark mr-md-2" data-toggle="buttons">
-    <label class="btn @NodeCss shadow-none border-right" @onclick="UpdateInsertNode">
-        <input type="checkbox" autocomplete="off"> Node
-    </label>
-    <label class="btn @EdgeCss shadow-none" @onclick="UpdateInsertEdge">
-        <input type="checkbox" autocomplete="off"> Edge
-    </label>
-</li>
+<li class="@NodeCss py-2 pl-2 pr-1" @onclick="UpdateInsertNode">Node</li>
+<li class="@EdgeCss py-2 pl-1 pr-2 border-right border-dark" @onclick="UpdateInsertEdge">Edge</li>
 
 <li class="NavNone dropdown">
     <button class="btn shadow-none dropdown-toggle" id="common" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

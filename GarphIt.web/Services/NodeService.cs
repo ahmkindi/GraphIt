@@ -46,7 +46,7 @@ namespace GraphIt.web.Services
         {
             Node node = new Node
             {
-                NodeId = NextId(nodes),
+                NodeId = n.NodeId,
                 LabelColor = n.LabelColor,
                 NodeColor = n.NodeColor,
                 Xaxis = n.Xaxis,
@@ -58,11 +58,11 @@ namespace GraphIt.web.Services
             return node;
         }
 
-        public Node AddNode(IList<Node> nodes, Node n, double offset)
+        public Node AddNode(IList<Node> nodes, Node n, int nextNodeId, double offset)
         {
             Node node = new Node
             {
-                NodeId = n.NodeId + NextId(nodes),
+                NodeId = n.NodeId + nextNodeId,
                 LabelColor = n.LabelColor,
                 NodeColor = n.NodeColor,
                 Xaxis = n.Xaxis + offset,
@@ -81,6 +81,11 @@ namespace GraphIt.web.Services
             {
                 if (edges[i].TailNodeId == node.NodeId || edges[i].HeadNodeId == node.NodeId) edges.RemoveAt(i);
             }
+        }
+
+        public void DeleteNodes(IList<Node> nodes, IList<Edge> edges, IList<Node> nodesToDel)
+        {
+            foreach (Node node in nodesToDel) DeleteNode(nodes, edges, node);
         }
 
         public int NextId(IList<Node> nodes)

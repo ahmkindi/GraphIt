@@ -28,8 +28,7 @@ else
             Width
         </div>
         <div class="p-custom">
-            <SfNumericTextBox TValue="int?" Value="@DefaultOptions.EdgeWidth" Min=1 Max=15 Step=1 CssClass="shortInput"
-                              @onchange="((e) => OnDefWidthChange(e))"></SfNumericTextBox>
+            <input class="shortInput" type="number" Min=1 Max=15 step=1 value="@DefaultOptions.EdgeWidth" @onchange="OnDefWidthChange" />
         </div>
     </li>
 }
@@ -37,7 +36,7 @@ else
 {
     <li class="navbar-text font-weight-bold pl-2 pr-custom-1 border-dark border-right">Selected</li>
     <li class="dropdown border-dark border-right @NavCss @OpenCss" data-toggle="tooltip" data-placement="bottom" title="Color">
-        <button class="btn shadow-none" @onclick="(() => Open = !Open)"  id="medgecolor" aria-haspopup="true" aria-expanded="@Open">
+        <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="medgecolor" aria-haspopup="true" aria-expanded="@Open">
             <span class="oi oi-brush" style="color:@ActiveEdges[0].EdgeColor"></span><span class="oi oi-text" style="color:@ActiveEdges[0].LabelColor"></span>
         </button>
         <div class="dropdown-menu @OpenCss" aria-labelledby="medgecolor">
@@ -52,8 +51,7 @@ else
                 Width
             </div>
             <div class="p-custom">
-                <SfNumericTextBox TValue="int?" Value="@ActiveEdges.ElementAt(0).Width" Min=1 Max=15 Step=1 CssClass="shortInput"
-                                  @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+                <input class="shortInput" type="number" Min=1 Max=15 step=1 value="@ActiveEdges[0].Width" @onchange="OnWidthChange" />
             </div>
         </li>
         <li class="d-flex flex-row px-2 border-dark border-right">
@@ -61,7 +59,7 @@ else
                 Label
             </div>
             <div class="p-custom">
-                <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange" Value="@ActiveEdges[0].Label"></SfTextBox>
+                <input class="shortInput" value="@ActiveEdges[0].Label" @onchange="OnEdgeLabelChange" />
             </div>
         </li>
         @if (DefaultOptions.Weighted)
@@ -71,7 +69,7 @@ else
                     Weight
                 </div>
                 <div class="p-custom">
-                    <SfNumericTextBox Value="@ActiveEdges[0].Weight" Min=1 CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+                    <input class="shortInput" type="number" Min=1 value="@ActiveEdges[0].Weight" @onchange="OnWeightChange" />
                 </div>
             </li>
         }
@@ -83,7 +81,7 @@ else
                 Width
             </div>
             <div class="p-custom">
-                <SfNumericTextBox TValue="int?" Min=1 Max=15 Step=1 CssClass="shortInput" @onchange="((e) => OnWidthChange(e))"></SfNumericTextBox>
+                <input class="shortInput" type="number" Min=1 Max=15 step=1 @onchange="OnWidthChange" />
             </div>
         </li>
         <li class="d-flex flex-row px-2 border-dark border-right">
@@ -91,7 +89,7 @@ else
                 Label
             </div>
             <div class="p-custom">
-                <SfTextBox CssClass="shortInput" ValueChange="OnEdgeLabelChange"></SfTextBox>
+                <input class="shortInput" @onchange="OnEdgeLabelChange" />
             </div>
         </li>
         @if (DefaultOptions.Weighted)
@@ -101,7 +99,7 @@ else
                     Weight
                 </div>
                 <div class="p-custom">
-                    <SfNumericTextBox Min=1 CssClass="shortInput" @onchange="((e) => OnWeightChange(e))"></SfNumericTextBox>
+                    <input class="shortInput" type="number" Min=1 @onchange="OnWeightChange" />
                 </div>
             </li>
         }
@@ -113,4 +111,8 @@ else
         </div>
         <div class="NavNone px-1 py-2" @onclick="@(() => OnCurve(0.1))"><span class="oi oi-plus"></span></div>
     </li>
+}
+@if (ActiveEdges.Any())
+{
+    <li class="NavNone p-2 border-dark border-left" @onclick="async () => await DeleteActiveEdges.InvokeAsync(true)"><span class="oi oi-trash"></span></li>
 }

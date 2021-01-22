@@ -120,20 +120,10 @@ namespace GraphIt.web.Pages
         }
         public async Task OnDelete()
         {
-            if (ActiveEdges.Any())
-            {
-                Edges.RemoveAll(e => ActiveEdges.Contains(e));
-                if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
-            }
-            if (ActiveNodes.Any())
-            {
-                foreach (Node node in ActiveNodes)
-                {
-                    Edges.RemoveAll(e => e.HeadNodeId == node.NodeId || e.TailNodeId == node.NodeId);
-                }
-                Nodes.RemoveAll(n => ActiveNodes.Contains(n));
-                if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
-            } 
+            EdgeService.DeleteEdges(Edges, ActiveEdges);
+            await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+            NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
+            await ActiveNodesChanged.InvokeAsync(new List<Node>());
         }
 
         public void OnRightClick()
@@ -470,7 +460,7 @@ namespace GraphIt.web.Pages
             PasteOffset += 5 * SVGControl.Scale;
             ActiveNodes.Clear();
             ActiveEdges.Clear();
-            foreach (Node node in CopiedNodes) ActiveNodes.Add(NodeService.AddNode(Nodes, node, PasteOffset));
+            foreach (Node node in CopiedNodes) ActiveNodes.Add(NodeService.AddNode(Nodes, node, nextNodeId, PasteOffset));
             foreach (Edge edge in CopiedEdges) ActiveEdges.Add(EdgeService.AddEdge(Edges, edge, nextNodeId));
             await NodesChanged.InvokeAsync(Nodes);
             await EdgesChanged.InvokeAsync(Edges);

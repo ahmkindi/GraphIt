@@ -21,6 +21,8 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Edge> ActiveEdges { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
+        [Parameter] public EventCallback<bool> DeleteActiveEdges { get; set; }
+
         public string OpenCss { get; set; }
         public bool Open { get; set; } = false;
         public string NavCss { get; set; }
@@ -33,11 +35,11 @@ namespace GraphIt.web.Pages
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
-        public async Task OnEdgeLabelChange(ChangedEventArgs e)
+        public async Task OnEdgeLabelChange(ChangeEventArgs e)
         {
             foreach (Edge edge in ActiveEdges)
             {
-                edge.Label = e.Value;
+                edge.Label = e.Value.ToString();
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
