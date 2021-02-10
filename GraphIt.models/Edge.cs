@@ -8,6 +8,23 @@ namespace GraphIt.models
 {
     public class Edge : IEquatable<Edge>
     {
+
+        public Edge(Edge edge)
+        {
+            EdgeId = edge.EdgeId;
+            HeadNodeId = edge.HeadNodeId;
+            TailNodeId = edge.TailNodeId;
+            Curve = edge.Curve;
+            Weight = edge.Weight;
+            Label = edge.Label;
+            Width = edge.Width;
+            LabelColor = edge.LabelColor;
+            EdgeColor = edge.EdgeColor;
+        }
+        public Edge()
+        {
+
+        }
         public int EdgeId { get; set; }
         public int HeadNodeId { get; set; }
         public int TailNodeId { get; set; }

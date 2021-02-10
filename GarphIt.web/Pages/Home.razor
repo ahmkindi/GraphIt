@@ -1,6 +1,6 @@
 ﻿@inherits HomeBase
 
-
+<li class="NavNone p-2 border-right border-dark" @onclick="OnSelectAll">Select All</li>
 <li class="NavNone dropdown border-right border-dark">
     <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Representations
@@ -17,24 +17,37 @@
     <div class="dropdown-menu" aria-labelledby="algos">
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)">Dijkstras Shortest Path</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.MaxFlow)">Max-flow</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)">Degree Centrality</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Colouring)">Graph Colouring</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Kruskal)">Kruskals MST</a>
     </div>
 </li>
 @if (StartAlgorithm.Algorithm != Algorithm.None)
 {
-    @if (StartAlgorithm.StartNode == null)
+    @if (StartAlgorithm.Type != AlgorithmType.NoInput && StartAlgorithm.StartNode == null)
     {
-        <li class="navbar-text">Choose Start Node</li>
+        <li class="navbar-text font-weight-bold">Choose Start Node</li>
     }
-    else if (RequiresEnd.Contains(StartAlgorithm.Algorithm) && StartAlgorithm.EndNode == null)
+    else if (StartAlgorithm.EndNode == null && StartAlgorithm.Type == AlgorithmType.TwoInput)
     {
-        <li>Choose End Node</li>
+        <li class="navbar-text font-weight-bold">Choose End Node</li>
     }
     else
     {
-        <li><button class="btn"><span class="oi oi-x"></span></button></li>
-        <li><button class="btn"><span class="oi oi-media-stop"></span></button></li>
-        <li><button class="btn"><span class="oi oi-media-skip-forward"></span></button></li>
-        <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
+        <li class="navbar-text font-weight-bold">@StartAlgorithm.Output</li>
+        @if (!Animate)
+        {
+            <li class="NavNone p-2" @onclick="() => Animate = true">Animate</li>
+            <li class="NavNone p-2" @onclick="async () => await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm())">Clear</li>
+        }
+        else
+        {
+            <li><button class="btn"><span class="oi oi-media-stop"></span></button></li>
+            <li><button class="btn"><span class="oi oi-media-skip-forward"></span></button></li>
+            <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
+            <li><button class="btn" @onclick="() => Animate = false"><span class="oi oi-x"></span></button></li>
+        }
     }
 }
-<li class="NavNone p-2" @onclick="OnSelectAll">Select All</li>

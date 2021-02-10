@@ -8,7 +8,12 @@ namespace GraphIt.models
     {
         None,
         BFS,
-        DFS
-        
+        DFS,
+        Degree,
+        DegreeVisual,
+        Colouring,
+        Kruskal,
+        Dijkstra,
+        MaxFlow
     }
 }

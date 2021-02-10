@@ -35,6 +35,7 @@ namespace GraphIt.web.Pages
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] public IAlgorithmService AlgorithmService { get; set; }
         public string SvgClass { get; set; }
         public IList<Node> CopiedNodes { get; set; } = new List<Node>();
         public IList<Edge> CopiedEdges { get; set; } = new List<Edge>();
@@ -46,6 +47,8 @@ namespace GraphIt.web.Pages
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
         private double[] origin = new double[2];
         public RectSelection RectSelection { get; set; } = new RectSelection();
+        public IList<AlgorithmNode> AlgorithmNodes = new List<AlgorithmNode>();
+        public IList<Edge> AlgorithmEdges = new List<Edge>();
         protected override void OnParametersSet()
         {
             if (GraphMode == GraphMode.Default)
@@ -55,6 +58,10 @@ namespace GraphIt.web.Pages
             else if (GraphMode == GraphMode.InsertNode)
             {
                 SvgClass = "insert";
+            }
+            if (StartAlgorithm.Ready && !StartAlgorithm.Done)
+            {
+                AlgorithmService.RunAlgorithm(DefaultOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges); 
             }
         }
 
@@ -292,10 +299,20 @@ namespace GraphIt.web.Pages
         }
         public async Task OnNodeClick(Node node)
         {
-            if (StartAlgorithm.Algorithm != Algorithm.None && StartAlgorithm.StartNode == null)
+            if (StartAlgorithm.Algorithm != Algorithm.None && StartAlgorithm.Type != AlgorithmType.NoInput)
             {
-                StartAlgorithm.StartNode = node;
-                await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+                if (StartAlgorithm.StartNode == null)
+                {
+                    StartAlgorithm.StartNode = node;
+                    if (StartAlgorithm.Type == AlgorithmType.OneInput) StartAlgorithm.Ready = true;
+                    await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+                }
+                else if (StartAlgorithm.EndNode == null && StartAlgorithm.Type == AlgorithmType.TwoInput)
+                {
+                    StartAlgorithm.EndNode = node;
+                    StartAlgorithm.Ready = true;
+                    await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+                }
             }
             ActiveNodes.Clear();
             ActiveNodes.Add(node);

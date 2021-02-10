@@ -18,6 +18,7 @@ namespace GraphIt.web.Pages
 {
     public class HomeBase : ComponentBase
     {
+        public bool Animate { get; set; } = false;
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
@@ -29,8 +30,6 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
 
-
-        public Algorithm[] RequiresEnd { get; set; } = { };
         public async Task OnMatrixClick()
         {
             Rep = Representation.Matrix;

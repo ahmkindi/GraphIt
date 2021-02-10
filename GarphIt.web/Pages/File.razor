@@ -42,14 +42,12 @@
                     overwrite the current graph? or open it with the current graph?
                 </div>
                 <div class="d-flex align-items-baseline">
-                    <label for="FileUpload2">
-                        <button class="btn btn-outline-success shadow-none btn-sm">
-                            Together
-                        </button>
+                    <label for="FileUpload2" class="btn btn-outline-success shadow-none btn-sm pointer">
+                        Together
                     </label>
                     <InputFile id="FileUpload2" OnChange="(e) => OpenGraphItFile(e, false)" accept=".graphit" />
-                    <label for="FileUpload">
-                        <button class="btn btn-outline-danger shadow-none btn-sm">Overwrite</button>
+                    <label for="FileUpload" class="btn btn-outline-danger shadow-none btn-sm pointer">
+                        Overwrite
                     </label>
                     <InputFile id="FileUpload" OnChange="(e) => OpenGraphItFile(e, true)" accept=".graphit" />
                     <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="(() => OpenPreference = false)">
