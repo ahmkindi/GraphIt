@@ -10,10 +10,10 @@ namespace GraphIt.models
         BFS,
         DFS,
         Degree,
-        DegreeVisual,
-        Colouring,
+        DegreeCentrality,
         Kruskal,
         Dijkstra,
+        DijkstraPath,
         MaxFlow
     }
 }

@@ -33,5 +33,16 @@ namespace GraphIt.models
             Xaxis = x;
             Yaxis = y;
         }
+
+        public Node(Node node)
+        {
+            NodeId = node.NodeId;
+            Radius = node.Radius;
+            NodeColor = node.NodeColor;
+            Xaxis = node.Xaxis;
+            Yaxis = node.Yaxis;
+            Label = node.Label;
+            LabelColor = node.LabelColor;
+        }
     }
 }

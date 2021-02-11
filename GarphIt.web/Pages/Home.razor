@@ -17,10 +17,10 @@
     <div class="dropdown-menu" aria-labelledby="algos">
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)">Dijkstras Shortest Path</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)">Dijkstras Shortest Distances To Node</a>
+        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DijkstraPath)">Dijkstras Shortest Path Between 2 Nodes</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.MaxFlow)">Max-flow</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)">Degree Centrality</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Colouring)">Graph Colouring</a>
         <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Kruskal)">Kruskals MST</a>
     </div>
 </li>

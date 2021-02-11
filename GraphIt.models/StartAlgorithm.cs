@@ -6,8 +6,8 @@ namespace GraphIt.models
 {
     public class StartAlgorithm
     {
-        private readonly IList<Algorithm> OneInput = new List<Algorithm> { Algorithm.BFS, Algorithm.DFS};
-        private readonly IList<Algorithm> TwoInput = new List<Algorithm> { Algorithm.Dijkstra, Algorithm.MaxFlow};
+        private readonly IList<Algorithm> OneInput = new List<Algorithm> { Algorithm.BFS, Algorithm.DFS, Algorithm.Dijkstra};
+        private readonly IList<Algorithm> TwoInput = new List<Algorithm> { Algorithm.DijkstraPath, Algorithm.MaxFlow};
         public Algorithm Algorithm { get; set; }
         public Node StartNode { get; set; }
         public Node EndNode { get; set; }

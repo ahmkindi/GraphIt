@@ -11,7 +11,7 @@ namespace GraphIt.models
 
         public AlgorithmNode(Node node)
         {
-            Node = node;
+            Node = new Node(node);
         }
 
         public bool Equals(AlgorithmNode other)
