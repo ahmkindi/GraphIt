@@ -19,8 +19,11 @@ namespace GraphIt.web.Pages
     public class HomeBase : ComponentBase
     {
         public bool Animate { get; set; } = false;
+        public bool ShowClearModal { get; set; } = false;
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
+        [Parameter] public GraphMode GraphMode { get; set; }
+        [Parameter] public EventCallback<GraphMode> GraphModeChanged { get; set; }
         [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
         [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
@@ -42,6 +45,7 @@ namespace GraphIt.web.Pages
         }
         public async Task OnAlgoChanged(Algorithm a)
         {
+            await GraphModeChanged.InvokeAsync(GraphMode.Algorithm);
             await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm(a));
         }
 
@@ -53,6 +57,21 @@ namespace GraphIt.web.Pages
             foreach (Edge edge in Edges) ActiveEdges.Add(edge);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+        }
+
+        public async Task Save()
+        {
+            StartAlgorithm.Save = true;
+            await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+            ShowClearModal = false;
+
+        }
+
+        public async Task Reset()
+        {
+            await GraphModeChanged.InvokeAsync(GraphMode.Default);
+            await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
+            ShowClearModal = false;
         }
     }
 }

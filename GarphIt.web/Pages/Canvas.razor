@@ -43,7 +43,7 @@
 <svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @SVGControl.Width @SVGControl.Height"
      tabindex="0" class="@SvgClass" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" @onkeydown="OnKeyDown"
      @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
-    @if (StartAlgorithm.Algorithm != Algorithm.None && StartAlgorithm.Done)
+    @if (StartAlgorithm.Done)
     {
         @if (AlgorithmNodes != null)
         {

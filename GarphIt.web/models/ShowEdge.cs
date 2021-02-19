@@ -22,7 +22,6 @@ namespace GraphIt.web.models
         public ShowEdge(Edge edge, Node head, Node tail)
         {
             EdgeArrow = new EdgeArrow();
-            EdgeArrow.ArrowOffset[0] = edge.Width;
             FontSize = 15 + (edge.Width * 1.5);
             Yoffset = 10 + edge.Width * 2;
             Rotate = 0;

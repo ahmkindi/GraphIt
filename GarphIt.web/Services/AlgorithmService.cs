@@ -9,17 +9,18 @@ namespace GraphIt.web.Services
     public class AlgorithmService : IAlgorithmService
     {
         private readonly DefaultOptions AlgoDefOptions = new DefaultOptions("#ffc400", "#000000", "#ff0000", "#000000");
+        private int MaxId { get; set; }
         public void RunAlgorithm(DefaultOptions d, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges)
         {
-            algorithmNodes = new List<AlgorithmNode>();
-            algorithmEdges = new List<Edge>();
+            algorithmNodes.Clear();
+            algorithmEdges.Clear();
             foreach (Node node in nodes) algorithmNodes.Add(new AlgorithmNode(node));
             foreach (Edge edge in edges) algorithmEdges.Add(new Edge(edge));
-
+            MaxId = nodes.Max(n => n.NodeId);
             switch (startAlgorithm.Algorithm)
             {
                 case Algorithm.Kruskal:
-                    Kruskal(startAlgorithm, nodes, ref algorithmNodes, edges, ref algorithmEdges);
+                    Kruskal(nodes, ref algorithmNodes, edges, ref algorithmEdges);
                     break;
                 case Algorithm.BFS:
                     BFS(d, startAlgorithm, nodes, ref algorithmNodes, ref algorithmEdges);
@@ -33,10 +34,20 @@ namespace GraphIt.web.Services
                 case Algorithm.DijkstraPath:
                     DijkstraPath(d, startAlgorithm, nodes, ref algorithmNodes, ref algorithmEdges);
                     break;
+                case Algorithm.Degree:
+                    Degree(d, ref algorithmNodes, ref algorithmEdges);
+                    break;
+                case Algorithm.DegreeCentrality:
+                    DegreeCentrality(ref algorithmNodes, ref algorithmEdges);
+                    break;
+                case Algorithm.MaxFlow:
+                    FordFulkerson(d, startAlgorithm, ref algorithmNodes, ref algorithmEdges);
+                    break;
             }
+            startAlgorithm.Done = true;
         }
 
-        public void Kruskal(StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges)
+        public void Kruskal(IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges)
         {
             algorithmEdges.Clear();
             IEnumerable<Edge> sortedEdges = edges.OrderBy(e => e.Weight);
@@ -53,8 +64,6 @@ namespace GraphIt.web.Services
                     set.Union(edge.TailNodeId, edge.HeadNodeId);
                 }
             }
-            
-            startAlgorithm.Done = true;
         }
 
         public void BFS(DefaultOptions d, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
@@ -84,7 +93,6 @@ namespace GraphIt.web.Services
                         ToExplore.Enqueue(neighbor);
                 }
             }
-            startAlgorithm.Done = true;
         }
 
         public void DFS(DefaultOptions d, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
@@ -114,7 +122,6 @@ namespace GraphIt.web.Services
                         ToExplore.Push(neighbor);
                 }
             }
-            startAlgorithm.Done = true;
         }
 
         public void Dijkstra(DefaultOptions d, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
@@ -134,7 +141,7 @@ namespace GraphIt.web.Services
                 Explored.Add(Exploring);
                 foreach(KeyValuePair<Node, double> kvp in Distances)
                 {
-                    Edge connector = ConnectingEdge(d, Exploring, kvp.Key, algorithmEdges);
+                    Edge connector = ConnectingEdge(d, Exploring.NodeId, kvp.Key.NodeId, algorithmEdges);
                     double exploringDis = Distances[Exploring];
                     if (!Explored.Contains(kvp.Key) && connector != null
                         && exploringDis != double.MaxValue && exploringDis + connector.Weight < kvp.Value)
@@ -148,8 +155,6 @@ namespace GraphIt.web.Services
             {
                 EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}", ref algorithmNodes);
             }
-
-            startAlgorithm.Done = true;
         }
 
         public void DijkstraPath(DefaultOptions d, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
@@ -170,7 +175,7 @@ namespace GraphIt.web.Services
                 Explored.Add(Exploring);
                 foreach (KeyValuePair<Node, double> kvp in Distances)
                 {
-                    Edge connector = ConnectingEdge(d, Exploring, kvp.Key, algorithmEdges);
+                    Edge connector = ConnectingEdge(d, Exploring.NodeId, kvp.Key.NodeId, algorithmEdges);
                     double exploringDis = Distances[Exploring];
                     if (!Explored.Contains(kvp.Key) && connector != null
                         && exploringDis != double.MaxValue && exploringDis + connector.Weight < kvp.Value)
@@ -197,13 +202,127 @@ namespace GraphIt.web.Services
                 }
                 EditAlgorithmNodes(nodeInPath, "", ref algorithmNodes);
             }
-
-            startAlgorithm.Done = true;
         }
+
+        public void Degree(DefaultOptions d, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
+        {
+            Dictionary<int, int> DegreeCount = new Dictionary<int, int>();
+            foreach (AlgorithmNode an in algorithmNodes) DegreeCount[an.Node.NodeId] = 0;
+            foreach (Edge edge in algorithmEdges)
+            {
+                DegreeCount[edge.TailNodeId]++;
+                if (!d.Directed) DegreeCount[edge.TailNodeId]++;
+            }
+            foreach (AlgorithmNode an in algorithmNodes) an.Header = DegreeCount[an.Node.NodeId].ToString();
+        }
+
+        public void DegreeCentrality(ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
+        {
+            Dictionary<int, int> DegreeCount = new Dictionary<int, int>();
+            double maxWeight = 1;
+            double minWeight = 0;
+            foreach (AlgorithmNode an in algorithmNodes) DegreeCount[an.Node.NodeId] = 0;
+            foreach (Edge edge in algorithmEdges)
+            {
+                DegreeCount[edge.TailNodeId]++;
+                DegreeCount[edge.HeadNodeId]++;
+                maxWeight = Math.Max(maxWeight, edge.Weight);
+                if (minWeight == 0) minWeight = edge.Weight;
+                else minWeight = Math.Min(minWeight, edge.Weight);
+            }
+            foreach (Edge edge in algorithmEdges)
+            {
+                double normalizedWeight = (edge.Weight - minWeight) / (maxWeight - minWeight);
+                edge.Width = Math.Max(1, (int)normalizedWeight * 20);
+            }
+            maxWeight = 0;
+            minWeight = -1;
+            foreach (KeyValuePair<int, int> kvp in DegreeCount) 
+            {
+                maxWeight = Math.Max(kvp.Value, maxWeight);
+                if (minWeight == -1) minWeight = kvp.Value;
+                else minWeight = Math.Min(minWeight, kvp.Value);
+            }
+            foreach (AlgorithmNode an in algorithmNodes)
+            {
+                double normalizedWeight = (DegreeCount[an.Node.NodeId] - minWeight) / (maxWeight - minWeight);
+                an.Node.Radius = Math.Max(10, (int)normalizedWeight * 100);
+            }
+        }
+
+        public void FordFulkerson(DefaultOptions d, StartAlgorithm startAlgorithm, ref IList<AlgorithmNode> algorithmNodes, ref IList<Edge> algorithmEdges)
+        {
+            int u, v;
+            double[,] rGraph = new double[MaxId+1, MaxId+1];
+
+            foreach (AlgorithmNode a1 in algorithmNodes)
+            {
+                foreach (AlgorithmNode a2 in algorithmNodes)
+                {
+                    Edge adj = ConnectingEdge(d, a1.Node.NodeId, a2.Node.NodeId, algorithmEdges);
+                    if (adj == null)
+                        rGraph[a1.Node.NodeId, a2.Node.NodeId] = 0;
+                    else rGraph[a1.Node.NodeId, a2.Node.NodeId] = adj.Weight;
+                }
+            }
+
+            int[] parent = new int[MaxId+1];
+
+            double max_flow = 0;
+
+            while (Boolbfs(rGraph, startAlgorithm.StartNode.NodeId, startAlgorithm.EndNode.NodeId, parent, algorithmNodes))
+            {
+                double path_flow = double.MaxValue;
+                for (v = startAlgorithm.EndNode.NodeId; v != startAlgorithm.StartNode.NodeId; v = parent[v])
+                {
+                    u = parent[v];
+                    path_flow = Math.Min(path_flow, rGraph[u, v]);
+                }
+
+                for (v = startAlgorithm.EndNode.NodeId; v != startAlgorithm.StartNode.NodeId; v = parent[v])
+                {
+                    u = parent[v];
+                    rGraph[u, v] -= path_flow;
+                    rGraph[v, u] += path_flow;
+                }
+
+                max_flow += path_flow;
+            }
+            if (d.Directed)
+            {
+                foreach (Edge edge in algorithmEdges)
+                {
+                    double flow = rGraph[edge.HeadNodeId, edge.TailNodeId];
+                    if (flow > 0)
+                    {
+                        edge.Label = $"{flow}/{edge.Weight}";
+                        edge.EdgeColor = AlgoDefOptions.EdgeColor;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Edge edge in algorithmEdges)
+                {
+                    double flow = rGraph[edge.HeadNodeId, edge.TailNodeId];
+                    double flow2 = rGraph[edge.TailNodeId, edge.HeadNodeId];
+                    if (Math.Abs(flow - flow2) > 0)
+                    {
+                        edge.Label = $"{Math.Round(Math.Abs(flow - flow2) / 2, 2)}/{edge.Weight}";
+                        edge.EdgeColor = AlgoDefOptions.EdgeColor;
+                    }
+                }
+            }
+
+            EditAlgorithmNodes(startAlgorithm.StartNode, "Source", ref algorithmNodes);
+            EditAlgorithmNodes(startAlgorithm.EndNode, "Sink", ref algorithmNodes);
+
+            startAlgorithm.Output = Math.Round(max_flow, 2).ToString();
+        }
+
 
         public void EditAlgorithmNodes(Node node, string header, ref IList<AlgorithmNode> algorithmNodes)
         {
-
             AlgorithmNode nodeEditing = algorithmNodes.First(n => n.Node.NodeId == node.NodeId);
             nodeEditing.Header = header;
             nodeEditing.Node.NodeColor = AlgoDefOptions.NodeColor;
@@ -215,6 +334,34 @@ namespace GraphIt.web.Services
             Edge edgeEditing = algorithmEdges.First(e => e.EdgeId == edge.EdgeId);
             edgeEditing.EdgeColor = AlgoDefOptions.EdgeColor;
             edgeEditing.LabelColor = AlgoDefOptions.EdgeLabelColor;
+        }
+
+        public bool Boolbfs(double[,] rGraph, int s, int t, int[] parent, IList<AlgorithmNode> nodes)
+        {
+            bool[] visited = new bool[MaxId+1];
+            foreach (AlgorithmNode a in nodes)
+                visited[a.Node.NodeId] = false;
+
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(s);
+            visited[s] = true;
+            parent[s] = -1;
+ 
+            while (queue.Any())
+            {
+                int u = queue.Dequeue();
+
+                foreach (AlgorithmNode a in nodes)
+                {
+                    if (visited[a.Node.NodeId] == false && rGraph[u, a.Node.NodeId] > 0)
+                    {
+                        queue.Enqueue(a.Node.NodeId);
+                        parent[a.Node.NodeId] = u;
+                        visited[a.Node.NodeId] = true;
+                    }
+                }
+            }
+            return (visited[t] == true);
         }
 
         public IList<NodeEdge> Adjacent(DefaultOptions d, Node node, IList<Node> nodes, IList<Edge> edges)
@@ -234,12 +381,12 @@ namespace GraphIt.web.Services
             return adj;
         }
 
-        public Edge ConnectingEdge(DefaultOptions d, Node tail, Node head, IList<Edge> edges)
+        public Edge ConnectingEdge(DefaultOptions d, int tailId, int headId, IList<Edge> edges)
         {
             foreach (Edge edge in edges)
             {
-                if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !d.Directed))
+                if ((edge.HeadNodeId == headId && edge.TailNodeId == tailId)
+                    || (edge.HeadNodeId == tailId && edge.TailNodeId == headId && !d.Directed))
                 {
                     return edge;
                 }

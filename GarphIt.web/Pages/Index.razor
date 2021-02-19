@@ -23,7 +23,8 @@ else
                 <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
                 break;
             case NavChoice.Home:
-                <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveNodes="ActiveNodes" @bind-ActiveEdges="ActiveEdges" Nodes="Nodes" Edges="Edges"></Home>
+                <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveNodes="ActiveNodes" 
+                      @bind-ActiveEdges="ActiveEdges" Nodes="Nodes" Edges="Edges" @bind-GraphMode="GraphMode"></Home>
                 break;
             case NavChoice.Insert:
                 <Insert @bind-GraphMode="GraphMode" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
@@ -50,6 +51,6 @@ else
 {
     <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></AdjMatrix>
 }
-<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges"
-        ChangeMenu="UpdateChoice" DefaultOptions="DefaultOptions" GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm"></Canvas>
+<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" ChangeMenu="UpdateChoice" 
+        DefaultOptions="DefaultOptions" @bind-GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm"></Canvas>
 <Footer GraphMode="GraphMode" @bind-DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>

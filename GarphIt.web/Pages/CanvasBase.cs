@@ -22,6 +22,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
         [Parameter] public GraphMode GraphMode { get; set; }
+        [Parameter] public EventCallback<GraphMode> GraphModeChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public IList<Edge> ActiveEdges { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
@@ -49,7 +50,8 @@ namespace GraphIt.web.Pages
         public RectSelection RectSelection { get; set; } = new RectSelection();
         public IList<AlgorithmNode> AlgorithmNodes = new List<AlgorithmNode>();
         public IList<Edge> AlgorithmEdges = new List<Edge>();
-        protected override void OnParametersSet()
+
+        protected override async Task OnParametersSetAsync()
         {
             if (GraphMode == GraphMode.Default)
             {
@@ -59,9 +61,35 @@ namespace GraphIt.web.Pages
             {
                 SvgClass = "insert";
             }
-            if (StartAlgorithm.Ready && !StartAlgorithm.Done)
+            else if (GraphMode == GraphMode.Algorithm)
             {
-                AlgorithmService.RunAlgorithm(DefaultOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges); 
+                if (StartAlgorithm.Ready && !StartAlgorithm.Done)
+                    AlgorithmService.RunAlgorithm(DefaultOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges);
+                else if (StartAlgorithm.Save)
+                {
+                    foreach (Node node in Nodes)
+                    {
+                        Node newNode = AlgorithmNodes.First(an => an.Node.NodeId == node.NodeId).Node;
+                        node.LabelColor = newNode.LabelColor;
+                        node.NodeColor = newNode.NodeColor;
+                        node.Radius = newNode.Radius;
+                    }
+                    for (int i = Edges.Count - 1; i >= 0; i--)
+                    {
+                        Edge newEdge = AlgorithmEdges.FirstOrDefault(e => e.EdgeId == Edges[i].EdgeId);
+                        if (newEdge == null)
+                            Edges.RemoveAt(i);
+                        else
+                        {
+                            Edges[i].LabelColor = newEdge.LabelColor;
+                            Edges[i].Label = newEdge.Label;
+                            Edges[i].EdgeColor = newEdge.EdgeColor;
+                            Edges[i].Width = newEdge.Width;
+                        }
+                    }
+                    await GraphModeChanged.InvokeAsync(GraphMode.Default);
+                    await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
+                }
             }
         }
 

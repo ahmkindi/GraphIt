@@ -14,12 +14,14 @@ namespace GraphIt.models
         public AlgorithmType Type { get; set; }
         public string Output { get; set; }
         public bool Ready { get; set; }
+        public bool Save { get; set; }
         public bool Done { get; set; }
         public StartAlgorithm(Algorithm a)
         {
             Algorithm = a;
-            Done = false;
+            Save = false;
             Ready = false;
+            Done = false;
             if (TwoInput.Contains(a)) Type = AlgorithmType.TwoInput;
             else if (OneInput.Contains(a)) Type = AlgorithmType.OneInput;
             else 
@@ -33,6 +35,7 @@ namespace GraphIt.models
         {
             Algorithm = Algorithm.None;
             Ready = false;
+            Save = false;
             Done = false;
         }
     }

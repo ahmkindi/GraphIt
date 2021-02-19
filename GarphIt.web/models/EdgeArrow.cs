@@ -7,7 +7,7 @@ namespace GraphIt.web.models
 {
     public class EdgeArrow
     {
-        public double[] ArrowOffset { get; set; } = { 0, 2.5 };
+        public double[] ArrowOffset { get; set; } = { 7, 2.5 };
         public int Width { get; set; } = 7;
         public int Height { get; set; } = 5;
         public double[] Points { get; set; } = { 0, 0, 7, 2.5, 0, 5 };
