@@ -1,7 +1,5 @@
 ﻿using GraphIt.models;
-using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Newtonsoft.Json.Linq;
 using Syncfusion.Blazor.Inputs;
 using System;
@@ -9,17 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GraphIt.web.Pages
+namespace GraphIt.web.Pages.Design
 {
-    public class NodeOptionsBase : ComponentBase
+    public class SelectedNodeBase : ComponentBase
     {
         public class HexColorValue
         {
             public string Hex { get; set; }
         }
         [Parameter] public HexColorValue ColorValue { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
@@ -31,12 +27,12 @@ namespace GraphIt.web.Pages
 
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
-            int r = (int) double.Parse(e.Value.ToString());
+            int r = (int)double.Parse(e.Value.ToString());
             if (r < 10) r = 10;
             else if (r > 100) r = 100;
-            foreach (Node node in ActiveNodes) 
+            foreach (Node node in ActiveNodes)
             {
-                node.Radius = r; 
+                node.Radius = r;
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
@@ -76,26 +72,6 @@ namespace GraphIt.web.Pages
                 node.NodeColor = ColorValue.Hex;
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-        }
-        public async Task OnDefNodeColorChange(ColorPickerEventArgs e)
-        {
-            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            DefaultOptions.NodeColor = ColorValue.Hex;
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-        public async Task OnDefNodeLabelColorChange(ColorPickerEventArgs e)
-        {
-            ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
-            DefaultOptions.NodeLabelColor = ColorValue.Hex;
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-        public async Task OnDefRadiusChange(ChangeEventArgs e)
-        {
-            int r = (int)double.Parse(e.Value.ToString());
-            if (r < 10) r = 10;
-            else if (r > 100) r = 100;
-            DefaultOptions.NodeRadius = r;
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
 
         public async Task OnRelabel()

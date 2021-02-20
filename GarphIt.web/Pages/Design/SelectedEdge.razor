@@ -1,0 +1,91 @@
+﻿@namespace GraphIt.web.Pages.Design
+@inherits SelectedEdgeBase
+
+@if (Open)
+{
+    NavCss = "NavActive";
+    OpenCss = "show";
+}
+else
+{
+    NavCss = "NavNone";
+    OpenCss = "";
+}
+
+<li class="dropdown border-dark border-right @NavCss @OpenCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+    <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="medgecolor" aria-haspopup="true" aria-expanded="@Open">
+        <span class="oi oi-brush" style="color:@ActiveEdges[0].EdgeColor"></span><span class="oi oi-text" style="color:@ActiveEdges[0].LabelColor"></span>
+    </button>
+    <div class="dropdown-menu @OpenCss" aria-labelledby="medgecolor">
+        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].EdgeColor" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
+        <span class="dropdown-item">Label <SfColorPicker Value="@ActiveEdges[0].LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker></span>
+    </div>
+</li>
+@if (ActiveEdges.Count == 1)
+{
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Width
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" type="number" Min=1 Max=15 step=1 value="@ActiveEdges[0].Width" @onchange="OnWidthChange" />
+        </div>
+    </li>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Label
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" value="@ActiveEdges[0].Label" @onchange="OnEdgeLabelChange" />
+        </div>
+    </li>
+    if (DefaultOptions.Weighted)
+    {
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Weight
+            </div>
+            <div class="p-custom">
+                <input class="shortInput" type="number" Min=1 value="@ActiveEdges[0].Weight" @onchange="OnWeightChange" />
+            </div>
+        </li>
+    }
+}
+else
+{
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Width
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" type="number" Min=1 Max=15 step=1 @onchange="OnWidthChange" />
+        </div>
+    </li>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Label
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" @onchange="OnEdgeLabelChange" />
+        </div>
+    </li>
+    if (DefaultOptions.Weighted)
+    {
+        <li class="d-flex flex-row px-2 border-dark border-right">
+            <div class="py-2">
+                Weight
+            </div>
+            <div class="p-custom">
+                <input class="shortInput" type="number" Min=1 @onchange="OnWeightChange" />
+            </div>
+        </li>
+    }
+}
+<li class="d-flex flex-row px-2">
+    <div class="NavNone px-1 py-2" @onclick="@(() => OnCurve(-0.1))"><span class="oi oi-minus"></span></div>
+    <div class="py-2">
+        Curve
+    </div>
+    <div class="NavNone px-1 py-2" @onclick="@(() => OnCurve(0.1))"><span class="oi oi-plus"></span></div>
+</li>
+ <li class="NavNone p-2 border-dark border-left" @onclick="async () => await DeleteActiveEdges.InvokeAsync(true)"><span class="oi oi-trash"></span></li>

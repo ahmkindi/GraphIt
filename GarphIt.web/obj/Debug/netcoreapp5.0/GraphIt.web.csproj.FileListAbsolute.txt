@@ -116,7 +116,6 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\AdjMatrix.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Canvas.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\EdgeLine.razor.g.cs
-C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\EdgeOptions.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\File.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Footer.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Home.razor.g.cs
@@ -124,7 +123,6 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Insert.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\NavBar.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\NodeCircle.razor.g.cs
-C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\NodeOptions.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Shared\MainLayout.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\_Imports.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\GraphIt.web.RazorComponent.output.cache
@@ -136,7 +134,6 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\AdjMatrix.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Canvas.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\EdgeLine.razor.g.cs
-C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\EdgeOptions.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\File.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Footer.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Home.razor.g.cs
@@ -144,7 +141,6 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Insert.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\NavBar.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\NodeCircle.razor.g.cs
-C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\NodeOptions.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Shared\MainLayout.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\_Imports.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Error.cshtml.g.cs
@@ -168,3 +164,13 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\AlgoNodeCircle.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\AlgoEdgeLine.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\AlgoNodeCircle.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Design\DefaultEdge.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Design\DefaultNode.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Design\Design.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Design\SelectedEdge.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\Design\SelectedNode.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\DefaultEdge.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\DefaultNode.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\Design.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\SelectedEdge.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\SelectedNode.razor.g.cs

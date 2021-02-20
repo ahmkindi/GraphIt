@@ -1,0 +1,77 @@
+﻿@namespace GraphIt.web.Pages.Design
+@inherits SelectedNodeBase
+
+@if (Open)
+{
+    NavCss = "NavActive";
+    OpenCss = "show";
+}
+else
+{
+    NavCss = "NavNone";
+    OpenCss = "";
+}
+
+<li class="dropdown border-dark border-right @OpenCss @NavCss" data-toggle="tooltip" data-placement="bottom" title="Color">
+    <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="mnodecolor" aria-haspopup="true" aria-expanded="@Open">
+        <span class="oi oi-brush" style="color:@ActiveNodes[0].NodeColor"></span><span class="oi oi-text" style="color:@ActiveNodes[0].LabelColor"></span>
+    </button>
+    <div class="dropdown-menu @OpenCss" aria-labelledby="mnodecolor">
+        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker></span>
+        <span class="dropdown-item">Label <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker></span>
+    </div>
+</li>
+@if (ActiveNodes.Count == 1)
+{
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Radius
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" type="number" Min=10 Max=100 step=1 value="@ActiveNodes[0].Radius" @onchange="OnRadiusChange" />
+        </div>
+    </li>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            X
+        </div>
+        <div class="p-custom pr-1">
+            <input class="medInput" type="number" value="@Math.Round(ActiveNodes[0].Xaxis, 2)" @onchange="OnXaxisChange" />
+        </div>
+        <div class="pl-1 py-2">
+            Y
+        </div>
+        <div class="p-custom">
+            <input class="medInput" type="number" value="@Math.Round(ActiveNodes[0].Yaxis, 2)" @onchange="OnYaxisChange" />
+        </div>
+    </li>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Label
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" value="@ActiveNodes[0].Label" @onchange="OnNodeLabelChange" />
+        </div>
+    </li>
+}
+else
+{
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Radius
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" type="number" Min=10 Max=100 step=1 @onchange="OnRadiusChange" />
+        </div>
+    </li>
+    <li class="d-flex flex-row px-2 border-dark border-right">
+        <div class="py-2">
+            Label
+        </div>
+        <div class="p-custom">
+            <input class="shortInput" @onchange="OnNodeLabelChange" />
+        </div>
+    </li>
+}
+<li class="NavNone p-2" @onclick="OnRelabel">Re-label</li>
+<li class="NavNone p-2 border-dark border-left" @onclick="async () => await DeleteActiveNodes.InvokeAsync(true)"><span class="oi oi-trash"></span></li>

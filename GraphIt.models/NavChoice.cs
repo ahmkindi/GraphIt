@@ -7,9 +7,8 @@ namespace GraphIt.models
         File,
         Home,
         Insert,
+        Design,
         View,
-        Node,
-        Edge,
         About,
     }
 }

@@ -19,6 +19,7 @@ namespace GraphIt.web.Pages
         public NavChoice? Choice { get; set; }
         public StartAlgorithm StartAlgorithm { get; set; } = new StartAlgorithm();
         public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
+        public DefaultOptions DefaultAlgoOptions { get; set; } = new DefaultOptions("#ffc400", "#000000", "#ff0000", "#000000");
         public IList<Node> ActiveNodes { get; set; } = new List<Node>();
         public IList<Edge> ActiveEdges { get; set; } = new List<Edge>();
         public List<Node> Nodes { get; set; } = new List<Node>();

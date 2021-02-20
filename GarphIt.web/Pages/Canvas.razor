@@ -5,7 +5,7 @@
         <MenuItem Text="Copy" Disabled="@(!ActiveNodes.Any())" IconCss="oi oi-layers"></MenuItem>
         <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())" IconCss="oi oi-clipboard"></MenuItem>
         <MenuItem Separator="true"></MenuItem>
-        <MenuItem Text="Insert Edge" IconCss="oi oi-transfer"></MenuItem>
+        <MenuItem Text="Insert Edge" Hidden="@(ActiveNodes.Count != 1)" IconCss="oi oi-transfer"></MenuItem>
         <MenuItem Text="Align" Disabled="@(ActiveNodes.Count < 2)" IconCss="oi oi-project">
             <MenuItems>
                 <MenuItem Text="Left" IconCss="oi oi-align-left"></MenuItem>
@@ -19,10 +19,10 @@
         </MenuItem>
         <MenuItem Text="Edit" Hidden="@(ActiveNodes.Any() && ActiveEdges.Any())" IconCss="oi oi-pencil"></MenuItem>
         <MenuItem Text="Edit" Hidden="@(!(ActiveNodes.Any() && ActiveEdges.Any()))" IconCss="oi oi-pencil">
-        <MenuItems>
-            <MenuItem Text="Nodes" IconCss="oi oi-media-record"></MenuItem>
-            <MenuItem Text="Edges" IconCss="oi oi-transfer"></MenuItem>
-        </MenuItems>
+            <MenuItems>
+                <MenuItem Text="Nodes" IconCss="oi oi-media-record"></MenuItem>
+                <MenuItem Text="Edges" IconCss="oi oi-transfer"></MenuItem>
+            </MenuItems>
         </MenuItem>
         <MenuItem Text="Delete" IconCss="oi oi-trash"></MenuItem>
     </MenuItems>
@@ -34,6 +34,15 @@
         <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())" IconCss="oi oi-clipboard"></MenuItem>
         <MenuItem Separator="true"></MenuItem>
         <MenuItem Text="Insert Node" IconCss="oi oi-plus"></MenuItem>
+        <MenuItem Text="Zoom In" IconCss="oi oi-zoom-in"></MenuItem>
+        <MenuItem Text="Zoom Out" IconCss="oi oi-zoom-out"></MenuItem>
+    </MenuItems>
+    <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
+</SfContextMenu>
+<SfContextMenu @ref="AlgorithmContextMenu" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Stop Algorithm" IconCss="oi oi-media-stop"></MenuItem>
+        <MenuItem Separator="true"></MenuItem>
         <MenuItem Text="Zoom In" IconCss="oi oi-zoom-in"></MenuItem>
         <MenuItem Text="Zoom Out" IconCss="oi oi-zoom-out"></MenuItem>
     </MenuItems>
@@ -124,6 +133,24 @@ else if (NewEdge.MultiEdges.Any())
                 <SfCheckBox @bind-Checked="NewEdge.MultiGraph" Label="Multi-Graph"></SfCheckBox>
                 <SfButton CssClass="e-success" @onclick="(() => AddNewEdge(true))">Done</SfButton>
                 <SfButton CssClass="e-danger" @onclick="(() => AddNewEdge(false))">Cancel</SfButton>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
+@if (StartAlgorithm.Clear)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <div class="text-center">
+                    <div class="row m-3 border-bottom border-dark">
+                        Save changes to your original graph?
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <button class="btn btn-outline-success shadow-none btn-sm" @onclick="Save">Save</button>
+                        <button class="btn btn-outline-danger shadow-none btn-sm" @onclick="Reset">Reset</button>
+                    </div>
+                </div>
             </Content>
         </DialogTemplates>
     </SfDialog>

@@ -13,14 +13,17 @@
             @("MultiGraph")
         </span>
     }
-    <div class="px-2">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" checked="@DefaultOptions.Weighted" id="wcheck" @onchange="OnDefWeightedChange">
-            <label class="form-check-label" for="wcheck">Weighted</label>
+    @if (GraphMode != GraphMode.Algorithm)
+    {
+        <div class="px-2">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" checked="@DefaultOptions.Weighted" id="wcheck" @onchange="OnDefWeightedChange">
+                <label class="form-check-label" for="wcheck">Weighted</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" checked="@DefaultOptions.Directed" id="dcheck" @onchange="OnDefDirectedChange">
+                <label class="form-check-label" for="dcheck">Directed</label>
+            </div>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" checked="@DefaultOptions.Directed" id="dcheck" @onchange="OnDefDirectedChange">
-            <label class="form-check-label" for="dcheck">Directed</label>
-        </div>
-    </div>
+    }
 </div>

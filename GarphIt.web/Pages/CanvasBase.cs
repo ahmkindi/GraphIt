@@ -18,6 +18,7 @@ namespace GraphIt.web.Pages
     public class CanvasBase : ComponentBase
     {
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public DefaultOptions DefaultAlgoOptions { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
@@ -45,13 +46,14 @@ namespace GraphIt.web.Pages
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public SfContextMenu<MenuItem> ObjectContextMenu { get; set; }
         public SfContextMenu<MenuItem> CanvasContextMenu { get; set; }
+        public SfContextMenu<MenuItem> AlgorithmContextMenu { get; set; }
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
         private double[] origin = new double[2];
         public RectSelection RectSelection { get; set; } = new RectSelection();
         public IList<AlgorithmNode> AlgorithmNodes = new List<AlgorithmNode>();
         public IList<Edge> AlgorithmEdges = new List<Edge>();
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             if (GraphMode == GraphMode.Default)
             {
@@ -64,32 +66,7 @@ namespace GraphIt.web.Pages
             else if (GraphMode == GraphMode.Algorithm)
             {
                 if (StartAlgorithm.Ready && !StartAlgorithm.Done)
-                    AlgorithmService.RunAlgorithm(DefaultOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges);
-                else if (StartAlgorithm.Save)
-                {
-                    foreach (Node node in Nodes)
-                    {
-                        Node newNode = AlgorithmNodes.First(an => an.Node.NodeId == node.NodeId).Node;
-                        node.LabelColor = newNode.LabelColor;
-                        node.NodeColor = newNode.NodeColor;
-                        node.Radius = newNode.Radius;
-                    }
-                    for (int i = Edges.Count - 1; i >= 0; i--)
-                    {
-                        Edge newEdge = AlgorithmEdges.FirstOrDefault(e => e.EdgeId == Edges[i].EdgeId);
-                        if (newEdge == null)
-                            Edges.RemoveAt(i);
-                        else
-                        {
-                            Edges[i].LabelColor = newEdge.LabelColor;
-                            Edges[i].Label = newEdge.Label;
-                            Edges[i].EdgeColor = newEdge.EdgeColor;
-                            Edges[i].Width = newEdge.Width;
-                        }
-                    }
-                    await GraphModeChanged.InvokeAsync(GraphMode.Default);
-                    await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
-                }
+                    AlgorithmService.RunAlgorithm(DefaultOptions, DefaultAlgoOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges);
             }
         }
 
@@ -115,14 +92,9 @@ namespace GraphIt.web.Pages
                     await OnDelete();
                     break;
                 case "Edit":
-                    if (ActiveNodes.Count == 1) await ChangeMenu.InvokeAsync(NavChoice.Node);
-                    else if (ActiveEdges.Count == 1) await ChangeMenu.InvokeAsync(NavChoice.Edge);
-                    break;
                 case "Nodes":
-                    await ChangeMenu.InvokeAsync(NavChoice.Node);
-                    break;
                 case "Edges":
-                    await ChangeMenu.InvokeAsync(NavChoice.Edge);
+                    await ChangeMenu.InvokeAsync(NavChoice.Design);
                     break;
                 case "Insert Edge":
                     InsertEdge();
@@ -130,6 +102,10 @@ namespace GraphIt.web.Pages
                 case "Insert Node":
                     NodeService.AddNode(Nodes, DefaultOptions, origin[0]*SVGControl.Scale + SVGControl.Xaxis, origin[1]*SVGControl.Scale + SVGControl.Yaxis);
                     await NodesChanged.InvokeAsync(Nodes);
+                    break;
+                case "Stop Algorithm":
+                    if (StartAlgorithm.Done) StartAlgorithm.Clear = true;
+                    else await Reset();
                     break;
                 case "Zoom In":
                     await ZoomIn();
@@ -176,11 +152,18 @@ namespace GraphIt.web.Pages
                     }
                     else
                     {
-                        CanvasContextMenu.Open(e.ClientX, e.ClientY);
-                        origin[0] = e.ClientX;
-                        origin[1] = e.ClientY;
-                        if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
-                        if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                        if (GraphMode == GraphMode.Algorithm)
+                        {
+                            AlgorithmContextMenu.Open(e.ClientX, e.ClientY);
+                        }
+                        else
+                        {
+                            CanvasContextMenu.Open(e.ClientX, e.ClientY);
+                            origin[0] = e.ClientX;
+                            origin[1] = e.ClientY;
+                            if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
+                            if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                        }
                     }
                 }
                 else
@@ -484,6 +467,37 @@ namespace GraphIt.web.Pages
             await EdgesChanged.InvokeAsync(Edges);
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+        }
+
+        public async Task Save()
+        {
+            foreach (Node node in Nodes)
+            {
+                Node newNode = AlgorithmNodes.First(an => an.Node.NodeId == node.NodeId).Node;
+                node.LabelColor = newNode.LabelColor;
+                node.NodeColor = newNode.NodeColor;
+                node.Radius = newNode.Radius;
+            }
+            for (int i = Edges.Count - 1; i >= 0; i--)
+            {
+                Edge newEdge = AlgorithmEdges.FirstOrDefault(e => e.EdgeId == Edges[i].EdgeId);
+                if (newEdge == null)
+                    Edges.RemoveAt(i);
+                else
+                {
+                    Edges[i].LabelColor = newEdge.LabelColor;
+                    Edges[i].Label = newEdge.Label;
+                    Edges[i].EdgeColor = newEdge.EdgeColor;
+                    Edges[i].Width = newEdge.Width;
+                }
+            }
+            await Reset();
+        }
+
+        public async Task Reset()
+        {
+            await GraphModeChanged.InvokeAsync(GraphMode.Default);
+            await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
         }
         public async Task ZoomIn()
         {
