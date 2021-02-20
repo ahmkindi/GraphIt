@@ -9,9 +9,9 @@ namespace GraphIt.models
         public string Header { get; set; }
         public Node Node { get; set; }
 
-        public AlgorithmNode(Node node)
+        public AlgorithmNode(Node node, DefaultOptions d)
         {
-            Node = new Node(node);
+            Node = new Node(node, d);
         }
 
         public bool Equals(AlgorithmNode other)

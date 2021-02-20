@@ -9,7 +9,7 @@ namespace GraphIt.models
     public class Edge : IEquatable<Edge>
     {
 
-        public Edge(Edge edge)
+        public Edge(Edge edge, DefaultOptions d)
         {
             EdgeId = edge.EdgeId;
             HeadNodeId = edge.HeadNodeId;
@@ -18,8 +18,8 @@ namespace GraphIt.models
             Weight = edge.Weight;
             Label = edge.Label;
             Width = edge.Width;
-            LabelColor = edge.LabelColor;
-            EdgeColor = edge.EdgeColor;
+            LabelColor = d.EdgeLabelColor;
+            EdgeColor = d.EdgeColor;
         }
         public Edge()
         {

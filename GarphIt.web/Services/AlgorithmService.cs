@@ -27,8 +27,8 @@ namespace GraphIt.web.Services
             AlgorithmEdges = algorithmEdges;
             AlgorithmNodes.Clear();
             AlgorithmEdges.Clear();
-            foreach (Node node in nodes) AlgorithmNodes.Add(new AlgorithmNode(node));
-            foreach (Edge edge in edges) AlgorithmEdges.Add(new Edge(edge));
+            foreach (Node node in nodes) AlgorithmNodes.Add(new AlgorithmNode(node, d));
+            foreach (Edge edge in edges) AlgorithmEdges.Add(new Edge(edge, d));
             MaxId = nodes.Max(n => n.NodeId);
             
             switch (StartAlgorithm.Algorithm)
@@ -63,7 +63,7 @@ namespace GraphIt.web.Services
 
         public void Kruskal()
         {
-            AlgorithmEdges.Clear();
+            double sum = 0;
             IEnumerable<Edge> sortedEdges = Edges.OrderBy(e => e.Weight);
             Set set = new Set(Nodes);
             
@@ -74,10 +74,12 @@ namespace GraphIt.web.Services
             {
                 if (set.FindSet(edge.TailNodeId) != set.FindSet(edge.HeadNodeId))
                 {
-                    AlgorithmEdges.Add(edge);
+                    sum += edge.Weight;
+                    EditAlgorithmEdges(edge);
                     set.Union(edge.TailNodeId, edge.HeadNodeId);
                 }
             }
+            StartAlgorithm.Output = $"Weight of MST is {sum}";
         }
 
         public void BFS()
@@ -86,6 +88,7 @@ namespace GraphIt.web.Services
             IList<Node> Explored = new List<Node>();
             NodeEdge Exploring;
             int count = 1;
+            EditAlgorithmNodes(StartAlgorithm.StartNode, count.ToString(), "");
             ToExplore.Enqueue(new NodeEdge(StartAlgorithm.StartNode));
 
             while (ToExplore.Any())
@@ -95,9 +98,12 @@ namespace GraphIt.web.Services
                     continue;
 
                 Explored.Add(Exploring.Node);
-                EditAlgorithmNodes(Exploring.Node, count.ToString());
+                
                 if (count > 1)
+                {
                     EditAlgorithmEdges(Exploring.Edge);
+                    EditAlgorithmNodes(Exploring.Node, count.ToString());
+                }
 
                 count++;
 
@@ -107,6 +113,7 @@ namespace GraphIt.web.Services
                         ToExplore.Enqueue(neighbor);
                 }
             }
+            TraversalOutput(Explored);
         }
 
         public void DFS()
@@ -115,6 +122,7 @@ namespace GraphIt.web.Services
             IList<Node> Explored = new List<Node>();
             NodeEdge Exploring;
             int count = 1;
+            EditAlgorithmNodes(StartAlgorithm.StartNode, count.ToString(), "");
             ToExplore.Push(new NodeEdge(StartAlgorithm.StartNode));
 
             while (ToExplore.Any())
@@ -123,10 +131,13 @@ namespace GraphIt.web.Services
                 if (Explored.Contains(Exploring.Node))
                     continue;
 
-                Explored.Add(Exploring.Node);
-                EditAlgorithmNodes(Exploring.Node, count.ToString());
+                Explored.Add(Exploring.Node); 
+
                 if (count > 1)
+                {
                     EditAlgorithmEdges(Exploring.Edge);
+                    EditAlgorithmNodes(Exploring.Node, count.ToString());
+                }
 
                 count++;
 
@@ -136,6 +147,8 @@ namespace GraphIt.web.Services
                         ToExplore.Push(neighbor);
                 }
             }
+
+            TraversalOutput(Explored);
         }
 
         public void Dijkstra()
@@ -167,7 +180,8 @@ namespace GraphIt.web.Services
 
             foreach(KeyValuePair<Node, double> kvp in Distances)
             {
-                EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}");
+                if (kvp.Key.NodeId == StartAlgorithm.StartNode.NodeId) EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}", "");
+                else EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}");
             }
         }
 
@@ -199,22 +213,28 @@ namespace GraphIt.web.Services
                     }
                 }
             }
-
+            double totalLength = 0;
             if (!Path.ContainsKey(StartAlgorithm.EndNode))
                 StartAlgorithm.Output = "No Path Exists";
             else
             {
                 Node nodeInPath = StartAlgorithm.EndNode;
+                StartAlgorithm.Output = nodeInPath.Label;
                 while (nodeInPath != StartAlgorithm.StartNode)
                 {
+                    if (nodeInPath == StartAlgorithm.EndNode)
+                        EditAlgorithmNodes(nodeInPath, "", "");
+                    else EditAlgorithmNodes(nodeInPath, "");
                     Edge edgeInPath = Path[nodeInPath];
-                    EditAlgorithmNodes(nodeInPath, "");
+                    totalLength += edgeInPath.Weight;
                     EditAlgorithmEdges(edgeInPath);
                     Node prev = Path[nodeInPath].TailNode(Nodes);
                     if (prev == nodeInPath && !DefaultOptions.Directed) prev = Path[nodeInPath].HeadNode(Nodes);
                     nodeInPath = prev;
+                    StartAlgorithm.Output = $"{nodeInPath.Label}=>{StartAlgorithm.Output}";
                 }
-                EditAlgorithmNodes(nodeInPath, "");
+                EditAlgorithmNodes(nodeInPath, "", "");
+                StartAlgorithm.Output = $"Path length is {totalLength}: {StartAlgorithm.Output}";
             }
         }
 
@@ -268,6 +288,8 @@ namespace GraphIt.web.Services
         {
             int u, v;
             double[,] rGraph = new double[MaxId+1, MaxId+1];
+            HashSet<int> nodesUsed = new HashSet<int>();
+            
 
             foreach (AlgorithmNode a1 in AlgorithmNodes)
             {
@@ -311,6 +333,8 @@ namespace GraphIt.web.Services
                     {
                         edge.Label = $"{flow}/{edge.Weight}";
                         edge.EdgeColor = DefaultAlgoOptions.EdgeColor;
+                        nodesUsed.Add(edge.HeadNodeId);
+                        nodesUsed.Add(edge.TailNodeId);
                     }
                 }
             }
@@ -324,14 +348,17 @@ namespace GraphIt.web.Services
                     {
                         edge.Label = $"{Math.Round(Math.Abs(flow - flow2) / 2, 2)}/{edge.Weight}";
                         edge.EdgeColor = DefaultAlgoOptions.EdgeColor;
+                        nodesUsed.Add(edge.HeadNodeId);
+                        nodesUsed.Add(edge.TailNodeId);
                     }
                 }
             }
+            foreach (int i in nodesUsed)
+                EditAlgorithmNodes(i, "");
+            EditAlgorithmNodes(StartAlgorithm.StartNode, "Source", "");
+            EditAlgorithmNodes(StartAlgorithm.EndNode, "Sink", "");
 
-            EditAlgorithmNodes(StartAlgorithm.StartNode, "Source");
-            EditAlgorithmNodes(StartAlgorithm.EndNode, "Sink");
-
-            StartAlgorithm.Output = Math.Round(max_flow, 2).ToString();
+            StartAlgorithm.Output = $"Maximum Flow = {Math.Round(max_flow, 2)}";
         }
 
 
@@ -341,6 +368,22 @@ namespace GraphIt.web.Services
             nodeEditing.Header = header;
             nodeEditing.Node.NodeColor = DefaultAlgoOptions.NodeColor;
             nodeEditing.Node.LabelColor = DefaultAlgoOptions.NodeLabelColor;
+        }
+
+        public void EditAlgorithmNodes(int id, string header)
+        {
+            AlgorithmNode nodeEditing = AlgorithmNodes.First(n => n.Node.NodeId == id);
+            nodeEditing.Header = header;
+            nodeEditing.Node.NodeColor = DefaultAlgoOptions.NodeColor;
+            nodeEditing.Node.LabelColor = DefaultAlgoOptions.NodeLabelColor;
+        }
+
+        public void EditAlgorithmNodes(Node node, string header, string _)
+        {
+            AlgorithmNode nodeEditing = AlgorithmNodes.First(n => n.Node.NodeId == node.NodeId);
+            nodeEditing.Header = header;
+            nodeEditing.Node.NodeColor = "#0000ff";
+            nodeEditing.Node.LabelColor = "#ffffff";
         }
 
         public void EditAlgorithmEdges(Edge edge)
@@ -421,6 +464,21 @@ namespace GraphIt.web.Services
             }
 
             return closest;
+        }
+
+        public void TraversalOutput(IList<Node> explored)
+        {
+            int count;
+            StartAlgorithm.Output = "Traversal Order: ";
+            IList<string> labelsUsed = new List<string>();
+            foreach (Node node in explored)
+            {
+                StartAlgorithm.Output += node.Label;
+                count = labelsUsed.Where(s => s == node.Label).Count();
+                if (count > 0) StartAlgorithm.Output += $"[{count}]";
+                StartAlgorithm.Output += " ";
+                labelsUsed.Add(node.Label);
+            }
         }
 
     }
