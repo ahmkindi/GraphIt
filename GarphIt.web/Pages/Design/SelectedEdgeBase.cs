@@ -25,9 +25,12 @@ namespace GraphIt.web.Pages.Design
 
         public async Task OnWidthChange(ChangeEventArgs e)
         {
+            int w = (int)double.Parse(e.Value.ToString());
+            if (w < 2) w = 25;
+            else if (w > 20) w = 20;
             foreach (Edge edge in ActiveEdges)
             {
-                edge.Width = int.Parse(e.Value.ToString());
+                edge.Width = w;
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }

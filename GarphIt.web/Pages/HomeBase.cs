@@ -18,7 +18,6 @@ namespace GraphIt.web.Pages
 {
     public class HomeBase : ComponentBase
     {
-        public bool Animate { get; set; } = false;
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public GraphMode GraphMode { get; set; }
@@ -31,7 +30,41 @@ namespace GraphIt.web.Pages
         [Parameter] public IList<Edge> Edges { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        public bool Animate { get; set; } = false;
+        public bool GetDegreePref { get; set; } = false;
+        public bool[] IsDisabled { get; set; }
 
+        protected override void OnInitialized()
+        {
+            IsDisabled = new bool[Enum.GetValues(typeof(Algorithm)).Length];
+        }
+        protected override void OnParametersSet()
+        {
+            for (int i = 0; i < IsDisabled.Length; i++)
+                IsDisabled[i] = false;
+
+            if (!Nodes.Any())
+                for (int i = 0; i < IsDisabled.Length; i++)
+                    IsDisabled[i] = true;
+            else 
+            {
+                if (DefaultOptions.MultiGraph) IsDisabled[(int)Algorithm.MaxFlow] = true;
+                if (!DefaultOptions.Weighted) 
+                {
+                    IsDisabled[(int)Algorithm.MaxFlow] = true;
+                    IsDisabled[(int)Algorithm.Dijkstra] = true;
+                    IsDisabled[(int)Algorithm.DijkstraPath] = true;
+                    IsDisabled[(int)Algorithm.Kruskal] = true;
+                }
+                if (!DefaultOptions.Directed)
+                {
+                    IsDisabled[(int)Algorithm.InDegreeCentrality] = true;
+                    IsDisabled[(int)Algorithm.OutDegreeCentrality] = true;
+                }
+            }
+
+        }
         public async Task OnMatrixClick()
         {
             Rep = Representation.Matrix;

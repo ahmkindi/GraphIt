@@ -19,7 +19,7 @@ namespace GraphIt.web.Pages
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
-        public bool StopZoomIn { get; set; }
+        [Inject] public IZoomService ZoomService { get; set; }
         public IList<Node> FilterNodes { get; set; } = new List<Node>();
         public string Filter { get; set; } = "";
         public int Counter { get; set; }
@@ -40,18 +40,19 @@ namespace GraphIt.web.Pages
             {
                 if (!Nodes.Contains(FilterNodes[i])) FilterNodes.RemoveAt(i);
             }
-            if (SVGControl.Scale <= 0.2) StopZoomIn = true;
-            else StopZoomIn = false;
         }
-        public async Task OnScaleClick(double x)
+        public async Task OnScaleClick(bool zoomOut)
         {
-            SVGControl.Scale += x;
-            await SVGControlChanged.InvokeAsync(SVGControl);
+            if (zoomOut)
+            {
+                if (ZoomService.ZoomOut(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
+            }
+            else if (ZoomService.ZoomIn(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
         }
 
-        public async Task SelectionZoom(ChangeEventArgs e)
+        public async Task SelectionZoom(double i)
         {
-            SVGControl.Scale = Double.Parse(e.Value.ToString());
+            SVGControl.Scale = i;
             await SVGControlChanged.InvokeAsync(SVGControl);
         }
 

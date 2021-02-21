@@ -15,7 +15,7 @@ namespace GraphIt.web.Services
         void Dijkstra();
         void DijkstraPath();
         void Degree();
-        void DegreeCentrality();
+        void DegreeCentrality(string pref);
         void FordFulkerson();
     }
 }

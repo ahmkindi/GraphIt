@@ -15,14 +15,22 @@
         Algorithms
     </button>
     <div class="dropdown-menu" aria-labelledby="algos">
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)">BFS</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)">DFS</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Kruskal)">Kruskals MST</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)">Dijkstras Shortest Distances To Node</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DijkstraPath)">Dijkstras Shortest Path Between 2 Nodes</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.MaxFlow)">Max-flow</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)">Degree of vertices</a>
-        <a class="dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DegreeCentrality)">Degree Centrality</a>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.BFS)" disabled="@IsDisabled[(int)Algorithm.BFS]">BFS</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DFS)" disabled="@IsDisabled[(int)Algorithm.DFS]">DFS</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Kruskal)" disabled="@IsDisabled[(int)Algorithm.Kruskal]">Kruskals MST</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)" disabled="@IsDisabled[(int)Algorithm.Dijkstra]">Dijkstras Single Source</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DijkstraPath)" disabled="@IsDisabled[(int)Algorithm.DijkstraPath]">Dijkstras Shortest Path</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.MaxFlow)" disabled="@IsDisabled[(int)Algorithm.MaxFlow]">Max-flow</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)" disabled="@IsDisabled[(int)Algorithm.Degree]">Degree of Vertices</button>
+        @if (DefaultOptions.Directed)
+        {
+            <button class="btn dropdown-item" @onclick="() => GetDegreePref = true" disabled="@IsDisabled[(int)Algorithm.DegreeCentrality]">Degree Centrality</button>
+        }
+        else
+        {
+            <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)" disabled="@IsDisabled[(int)Algorithm.DegreeCentrality]">Degree Centrality</button>
+        }
+
     </div>
 </li>
 @if (StartAlgorithm.Algorithm != Algorithm.None)
@@ -51,4 +59,28 @@
             <li><button class="btn" @onclick="() => Animate = false"><span class="oi oi-x"></span></button></li>
         }
     }
+}
+
+@if (GetDegreePref)
+{
+    <SfDialog Width="300px" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <div class="text-center">
+                    <div class="row m-3 border-bottom border-dark">
+                        How do you specify the importance of a Node?
+                    </div>
+                    <div class="d-flex align-items-baseline">
+                        <button class="btn btn-outline-success shadow-none btn-sm" 
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.InDegreeCentrality); GetDegreePref = false; }">In-Degree</button>
+                        <button class="btn btn-outline-success shadow-none btn-sm" 
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.OutDegreeCentrality); GetDegreePref = false; }">Out-Degree</button>
+                        <button class="btn btn-outline-success shadow-none btn-sm" 
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.DegreeCentrality); GetDegreePref = false; }">Both</button>
+                        <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="() => GetDegreePref = false">cancel</button>
+                    </div>
+                </div>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
 }

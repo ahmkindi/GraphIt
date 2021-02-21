@@ -10,6 +10,8 @@ namespace GraphIt.models
         BFS,
         DFS,
         Degree,
+        InDegreeCentrality,
+        OutDegreeCentrality,
         DegreeCentrality,
         Kruskal,
         Dijkstra,

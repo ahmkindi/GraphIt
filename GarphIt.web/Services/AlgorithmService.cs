@@ -48,14 +48,20 @@ namespace GraphIt.web.Services
                 case Algorithm.DijkstraPath:
                     DijkstraPath();
                     break;
+                case Algorithm.MaxFlow:
+                    FordFulkerson();
+                    break;
                 case Algorithm.Degree:
                     Degree();
                     break;
                 case Algorithm.DegreeCentrality:
-                    DegreeCentrality();
+                    DegreeCentrality("both");
                     break;
-                case Algorithm.MaxFlow:
-                    FordFulkerson();
+                case Algorithm.InDegreeCentrality:
+                    DegreeCentrality("in");
+                    break;
+                case Algorithm.OutDegreeCentrality:
+                    DegreeCentrality("out");
                     break;
             }
             StartAlgorithm.Done = true;
@@ -240,37 +246,44 @@ namespace GraphIt.web.Services
 
         public void Degree()
         {
-            Dictionary<int, int> DegreeCount = new Dictionary<int, int>();
-            foreach (AlgorithmNode an in AlgorithmNodes) DegreeCount[an.Node.NodeId] = 0;
+            Dictionary<int, int> InDegreeCount = new Dictionary<int, int>();
+            Dictionary<int, int> OutDegreeCount = new Dictionary<int, int>();
+            foreach (AlgorithmNode an in AlgorithmNodes) 
+            {
+                InDegreeCount[an.Node.NodeId] = 0;
+                OutDegreeCount[an.Node.NodeId] = 0;
+            } 
             foreach (Edge edge in AlgorithmEdges)
             {
-                DegreeCount[edge.TailNodeId]++;
-                if (!DefaultOptions.Directed) DegreeCount[edge.TailNodeId]++;
+                OutDegreeCount[edge.TailNodeId]++;
+                InDegreeCount[edge.HeadNodeId]++;
             }
-            foreach (AlgorithmNode an in AlgorithmNodes) an.Header = DegreeCount[an.Node.NodeId].ToString();
+            if (DefaultOptions.Directed)
+                foreach (AlgorithmNode an in AlgorithmNodes)
+                    an.Header = $"In-Degree:{InDegreeCount[an.Node.NodeId]}\nOut-Degree:{OutDegreeCount[an.Node.NodeId]}";
+            else
+                foreach (AlgorithmNode an in AlgorithmNodes)
+                    an.Header = $"Degree:{InDegreeCount[an.Node.NodeId]+OutDegreeCount[an.Node.NodeId]}";
         }
 
-        public void DegreeCentrality()
+        public void DegreeCentrality(string pref)
         {
             Dictionary<int, int> DegreeCount = new Dictionary<int, int>();
-            double maxWeight = 1;
-            double minWeight = 0;
+            double maxWeight = 0;
+            double minWeight = -1;
             foreach (AlgorithmNode an in AlgorithmNodes) DegreeCount[an.Node.NodeId] = 0;
             foreach (Edge edge in AlgorithmEdges)
             {
-                DegreeCount[edge.TailNodeId]++;
-                DegreeCount[edge.HeadNodeId]++;
-                maxWeight = Math.Max(maxWeight, edge.Weight);
-                if (minWeight == 0) minWeight = edge.Weight;
-                else minWeight = Math.Min(minWeight, edge.Weight);
+                if (pref == "in")
+                    DegreeCount[edge.HeadNodeId]++;
+                else if (pref == "out")
+                    DegreeCount[edge.TailNodeId]++;
+                else if (pref == "both")
+                {
+                    DegreeCount[edge.TailNodeId]++;
+                    DegreeCount[edge.HeadNodeId]++;
+                }
             }
-            foreach (Edge edge in AlgorithmEdges)
-            {
-                double normalizedWeight = (edge.Weight - minWeight) / (maxWeight - minWeight);
-                edge.Width = Math.Max(1, (int)normalizedWeight * 20);
-            }
-            maxWeight = 0;
-            minWeight = -1;
             foreach (KeyValuePair<int, int> kvp in DegreeCount) 
             {
                 maxWeight = Math.Max(kvp.Value, maxWeight);
@@ -280,7 +293,7 @@ namespace GraphIt.web.Services
             foreach (AlgorithmNode an in AlgorithmNodes)
             {
                 double normalizedWeight = (DegreeCount[an.Node.NodeId] - minWeight) / (maxWeight - minWeight);
-                an.Node.Radius = Math.Max(10, (int)normalizedWeight * 100);
+                an.Node.Radius = (int) (normalizedWeight * (150 - 25) + 25);
             }
         }
 

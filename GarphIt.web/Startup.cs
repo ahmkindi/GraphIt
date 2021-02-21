@@ -37,6 +37,7 @@ namespace GraphIt.web
             services.AddScoped<IEdgeService, EdgeService>();
             services.AddScoped<IAlgorithmService, AlgorithmService>();
             services.AddScoped<IXmlNodeService, XmlNodeService>();
+            services.AddScoped<IZoomService, ZoomService>();
 
         }
 

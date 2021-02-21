@@ -36,7 +36,10 @@ namespace GraphIt.web.Pages.Design
         }
         public async Task OnDefWidthChange(ChangeEventArgs e)
         {
-            DefaultOptions.EdgeWidth = int.Parse(e.Value.ToString());
+            int w = (int)double.Parse(e.Value.ToString());
+            if (w < 2) w = 2;
+            else if (w > 20) w = 20;
+            DefaultOptions.EdgeWidth = w;
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
     }

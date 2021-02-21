@@ -163,12 +163,14 @@ using GraphIt.web.models;
 #line 30 "C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\Pages\AlgoEdgeLine.razor"
       
     [Parameter] public Edge Edge { get; set; }
-    [Parameter] public IList<Node> Nodes { get; set; }
+    [Parameter] public IList<AlgorithmNode> AlgorithmNodes { get; set; }
     [Parameter] public DefaultOptions DefaultOptions { get; set; }
     public ShowEdge ShowEdge { get; set; }
     protected override void OnParametersSet()
     {
-        ShowEdge = new ShowEdge(Edge, Edge.HeadNode(Nodes), Edge.TailNode(Nodes));
+        IList<Node> nodes = new List<Node>();
+        foreach (AlgorithmNode a in AlgorithmNodes) nodes.Add(a.Node);
+        ShowEdge = new ShowEdge(Edge, Edge.HeadNode(nodes), Edge.TailNode(nodes));
     }
 
 #line default

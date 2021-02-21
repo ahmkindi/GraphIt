@@ -36,7 +36,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
-        [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] public IZoomService ZoomService { get; set; }
         [Inject] public IAlgorithmService AlgorithmService { get; set; }
         public string SvgClass { get; set; }
         public IList<Node> CopiedNodes { get; set; } = new List<Node>();
@@ -108,10 +108,10 @@ namespace GraphIt.web.Pages
                     else await Reset();
                     break;
                 case "Zoom In":
-                    await ZoomIn();
+                    if (ZoomService.ZoomIn(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
                     break;
                 case "Zoom Out":
-                    await ZoomOut();
+                    if (ZoomService.ZoomOut(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
                     break;
             }
         }
@@ -394,11 +394,11 @@ namespace GraphIt.web.Pages
         {
             if (e.DeltaY > 0)
             {
-                await ZoomOut();
+                if (ZoomService.ZoomOut(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
             }
             else if (e.DeltaY < 0)
             {
-                await ZoomIn();
+                if (ZoomService.ZoomIn(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
             }
         }
 
@@ -498,20 +498,6 @@ namespace GraphIt.web.Pages
         {
             await GraphModeChanged.InvokeAsync(GraphMode.Default);
             await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
-        }
-        public async Task ZoomIn()
-        {
-            if (SVGControl.Scale > 0.2)
-            {
-                SVGControl.Scale -= 0.1;
-            }
-            await SVGControlChanged.InvokeAsync(SVGControl);
-        }
-
-        public async Task ZoomOut()
-        {
-            SVGControl.Scale += 0.1;
-            await SVGControlChanged.InvokeAsync(SVGControl);
         }
     }
 }

@@ -28,8 +28,8 @@ namespace GraphIt.web.Pages.Design
         public async Task OnRadiusChange(ChangeEventArgs e)
         {
             int r = (int)double.Parse(e.Value.ToString());
-            if (r < 10) r = 10;
-            else if (r > 100) r = 100;
+            if (r < 25) r = 25;
+            else if (r > 150) r = 150;
             foreach (Node node in ActiveNodes)
             {
                 node.Radius = r;

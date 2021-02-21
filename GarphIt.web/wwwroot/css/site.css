@@ -83,6 +83,7 @@ svg {
 .moveNode{
     cursor: move;
 }
+
 svg text {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
