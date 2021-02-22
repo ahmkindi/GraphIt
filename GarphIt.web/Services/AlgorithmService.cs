@@ -399,13 +399,18 @@ namespace GraphIt.web.Services
             // Call the recursive helper function to find articulation 
             // points in DFS tree rooted with vertex 'i' 
             foreach (Node node in Nodes)
-                if (visited[node.NodeId] == false)
+                if (!visited[node.NodeId])
                     APUtil(node.NodeId, visited, disc, low, parent, ap);
 
-            // Now ap[] contains articulation points, print them 
+            // Now ap[] contains articulation points, print them
+            int count = 0;
             foreach (Node node in Nodes)
-                if (ap[node.NodeId] == true)
+                if (ap[node.NodeId])
+                {
                     EditAlgorithmNodes(node, "");
+                    count++;
+                }
+            StartAlgorithm.Output = $"{count} Articulation Points Found";
         }
 
         // A recursive function that find articulation points using DFS 

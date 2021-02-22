@@ -57,7 +57,11 @@ namespace GraphIt.web.Pages
                     IsDisabled[(int)Algorithm.DijkstraPath] = true;
                     IsDisabled[(int)Algorithm.Kruskal] = true;
                 }
-                if (!DefaultOptions.Directed)
+                if (DefaultOptions.Directed)
+                {
+                    IsDisabled[(int)Algorithm.Articulation] = true;
+                }
+                else
                 {
                     IsDisabled[(int)Algorithm.InDegreeCentrality] = true;
                     IsDisabled[(int)Algorithm.OutDegreeCentrality] = true;
