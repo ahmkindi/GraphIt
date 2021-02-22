@@ -17,5 +17,6 @@ namespace GraphIt.web.Services
         void Degree();
         void DegreeCentrality(string pref);
         void FordFulkerson();
+        void Articulation();
     }
 }

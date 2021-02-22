@@ -16,6 +16,7 @@ namespace GraphIt.models
         Kruskal,
         Dijkstra,
         DijkstraPath,
-        MaxFlow
+        MaxFlow,
+        Articulation
     }
 }

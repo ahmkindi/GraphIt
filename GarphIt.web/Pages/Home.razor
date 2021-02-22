@@ -21,6 +21,7 @@
         <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Dijkstra)" disabled="@IsDisabled[(int)Algorithm.Dijkstra]">Dijkstras Single Source</button>
         <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.DijkstraPath)" disabled="@IsDisabled[(int)Algorithm.DijkstraPath]">Dijkstras Shortest Path</button>
         <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.MaxFlow)" disabled="@IsDisabled[(int)Algorithm.MaxFlow]">Max-flow</button>
+        <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Articulation)" disabled="@IsDisabled[(int)Algorithm.Articulation]">Articulation Points</button>
         <button class="btn dropdown-item" @onclick="() => OnAlgoChanged(Algorithm.Degree)" disabled="@IsDisabled[(int)Algorithm.Degree]">Degree of Vertices</button>
         @if (DefaultOptions.Directed)
         {

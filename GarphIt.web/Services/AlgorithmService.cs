@@ -16,6 +16,7 @@ namespace GraphIt.web.Services
         public IList<Edge> AlgorithmEdges { get; set; }
         public IList<Node> Nodes { get; set; }
         public IList<Edge> Edges { get; set; }
+        int time = 0;
         public void RunAlgorithm(DefaultOptions d, DefaultOptions a, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges)
         {
             DefaultAlgoOptions = a;
@@ -62,6 +63,9 @@ namespace GraphIt.web.Services
                     break;
                 case Algorithm.OutDegreeCentrality:
                     DegreeCentrality("out");
+                    break;
+                case Algorithm.Articulation:
+                    Articulation();
                     break;
             }
             StartAlgorithm.Done = true;
@@ -113,7 +117,7 @@ namespace GraphIt.web.Services
 
                 count++;
 
-                foreach (NodeEdge neighbor in Adjacent(Exploring.Node))
+                foreach (NodeEdge neighbor in Adjacent(Exploring.Node.NodeId))
                 {
                     if (!Explored.Contains(neighbor.Node))
                         ToExplore.Enqueue(neighbor);
@@ -147,7 +151,7 @@ namespace GraphIt.web.Services
 
                 count++;
 
-                foreach (NodeEdge neighbor in Adjacent(Exploring.Node))
+                foreach (NodeEdge neighbor in Adjacent(Exploring.Node.NodeId))
                 {
                     if (!Explored.Contains(neighbor.Node))
                         ToExplore.Push(neighbor);
@@ -374,6 +378,89 @@ namespace GraphIt.web.Services
             StartAlgorithm.Output = $"Maximum Flow = {Math.Round(max_flow, 2)}";
         }
 
+        public void Articulation()
+        {
+            // Mark all the vertices as not visited 
+            bool[] visited = new bool[MaxId+1];
+            int[] disc = new int[MaxId+1];
+            int[] low = new int[MaxId+1];
+            int[] parent = new int[MaxId+1];
+            bool[] ap = new bool[MaxId+1]; // To store articulation points 
+
+            // Initialize parent and visited, and  
+            // ap(articulation point) arrays 
+            foreach (Node node in Nodes)
+            {
+                parent[node.NodeId] = -1;
+                visited[node.NodeId] = false;
+                ap[node.NodeId] = false;
+            }
+
+            // Call the recursive helper function to find articulation 
+            // points in DFS tree rooted with vertex 'i' 
+            foreach (Node node in Nodes)
+                if (visited[node.NodeId] == false)
+                    APUtil(node.NodeId, visited, disc, low, parent, ap);
+
+            // Now ap[] contains articulation points, print them 
+            foreach (Node node in Nodes)
+                if (ap[node.NodeId] == true)
+                    EditAlgorithmNodes(node, "");
+        }
+
+        // A recursive function that find articulation points using DFS 
+        // u --> The vertex to be visited next 
+        // visited[] --> keeps tract of visited vertices 
+        // disc[] --> Stores discovery times of visited vertices 
+        // parent[] --> Stores parent vertices in DFS tree 
+        // ap[] --> Store articulation points 
+        void APUtil(int u, bool[] visited, int[] disc,
+                    int[] low, int[] parent, bool[] ap)
+        {
+
+            // Count of children in DFS Tree 
+            int children = 0;
+
+            // Mark the current node as visited 
+            visited[u] = true;
+
+            // Initialize discovery time and low value 
+            disc[u] = low[u] = ++time;
+
+            // Go through all vertices aadjacent to this 
+            foreach (NodeEdge nodeEdge in Adjacent(u))
+            {
+                int v = nodeEdge.Node.NodeId; // v is current adjacent of u 
+
+                // If v is not visited yet, then make it a child of u 
+                // in DFS tree and recur for it 
+                if (!visited[v])
+                {
+                    children++;
+                    parent[v] = u;
+                    APUtil(v, visited, disc, low, parent, ap);
+
+                    // Check if the subtree rooted with v has  
+                    // a connection to one of the ancestors of u 
+                    low[u] = Math.Min(low[u], low[v]);
+
+                    // u is an articulation point in following cases 
+
+                    // (1) u is root of DFS tree and has two or more chilren. 
+                    if (parent[u] == -1 && children > 1)
+                        ap[u] = true;
+
+                    // (2) If u is not root and low value of one of its child 
+                    // is more than discovery value of u. 
+                    if (parent[u] != -1 && low[v] >= disc[u])
+                        ap[u] = true;
+                }
+
+                // Update low value of u for parent function calls. 
+                else if (v != parent[u])
+                    low[u] = Math.Min(low[u], disc[v]);
+            }
+        }
 
         public void EditAlgorithmNodes(Node node, string header)
         {
@@ -434,16 +521,16 @@ namespace GraphIt.web.Services
             return (visited[t] == true);
         }
 
-        public IList<NodeEdge> Adjacent(Node node)
+        public IList<NodeEdge> Adjacent(int id)
         {
             var adj = new List<NodeEdge>();
-            foreach(Edge edge in Edges.Where(e => e.TailNodeId == node.NodeId)) 
+            foreach(Edge edge in Edges.Where(e => e.TailNodeId == id)) 
             {
                 adj.Add(new NodeEdge(Nodes.First(n => n.NodeId == edge.HeadNodeId), edge));
             }
             if (!DefaultOptions.Directed)
             {
-                foreach (Edge edge in Edges.Where(e => e.HeadNodeId == node.NodeId))
+                foreach (Edge edge in Edges.Where(e => e.HeadNodeId == id))
                 {
                     adj.Add(new NodeEdge(Nodes.First(n => n.NodeId == edge.TailNodeId), edge));
                 }
