@@ -153,7 +153,7 @@ using BlazorPro.BlazorSize;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 21 "C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\Pages\AlgoNodeCircle.razor"
+#line 23 "C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\Pages\AlgoNodeCircle.razor"
       
     [Parameter] public AlgorithmNode AlgorithmNode { get; set; }
 
