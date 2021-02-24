@@ -23,6 +23,8 @@ namespace GraphIt.web.Pages
         [Parameter] public List<Edge> Edges { get; set; }
         [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
+        [Parameter] public NewEdge NewEdge { get; set; }
+        [Parameter] public EventCallback<NewEdge> NewEdgeChanged { get; set; }
         public bool InsertNode { get; set; }
         public bool InsertEdge { get; set; }
         public string NodeCss { get; set; }

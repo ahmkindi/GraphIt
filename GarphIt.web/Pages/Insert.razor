@@ -16,10 +16,10 @@ else
 {
     EdgeCss = "NavNone";
 }
-<li class="@NodeCss py-2 pl-2 pr-1" @onclick="UpdateInsertNode">Node</li>
-<li class="@EdgeCss py-2 pl-1 pr-2 border-right border-dark" @onclick="UpdateInsertEdge">Edge</li>
+<li class="@NodeCss p-2 border-right border-dark" @onclick="UpdateInsertNode">Node</li>
+<li class="@EdgeCss p-2 mr-1 border-right border-dark" @onclick="UpdateInsertEdge">Edge</li>
 
-<li class="NavNone dropdown">
+<li class="NavNone dropdown border-right border-dark">
     <button class="btn shadow-none dropdown-toggle" id="common" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Common Graphs
     </button>
@@ -32,6 +32,24 @@ else
         <a class="dropdown-item" @onclick="(() => WantedGraph = CommonGraph.CBipartite)">Complete Bipartite</a>
     </div>
 </li>
+@if (GraphMode == GraphMode.InsertNode)
+{
+    <li class="navbar-text font-weight-bold px-2">Click To Add Node</li>
+}
+else if (GraphMode == GraphMode.InsertEdge)
+{
+    if (NewEdge.WaitingForNode)
+    {
+        <li class="NavNone p-2 border-right border-dark" @onclick="async () => await NewEdgeChanged.InvokeAsync(new NewEdge())">Change First Node</li>
+        <li class="navbar-text font-weight-bold px-2">Choose Second Node</li>
+    }
+    else
+    {
+        <li class="navbar-text font-weight-bold px-2">Choose First Node</li>
+    }
+}
+
+
 
 @if (WantedGraph != null && !Loading)
 {
@@ -64,15 +82,15 @@ else
                             }
                         </div>
                     </div>
-                        <div class="d-flex align-items-baseline">
-                            <button class="btn btn-outline-success shadow-none btn-sm" @onclick="CreateGraph">
-                                Done
-                            </button>
-                            <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="(() => WantedGraph = null)">
-                                Cancel
-                            </button>
-                        </div>
+                    <div class="d-flex align-items-baseline">
+                        <button class="btn btn-outline-success shadow-none btn-sm" @onclick="CreateGraph">
+                            Done
+                        </button>
+                        <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="(() => WantedGraph = null)">
+                            Cancel
+                        </button>
                     </div>
+                </div>
             </Content>
         </DialogTemplates>
     </SfDialog>

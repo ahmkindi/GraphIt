@@ -109,7 +109,7 @@
         }
         else
         {
-            <DialogButton Content="Text View" OnClick="(() => TextView = !TextView)" />
+            <DialogButton Content="Text View" OnClick="() => { TextView = !TextView; ShowText = GetText(); }" />
             <DialogButton Content="Close" OnClick="@CloseMatrix" />
         }
     </DialogButtons>

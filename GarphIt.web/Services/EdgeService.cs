@@ -84,6 +84,11 @@ namespace GraphIt.web.Services
 
             foreach (Edge e1 in edges)
             {
+                if (e1.HeadNodeId == e1.TailNodeId)
+                {
+                    d.MultiGraph = true;
+                    return;
+                }
                 foreach (Edge e2 in edges)
                 {
                     if (e1.EdgeId != e2.EdgeId 

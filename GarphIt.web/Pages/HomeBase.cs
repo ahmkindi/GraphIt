@@ -31,6 +31,7 @@ namespace GraphIt.web.Pages
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+
         public bool Animate { get; set; } = false;
         public bool GetDegreePref { get; set; } = false;
         public bool[] IsDisabled { get; set; }

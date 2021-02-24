@@ -18,6 +18,7 @@ namespace GraphIt.web.Pages
         [Parameter] public Representation Rep { get; set; }
         [Parameter] public EventCallback<Representation> RepChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
@@ -37,6 +38,9 @@ namespace GraphIt.web.Pages
         {
             Rep = Representation.None;
             await RepChanged.InvokeAsync(Rep);
+
+            EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
+            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
         }
 
         public Edge Adjacent(Node tail, Node head)

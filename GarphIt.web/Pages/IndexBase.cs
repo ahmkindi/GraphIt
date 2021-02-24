@@ -26,6 +26,7 @@ namespace GraphIt.web.Pages
         public List<Edge> Edges { get; set; } = new List<Edge>();
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
         public Representation Rep { get; set; } = Representation.None;
+        public NewEdge NewEdge { get; set; } = new NewEdge();
         public SVGControl SVGControl { get; set; } = new SVGControl();
 
         protected override void OnAfterRender(bool firstRender)
