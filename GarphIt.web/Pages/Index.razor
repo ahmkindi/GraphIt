@@ -20,7 +20,7 @@ else
         @switch (Choice)
         {
             case NavChoice.File:
-                <File DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
+                <File @bind-DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
                 break;
             case NavChoice.Home:
                 <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveNodes="ActiveNodes" DefaultOptions="DefaultOptions"
@@ -50,5 +50,5 @@ else
     <AdjMatrix @bind-Rep="Rep" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></AdjMatrix>
 }
 <Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" ChangeMenu="UpdateChoice"
-        DefaultOptions="DefaultOptions" @bind-GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" DefaultAlgoOptions="DefaultAlgoOptions"></Canvas>
+        @bind-DefaultOptions="DefaultOptions" @bind-GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" DefaultAlgoOptions="DefaultAlgoOptions"></Canvas>
 <Footer GraphMode="GraphMode" @bind-DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>

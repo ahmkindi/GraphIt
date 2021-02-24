@@ -7,12 +7,6 @@
     <div class="px-2 border-right border-dark">
         Mode: @GraphMode
     </div>
-    @if (DefaultOptions.MultiGraph)
-    {
-        <span class="px-2 text-danger">
-            @("MultiGraph")
-        </span>
-    }
     @if (GraphMode != GraphMode.Algorithm)
     {
         <div class="px-2">
@@ -25,5 +19,11 @@
                 <label class="form-check-label" for="dcheck">Directed</label>
             </div>
         </div>
+    }
+    @if (DefaultOptions.MultiGraph)
+    {
+        <span class="px-2 text-danger">
+            @("MultiGraph")
+        </span>
     }
 </div>

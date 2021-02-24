@@ -18,6 +18,7 @@ namespace GraphIt.web.Pages
     public class CanvasBase : ComponentBase
     {
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public DefaultOptions DefaultAlgoOptions { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
@@ -128,9 +129,14 @@ namespace GraphIt.web.Pages
         public async Task OnDelete()
         {
             EdgeService.DeleteEdges(Edges, ActiveEdges);
-            await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
             NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
+            await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
             await ActiveNodesChanged.InvokeAsync(new List<Node>());
+            if (DefaultOptions.MultiGraph)
+            {
+                EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
+                if (!DefaultOptions.MultiGraph) await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
+            }
         }
 
         public void OnRightClick()
@@ -378,9 +384,10 @@ namespace GraphIt.web.Pages
                 {
                     foreach (Edge edge in NewEdge.MultiEdges) Edges.Remove(edge);
                 }
-                else
+                else if (!DefaultOptions.MultiGraph)
                 {
                     DefaultOptions.MultiGraph = true;
+                    await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
                 }
                 if (DefaultOptions.Weighted) EdgeService.AddEdge(Edges, DefaultOptions, NewEdge.Head.NodeId, NewEdge.Tail.NodeId, Math.Round(NewEdge.Weight, 2));
                 else EdgeService.AddEdge(Edges, DefaultOptions, NewEdge.Head.NodeId, NewEdge.Tail.NodeId);

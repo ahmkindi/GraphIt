@@ -10,6 +10,8 @@ namespace GraphIt.web.Services
 {
     public class NodeService : INodeService
     {
+
+        [Inject] public IEdgeService EdgeService { get; set; }
         public Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y, string label)
         {
             Node node = new Node

@@ -79,6 +79,25 @@ namespace GraphIt.web.Services
             edges.RemoveAll(e => edgesToDel.Contains(e));
         }
 
+        public void UpdateMultiGraph(DefaultOptions d, List<Edge> edges)
+        {
+
+            foreach (Edge e1 in edges)
+            {
+                foreach (Edge e2 in edges)
+                {
+                    if (e1.EdgeId != e2.EdgeId 
+                        && (e1.HeadNodeId == e2.HeadNodeId && e1.TailNodeId == e2.TailNodeId
+                            || (!d.Directed && e1.TailNodeId == e2.HeadNodeId && e1.HeadNodeId == e2.TailNodeId)))
+                    {
+                        d.MultiGraph = true;
+                        return;
+                    }
+                }
+            }
+            d.MultiGraph = false;
+        }
+
         public IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed)
         {
             IList<Edge> MultiEdges = new List<Edge>();

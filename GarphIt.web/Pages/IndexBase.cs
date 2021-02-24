@@ -45,12 +45,14 @@ namespace GraphIt.web.Pages
         {
             NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
             ActiveNodes.Clear();
+            if (DefaultOptions.MultiGraph) EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
         }
 
         public void DeleteActiveEdges(bool _)
         {
             EdgeService.DeleteEdges(Edges, ActiveEdges);
             ActiveEdges.Clear();
+            if (DefaultOptions.MultiGraph) EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
         }
 
         public void Dispose()

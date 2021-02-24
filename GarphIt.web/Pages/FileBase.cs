@@ -17,6 +17,7 @@ namespace GraphIt.web.Pages
     public class FileBase : ComponentBase
     {
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
         [Parameter] public List<Node> Nodes { get; set; }
@@ -77,6 +78,7 @@ namespace GraphIt.web.Pages
                 writer.WriteStartElement("Graph");
                 foreach (Node node in Nodes) XmlNodeService.CreateNode(node, writer);
                 foreach (Edge edge in Edges) XmlNodeService.CreateNode(edge, writer);
+                XmlNodeService.CreateNode(DefaultOptions, writer);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -93,9 +95,7 @@ namespace GraphIt.web.Pages
             try
             {
                 byte[] temp;
-                IList<Node> newNodes = new List<Node>();
-                IList<Edge> newEdges = new List<Edge>();
-                DefaultOptions tempDef = new DefaultOptions();
+                DefaultOptions newDefOptions = new DefaultOptions();
 
                 using (var streamReader = new MemoryStream())
                 {
@@ -110,7 +110,13 @@ namespace GraphIt.web.Pages
                     Nodes.Clear();
                     Edges.Clear();
                 }
-                Traverse(xmlData, NodeService.NextId(Nodes), EdgeService.NextId(Edges));
+                Traverse(xmlData, NodeService.NextId(Nodes), EdgeService.NextId(Edges), newDefOptions);
+                if (overwrite) await DefaultOptionsChanged.InvokeAsync(newDefOptions);
+                else if (!DefaultOptions.MultiGraph && newDefOptions.MultiGraph)
+                {
+                    DefaultOptions.MultiGraph = true;
+                    await DefaultOptionsChanged.InvokeAsync(newDefOptions);
+                }
             }
             catch (Exception)
             {
@@ -150,7 +156,7 @@ namespace GraphIt.web.Pages
             }
         }
 
-        private void Traverse(XmlDocument xmlData, int nextNodeId, int nextEdgeId)
+        private void Traverse(XmlDocument xmlData, int nextNodeId, int nextEdgeId, DefaultOptions newD)
         {
             foreach (XmlNode i in xmlData.DocumentElement.ChildNodes)
             {
@@ -223,6 +229,42 @@ namespace GraphIt.web.Pages
                         }
                     }
                     Edges.Add(newEdge);
+                }
+                else if (i.Name == "DefaultOptions")
+                {
+                    foreach (XmlNode option in i.ChildNodes)
+                    {
+                        switch (option.Name)
+                        {
+                            case "NodeColor":
+                                newD.NodeColor = option.InnerText;
+                                break;
+                            case "MultiGraph":
+                                newD.MultiGraph = bool.Parse(option.InnerText);
+                                break;
+                            case "NodeLabelColor":
+                                newD.NodeColor = option.InnerText;
+                                break;
+                            case "NodeRadius":
+                                newD.NodeRadius = int.Parse(option.InnerText);
+                                break;
+                            case "Weighted":
+                                newD.Weighted = bool.Parse(option.InnerText);
+                                break;
+                            case "Directed":
+                                newD.Directed = bool.Parse(option.InnerText);
+                                break;
+                            case "EdgeColor":
+                                newD.EdgeColor = option.InnerText;
+                                break;
+                            case "EdgeLabelColor":
+                                newD.EdgeLabelColor = option.InnerText;
+                                break;
+                            case "EdgeWidth":
+                                newD.EdgeWidth = int.Parse(option.InnerText);
+                                break;
+                        }
+                    }
                 }
             }
         }
