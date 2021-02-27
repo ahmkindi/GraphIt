@@ -8,8 +8,8 @@ namespace GraphIt.web.Services
 {
     public interface IZoomService
     {
-        string GetPercentage(double scale);
-        int GetPercentageInt(double scale);
+        string GetPercentageString(double scale);
+        double GetPercentage(double scale);
         public double GetDefaultScale();
         double GetMaxScale();
         bool ZoomIn(SVGControl svgControl);

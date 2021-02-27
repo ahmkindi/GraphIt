@@ -15,44 +15,28 @@ else
 {
     MatchExact.Css = "NavNone";
 }
-<li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>
+@*<li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>*@
 <li class="d-flex flex-row px-2 border-dark border-right">
-    @if (ZoomService.GetPercentageInt(SVGControl.Scale) <= 10)
-    {
-        <div class="btn disabled py-2 px-1"><span class="oi oi-zoom-out"></span></div>
-    }
-    else
-    {
-        <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(true))"><span class="oi oi-zoom-out"></span></div>
-    }
     <div class="btn-group">
-        <input type="number" class="shortInput" value="@ZoomService.GetPercentageInt(SVGControl.Scale)" min="1" max="349"
-               @onchange="async (e) => { ZoomService.NewInput(e.Value.ToString(), SVGControl); await SVGControlChanged.InvokeAsync(SVGControl); }">
+        <SfNumericTextBox Value="@(ZoomService.GetMaxScale()-SVGControl.Scale)" Min=0.01 Max=3.49 Step=0.1 Format="p2" CssClass="e-custom"
+                          OnChange="async (e) => { SVGControl.Scale = ZoomService.GetMaxScale() - double.Parse(e.Value.ToString()); await SVGControlChanged.InvokeAsync(SVGControl); }"></SfNumericTextBox>
         <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <div class="dropdown-menu">
-            <a class="dropdown-item" @onclick="() => SelectionZoom(0.1)">@ZoomService.GetPercentage(0.1)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(0.6)">@ZoomService.GetPercentage(0.6)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(1.1)">@ZoomService.GetPercentage(1.1)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(1.6)">@ZoomService.GetPercentage(1.6)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(2.1)">@ZoomService.GetPercentage(2.1)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(2.5)">@ZoomService.GetPercentage(2.5)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(2.7)">@ZoomService.GetPercentage(2.7)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(2.9)">@ZoomService.GetPercentage(2.9)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(3.1)">@ZoomService.GetPercentage(3.1)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(3.3)">@ZoomService.GetPercentage(3.3)</a>
-            <a class="dropdown-item" @onclick="() => SelectionZoom(3.4)">@ZoomService.GetPercentage(3.4)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(0.1)">@ZoomService.GetPercentageString(0.1)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(0.6)">@ZoomService.GetPercentageString(0.6)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(1.1)">@ZoomService.GetPercentageString(1.1)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(1.6)">@ZoomService.GetPercentageString(1.6)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(2.1)">@ZoomService.GetPercentageString(2.1)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(2.5)">@ZoomService.GetPercentageString(2.5)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(2.7)">@ZoomService.GetPercentageString(2.7)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(2.9)">@ZoomService.GetPercentageString(2.9)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(3.1)">@ZoomService.GetPercentageString(3.1)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(3.3)">@ZoomService.GetPercentageString(3.3)</a>
+            <a class="dropdown-item" @onclick="() => SelectionZoom(3.4)">@ZoomService.GetPercentageString(3.4)</a>
         </div>
     </div>
-    @if (ZoomService.GetPercentageInt(SVGControl.Scale) >= 340)
-    {
-        <div class="btn disabled py-2 px-1"><span class="oi oi-zoom-in"></span></div>
-    }
-    else
-    {
-        <div class="NavNone py-2 px-1" @onclick="@(() => OnScaleClick(false))"><span class="oi oi-zoom-in"></span></div>
-    }
 </li>
 <li class="d-flex flex-row px-2">
     <div class="py-2 px-1 @MatchCase.Css font-weight-bold" data-toggle="tooltip" data-placement="bottom" title="Match case" 

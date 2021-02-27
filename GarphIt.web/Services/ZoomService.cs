@@ -9,14 +9,14 @@ namespace GraphIt.web.Services
     public class ZoomService : IZoomService
     {
         private readonly double MaxScale = 3.5;
-        public string GetPercentage(double scale)
+        public string GetPercentageString(double scale)
         {
             return $"{(int)Math.Round((MaxScale - scale) * 100)}%";
         }
 
-        public int GetPercentageInt(double scale)
+        public double GetPercentage(double scale)
         {
-            return (int) Math.Round((MaxScale - scale) * 100);
+            return ((int) Math.Round((MaxScale - scale) * 100))/100.0;
         }
 
         public double GetDefaultScale()
@@ -41,7 +41,7 @@ namespace GraphIt.web.Services
 
         public bool ZoomOut(SVGControl svgControl)
         {
-            if (svgControl.Scale < MaxScale)
+            if (Math.Round(svgControl.Scale,1) < MaxScale)
             {
                 svgControl.Scale = Math.Round(svgControl.Scale, 1) + 0.1;
                 return true;
@@ -52,9 +52,9 @@ namespace GraphIt.web.Services
         public void NewInput(string value, SVGControl svgControl)
         {
             var x = double.Parse(value);
-            if (x > 349) x = 349;
-            else if (x < 1) x = 1;
-            svgControl.Scale = MaxScale - (x / 100);
+            if (x > 3.49) x = 3.49;
+            else if (x < 0.01) x = 0.01;
+            svgControl.Scale = Math.Round(MaxScale - (x / 100), 2);
         }
     }
 }
