@@ -1,6 +1,6 @@
 ﻿using BlazorPro.BlazorSize;
 using GraphIt.models;
-using GraphIt.web.models;
+using GraphIt.web.Models;
 using GraphIt.web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;

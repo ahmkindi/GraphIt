@@ -1,0 +1,48 @@
+﻿<li class="NavNone p-2 border-right border-dark" @onclick="() => ShowAbout = true">About</li>
+<li class="NavNone dropdown border-right border-dark">
+    <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Instructions
+    </button>
+    <div class="dropdown-menu" aria-labelledby="repre">
+        <a class="dropdown-item" @onclick="() => ShowVideo = true">Quick start Video</a>
+        <a class="dropdown-item" href="files" download="Graphanatic.pdf" target="_top">Documentation</a>
+    </div>
+</li>
+
+<SfDialog Width="340px" ShowCloseIcon="true" @bind-Visible="@ShowVideo" IsModal="true">
+    <DialogTemplates>
+        <Header>
+            Video Tutorial
+        </Header>
+        <Content>
+            <div class="row">
+                <iframe width="340" height="255" src="https://www.youtube.com/embed/gXgEDyodOJU" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog Width="320px" ShowCloseIcon="true" @bind-Visible="@ShowAbout" IsModal="true">
+    <DialogTemplates>
+        <Header>
+            About
+        </Header>
+        <Content>
+            <div class="row justify-content-center font-weight-normal">
+                Graph theory is becoming more and more popular within different fields, from biology to computer science.
+                By utilizing nodes (vertices) and edges (links) pairwise relations between objects can be visualized and algorithms
+                can be understood through these graphs. Graphanatic aims to be a user-friendly tool that allows users to create graphs to their
+                liking and run different algorithms to help solve problems.
+            </div>
+            <br />
+            <div class="row">
+                Graphanatic was developed by Ahmed Al Kindi under the supervision of Dr. Weiren Yu as part of a dissertation project at the University of Warwick.
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+@code{
+    private bool ShowVideo { get; set; } = false;
+    private bool ShowAbout { get; set; } = false;
+}

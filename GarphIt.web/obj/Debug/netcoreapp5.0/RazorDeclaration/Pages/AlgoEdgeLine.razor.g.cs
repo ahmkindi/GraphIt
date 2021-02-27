@@ -147,7 +147,7 @@ using BlazorPro.BlazorSize;
 #nullable disable
 #nullable restore
 #line 1 "C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\Pages\AlgoEdgeLine.razor"
-using GraphIt.web.models;
+using GraphIt.web.Models;
 
 #line default
 #line hidden

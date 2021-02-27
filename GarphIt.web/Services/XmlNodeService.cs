@@ -1,5 +1,5 @@
 ﻿using GraphIt.models;
-using GraphIt.web.models;
+using GraphIt.web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

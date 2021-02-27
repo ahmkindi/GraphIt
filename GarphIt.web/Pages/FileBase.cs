@@ -86,7 +86,7 @@ namespace GraphIt.web.Pages
                 stream.Seek(0, SeekOrigin.Begin);
                 result = reader.ReadToEnd();
             }
-            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.graphit", "application/octet-stream", DeflateAndEncode(result));
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "Gra.phanatic", "application/octet-stream", DeflateAndEncode(result));
         }
 
         public async Task OpenGraphItFile(InputFileChangeEventArgs e, bool overwrite)

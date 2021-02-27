@@ -174,3 +174,5 @@ C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Fin
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\Design.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\SelectedEdge.razor.g.cs
 C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\Design\SelectedNode.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\RazorDeclaration\Pages\About.razor.g.cs
+C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GarphIt.web\obj\Debug\netcoreapp5.0\Razor\Pages\About.razor.g.cs

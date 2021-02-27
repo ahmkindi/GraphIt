@@ -12,7 +12,7 @@ namespace GraphIt.models
         public double Height { get; set; } = 0;
         public double OldXaxis { get; set; } = 0;
         public double OldYaxis { get; set; } = 0;
-        public double Scale { get; set; } = 1;
+        public double Scale { get; set; } = 2.5;
         public bool Pan { get; set; } = false;
     }
 }

@@ -46,7 +46,9 @@
     }
     else
     {
-        @if (!Animate)
+        <li class="NavNone p-2" @onclick="async () => { StartAlgorithm.Clear = true; await StartAlgorithmChanged.InvokeAsync(StartAlgorithm); }">Stop</li>
+        <li class="navbar-text font-weight-bold alert-success">@StartAlgorithm.Output</li>
+        @*@if (!Animate)
         {
             <li class="NavNone p-2" @onclick="() => Animate = true">Animate</li>
             <li class="NavNone p-2" @onclick="async () => { StartAlgorithm.Clear = true; await StartAlgorithmChanged.InvokeAsync(StartAlgorithm); }">Clear</li>
@@ -58,7 +60,7 @@
             <li><button class="btn"><span class="oi oi-media-skip-forward"></span></button></li>
             <li><button class="btn"><span class="oi oi-media-step-forward"></span></button></li>
             <li><button class="btn" @onclick="() => Animate = false"><span class="oi oi-x"></span></button></li>
-        }
+        }*@
     }
 }
 
@@ -72,12 +74,18 @@
                         How do you specify the importance of a Node?
                     </div>
                     <div class="d-flex align-items-baseline">
-                        <button class="btn btn-outline-success shadow-none btn-sm" 
-                                @onclick="async () => { await OnAlgoChanged(Algorithm.InDegreeCentrality); GetDegreePref = false; }">In-Degree</button>
-                        <button class="btn btn-outline-success shadow-none btn-sm" 
-                                @onclick="async () => { await OnAlgoChanged(Algorithm.OutDegreeCentrality); GetDegreePref = false; }">Out-Degree</button>
-                        <button class="btn btn-outline-success shadow-none btn-sm" 
-                                @onclick="async () => { await OnAlgoChanged(Algorithm.DegreeCentrality); GetDegreePref = false; }">Both</button>
+                        <button class="btn btn-outline-success shadow-none btn-sm"
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.InDegreeCentrality); GetDegreePref = false; }">
+                            In-Degree
+                        </button>
+                        <button class="btn btn-outline-success shadow-none btn-sm"
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.OutDegreeCentrality); GetDegreePref = false; }">
+                            Out-Degree
+                        </button>
+                        <button class="btn btn-outline-success shadow-none btn-sm"
+                                @onclick="async () => { await OnAlgoChanged(Algorithm.DegreeCentrality); GetDegreePref = false; }">
+                            Both
+                        </button>
                         <button class="ml-auto btn btn-outline-dark shadow-none btn-sm" @onclick="() => GetDegreePref = false">cancel</button>
                     </div>
                 </div>

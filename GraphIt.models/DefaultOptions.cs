@@ -10,8 +10,8 @@ namespace GraphIt.models
         public string NodeLabelColor { get; set; }
         public string EdgeColor { get; set; }
         public string EdgeLabelColor { get; set; }
-        public int NodeRadius { get; set; } = 50;
-        public int EdgeWidth { get; set; } = 5;
+        public int NodeRadius { get; set; } = 75;
+        public int EdgeWidth { get; set; } = 10;
         public bool Weighted { get; set; } = true;
         public bool Directed { get; set; } = true;
         public bool MultiGraph { get; set; } = false;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GraphIt.web.models
+namespace GraphIt.web.Models
 {
     public class ShowEdge
     {
