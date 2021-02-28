@@ -1,5 +1,0 @@
-﻿<StaticWebAssets Version="1.0">
-  <ContentRoot BasePath="/" Path="C:\Users\ahmki\OneDrive - University of Warwick\Warwick Studies\year 3\CS310-Final-Project\Project\GraphIt\GraphIt.wasm\bin\Debug\net5.0\wwwroot\" />
-  <ContentRoot BasePath="_content/BlazorPro.BlazorSize" Path="C:\Users\ahmki\.nuget\packages\blazorpro.blazorsize\3.0.0\build\..\staticwebassets\" />
-  <ContentRoot BasePath="_content/Syncfusion.Blazor" Path="C:\Users\ahmki\.nuget\packages\syncfusion.blazor\18.3.0.51\build\..\staticwebassets\" />
-</StaticWebAssets>
