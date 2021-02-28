@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using BlazorPro.BlazorSize;
-using GraphIt.web.Services;
+using GraphIt.wasm.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,7 @@ namespace GraphIt.web
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(sp.GetRequiredService<NavigationManager>().BaseUri) });
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzMwOTQzQDMxMzgyZTMzMmUzMEppR1dzL3pyd2pDc0JuVHhlYXpyd1MxWDh4SFN2YkR6cFJ3encxS1BCMjQ9");
             services.AddSyncfusionBlazor();
             services.AddScoped<ResizeListener>();
@@ -38,7 +40,6 @@ namespace GraphIt.web
             services.AddScoped<IAlgorithmService, AlgorithmService>();
             services.AddScoped<IXmlNodeService, XmlNodeService>();
             services.AddScoped<IZoomService, ZoomService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

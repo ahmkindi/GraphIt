@@ -28,8 +28,8 @@
           "net5.0": {
             "targetAlias": "netcoreapp5.0",
             "projectReferences": {
-              "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj": {
-                "projectPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj"
+              "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\GraphIt.wasm.csproj": {
+                "projectPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\GraphIt.wasm.csproj"
               }
             }
           }
@@ -44,10 +44,6 @@
         "net5.0": {
           "targetAlias": "netcoreapp5.0",
           "dependencies": {
-            "Aspose.SVG": {
-              "target": "Package",
-              "version": "[20.11.0, )"
-            },
             "BlazorPro.BlazorSize": {
               "target": "Package",
               "version": "[3.0.0, )"
@@ -83,29 +79,29 @@
         }
       }
     },
-    "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj": {
+    "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\GraphIt.wasm.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj",
-        "projectName": "GraphIt.models",
-        "projectPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\GraphIt.models.csproj",
+        "projectUniqueName": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\GraphIt.wasm.csproj",
+        "projectName": "GraphIt.wasm",
+        "projectPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\GraphIt.wasm.csproj",
         "packagesPath": "C:\\Users\\ahmki\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.models\\obj\\",
+        "outputPath": "C:\\Users\\ahmki\\OneDrive - University of Warwick\\Warwick Studies\\year 3\\CS310-Final-Project\\Project\\GraphIt\\GraphIt.wasm\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ahmki\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netstandard2.0"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netstandard2.0": {
-            "targetAlias": "netstandard2.0",
+          "net5.0": {
+            "targetAlias": "net5.0",
             "projectReferences": {}
           }
         },
@@ -116,18 +112,29 @@
         }
       },
       "frameworks": {
-        "netstandard2.0": {
-          "targetAlias": "netstandard2.0",
+        "net5.0": {
+          "targetAlias": "net5.0",
           "dependencies": {
-            "NETStandard.Library": {
+            "BlazorPro.BlazorSize": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.0.3, )",
-              "autoReferenced": true
+              "version": "[5.0.0, )"
             },
-            "System.ComponentModel.Annotations": {
+            "Syncfusion.Blazor": {
               "target": "Package",
-              "version": "[4.7.0, )"
+              "version": "[18.3.0.51, )"
+            },
+            "System.Net.Http.Json": {
+              "target": "Package",
+              "version": "[5.0.0, )"
             }
           },
           "imports": [
@@ -140,7 +147,23 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Runtime.browser-wasm",
+              "version": "[5.0.0, 5.0.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "browser-wasm": {
+          "#import": []
         }
       }
     }

@@ -1,0 +1,48 @@
+﻿@namespace GraphIt.wasm.Pages.Design
+@inherits DesignBase
+
+<li class="d-flex flex-row px-2 border-dark border-right">
+    <select class="form-control shadow-none scrollable-menu p-0" @onchange="(args) => SelectDesign = (SelectDesign) Enum.Parse(typeof(SelectDesign), args.Value.ToString())">
+        @foreach (SelectDesign sd in Enum.GetValues(typeof(SelectDesign)))
+        {
+            if (sd == SelectDesign.SelectedNode && !ActiveNodes.Any())
+            {
+                break;
+            }
+            if (sd == SelectDesign.SelectedEdge && !ActiveEdges.Any())
+            {
+                break;
+            }
+            if (sd == SelectDesign)
+            {
+                <option value="@sd" selected>@GetText(sd)</option>
+            }
+            else
+            {
+                <option value="@sd">@GetText(sd)</option>
+            }
+        }
+    </select>
+</li>
+
+@switch (SelectDesign)
+{
+    case SelectDesign.DefaultNode:
+        <DefaultNode @bind-DefaultOptions="DefaultOptions"></DefaultNode>
+        break;
+    case SelectDesign.DefaultEdge:
+        <DefaultEdge @bind-DefaultOptions="DefaultOptions"></DefaultEdge>
+        break;
+    case SelectDesign.AlgorithmNode:
+        <DefaultNode @bind-DefaultOptions="DefaultAlgoOptions"></DefaultNode>
+        break;
+    case SelectDesign.AlgorithmEdge:
+        <DefaultEdge @bind-DefaultOptions="DefaultAlgoOptions"></DefaultEdge>
+        break;
+    case SelectDesign.SelectedNode:
+        <SelectedNode ActiveNodes="ActiveNodes" ActiveNodesChanged="GoUpdateActiveNodes" Nodes="Nodes" NodesChanged="GoUpdateNodes" DeleteActiveNodes="GoDeleteActiveNodes"></SelectedNode>
+        break;
+    case SelectDesign.SelectedEdge:
+        <SelectedEdge ActiveEdges="ActiveEdges" ActiveEdgesChanged="GoUpdateActiveEdges" DefaultOptions="DefaultOptions" DeleteActiveEdges="GoDeleteActiveEdges"></SelectedEdge>
+        break;
+}

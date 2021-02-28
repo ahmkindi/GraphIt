@@ -1,0 +1,41 @@
+﻿@using GraphIt.wasm.Models
+<g>
+    <path id="@Edge.EdgeId" d="@ShowEdge.Path" stroke-width="@Edge.Width" stroke="@Edge.EdgeColor"
+          marker-end="url(#@("arrowhead"+Edge.EdgeId))" fill="none" />
+    <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.LabelColor" dy="@ShowEdge.Yoffset" rotate="@ShowEdge.Rotate">
+        <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowEdge.Label</textPath>
+    </text>
+
+    @if (DefaultOptions.Weighted)
+    {
+        <text>
+            <text text-anchor="middle" font-size="@ShowEdge.FontSize" fill="@Edge.EdgeColor" dy="-@Edge.Width" rotate="@ShowEdge.Rotate">
+                <textPath href="@("#"+Edge.EdgeId)" startOffset="50%">@ShowEdge.Weight</textPath>
+            </text>
+        </text>
+    }
+    @if (DefaultOptions.Directed)
+    {
+        <defs>
+            <marker id="@("arrowhead"+Edge.EdgeId)" markerWidth="@ShowEdge.EdgeArrow.Width" markerHeight="@ShowEdge.EdgeArrow.Height"
+                    refX="@ShowEdge.EdgeArrow.ArrowOffset[0]" refY="@ShowEdge.EdgeArrow.ArrowOffset[1]" orient="auto">
+                <polygon points=@($"{ShowEdge.EdgeArrow.Points[0]} {ShowEdge.EdgeArrow.Points[1]}, " +
+                                  $"{ShowEdge.EdgeArrow.Points[2]} {ShowEdge.EdgeArrow.Points[3]}, " +
+                                  $"{ShowEdge.EdgeArrow.Points[4]} {ShowEdge.EdgeArrow.Points[5]}") fill="@(Edge.EdgeColor)" />
+            </marker>
+        </defs>
+    }
+</g>
+
+@code{
+    [Parameter] public Edge Edge { get; set; }
+    [Parameter] public IList<AlgorithmNode> AlgorithmNodes { get; set; }
+    [Parameter] public DefaultOptions DefaultOptions { get; set; }
+    public ShowEdge ShowEdge { get; set; }
+    protected override void OnParametersSet()
+    {
+        IList<Node> nodes = new List<Node>();
+        foreach (AlgorithmNode a in AlgorithmNodes) nodes.Add(a.Node);
+        ShowEdge = new ShowEdge(Edge, Edge.HeadNode(nodes), Edge.TailNode(nodes));
+    }
+}

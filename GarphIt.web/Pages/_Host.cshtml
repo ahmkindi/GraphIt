@@ -1,5 +1,5 @@
 ﻿@page "/"
-@namespace GraphIt.web.Shared
+@namespace GraphIt.web.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
@@ -10,17 +10,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GraphIt.web</title>
-    <base href="https://localhost:44367/" />
+    <title>Graphanatic</title>
     <link href="https://cdn.syncfusion.com/blazor/18.4.31/bootstrap4.css" rel="stylesheet" />
     <link href="_content/Syncfusion.Blazor/styles/bootstrap4.css" rel="stylesheet" />
     <link href="https://cdn.syncfusion.com/ej2/fabric.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/site.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
+        <component type="typeof(GraphIt.wasm.App)" render-mode="ServerPrerendered" />
     </app>
 
     <div id="blazor-error-ui">

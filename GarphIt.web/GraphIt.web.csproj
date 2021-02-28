@@ -10,14 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.SVG" Version="20.11.0" />
     <PackageReference Include="BlazorPro.BlazorSize" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.2.0-preview3.20168.3" />
     <PackageReference Include="Syncfusion.Blazor" Version="18.3.0.51" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphIt.models\GraphIt.models.csproj" />
+    <ProjectReference Include="..\GraphIt.wasm\GraphIt.wasm.csproj" />
   </ItemGroup>
 
 </Project>
