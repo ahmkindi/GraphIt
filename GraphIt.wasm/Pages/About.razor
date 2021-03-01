@@ -1,11 +1,11 @@
 ﻿<li class="NavNone p-2 border-right border-dark" @onclick="() => ShowAbout = true">About</li>
 <li class="NavNone dropdown border-right border-dark">
     <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Instructions
+        Help
     </button>
     <div class="dropdown-menu" aria-labelledby="repre">
         <a class="dropdown-item" @onclick="() => ShowVideo = true">Quick start Video</a>
-        <a class="dropdown-item" href="files" download="Graphanatic.pdf" target="_top">Documentation</a>
+        <a class="dropdown-item" href="https://www.graphanatic.com/files/Graphanatic.pdf" target="_blank">Documentation</a>
     </div>
 </li>
 
@@ -42,7 +42,5 @@
     </DialogTemplates>
 </SfDialog>
 
-@code{
-    private bool ShowVideo { get; set; } = false;
-    private bool ShowAbout { get; set; } = false;
-}
+@code{ private bool ShowVideo { get; set; } = false;
+    private bool ShowAbout { get; set; } = false; }
