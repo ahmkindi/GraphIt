@@ -18,8 +18,6 @@ namespace GraphIt.wasm.Pages.Design
         [Parameter] public HexColorValue ColorValue { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
         [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         [Parameter] public EventCallback<bool> DeleteActiveNodes { get; set; }
         public string OpenCss { get; set; }
         public bool Open { get; set; } = false;
@@ -77,24 +75,12 @@ namespace GraphIt.wasm.Pages.Design
         public async Task OnRelabel()
         {
             int count = 1;
-            if (ActiveNodes.Any())
+            foreach (Node node in ActiveNodes)
             {
-                foreach (Node node in ActiveNodes)
-                {
-                    node.Label = count.ToString();
-                    count++;
-                }
-                await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+                node.Label = count.ToString();
+                count++;
             }
-            else
-            {
-                foreach (Node node in Nodes)
-                {
-                    node.Label = count.ToString();
-                    count++;
-                }
-                await NodesChanged.InvokeAsync(Nodes);
-            }
+            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
     }
 }

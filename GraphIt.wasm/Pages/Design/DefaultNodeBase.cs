@@ -18,6 +18,8 @@ namespace GraphIt.wasm.Pages.Design
         [Parameter] public HexColorValue ColorValue { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
+        [Parameter] public List<Node> Nodes { get; set; }
+        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
         public string OpenCss { get; set; }
         public bool Open { get; set; } = false;
         public string NavCss { get; set; }
@@ -41,6 +43,17 @@ namespace GraphIt.wasm.Pages.Design
             else if (r > 150) r = 150;
             DefaultOptions.NodeRadius = r;
             await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
+        }
+
+        public async Task OnRelabel()
+        {
+            int count = 1;
+            foreach (Node node in Nodes)
+            {
+                node.Label = count.ToString();
+                count++;
+            }
+            await NodesChanged.InvokeAsync(Nodes);
         }
 
     }

@@ -2,6 +2,7 @@
 using GraphIt.wasm.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -91,17 +92,17 @@ namespace GraphIt.wasm.Pages
 
         public async Task OpenGraphItFile(InputFileChangeEventArgs e, bool overwrite)
         {
-            OpenPreference = false;
             try
             {
+                await JSRuntime.InvokeAsync<string>("console.log", e.File.OpenReadStream().Length);
                 byte[] temp;
                 DefaultOptions newDefOptions = new DefaultOptions();
-
                 using (var streamReader = new MemoryStream())
                 {
                     await e.File.OpenReadStream().CopyToAsync(streamReader);
                     temp = streamReader.ToArray();
                 }
+                OpenPreference = false;
                 string graph = DecodeAndInflate(temp);
                 XmlDocument xmlData = new XmlDocument();
                 xmlData.LoadXml(graph);
@@ -118,7 +119,7 @@ namespace GraphIt.wasm.Pages
                     await DefaultOptionsChanged.InvokeAsync(newDefOptions);
                 }
             }
-            catch (Exception)
+            catch (ObjectDisposedException)
             {
                 ErrorOpening = true;
             }

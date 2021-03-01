@@ -16,6 +16,7 @@ namespace GraphIt.wasm.Models
         public bool Ready { get; set; } = false;
         public bool Clear { get; set; } = false;
         public bool Done { get; set; } = false;
+
         public StartAlgorithm(Algorithm a)
         {
             Algorithm = a;
