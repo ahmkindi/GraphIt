@@ -7,11 +7,11 @@
         {
             if (sd == SelectDesign.SelectedNode && !ActiveNodes.Any())
             {
-                break;
+                continue;
             }
             if (sd == SelectDesign.SelectedEdge && !ActiveEdges.Any())
             {
-                break;
+                continue;
             }
             if (sd == SelectDesign)
             {

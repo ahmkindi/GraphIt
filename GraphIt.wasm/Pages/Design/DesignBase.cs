@@ -26,8 +26,10 @@ namespace GraphIt.wasm.Pages.Design
 
         protected override void OnParametersSet()
         {
-            if (ActiveNodes.Any()) SelectDesign = SelectDesign.SelectedNode;
-            else if (ActiveEdges.Any()) SelectDesign = SelectDesign.SelectedEdge;
+            if (ActiveNodes.Any() && !ActiveEdges.Any()) SelectDesign = SelectDesign.SelectedNode;
+            else if (ActiveEdges.Any() && !ActiveNodes.Any()) SelectDesign = SelectDesign.SelectedEdge;
+            else if (SelectDesign == SelectDesign.SelectedNode && ActiveNodes.Any()) return;
+            else if (SelectDesign == SelectDesign.SelectedEdge && ActiveEdges.Any()) return;
             else SelectDesign = SelectDesign.DefaultNode;
         }
 
