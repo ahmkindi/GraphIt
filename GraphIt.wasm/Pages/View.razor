@@ -18,8 +18,7 @@ else
 @*<li class="NavNone p-2 border-dark border-right" @onclick="Fit">Graph Fit</li>*@
 <li class="d-flex flex-row px-2 border-dark border-right">
     <div class="btn-group">
-        <SfNumericTextBox Value="@(ZoomService.GetMaxScale()-SVGControl.Scale)" Min=0.01 Max=3.49 Step=0.1 Format="p2" CssClass="e-custom"
-                          OnChange="async (e) => { SVGControl.Scale = ZoomService.GetMaxScale() - double.Parse(e.Value.ToString()); await SVGControlChanged.InvokeAsync(SVGControl); }"></SfNumericTextBox>
+        <SfNumericTextBox TValue="int" @bind-Value="PercentageZoom" Min=1 Max=340 Step=10 CssClass="e-custom"></SfNumericTextBox>
         <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">Toggle Dropdown</span>
         </button>

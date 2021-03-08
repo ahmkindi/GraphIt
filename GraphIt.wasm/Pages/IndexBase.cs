@@ -35,6 +35,12 @@ namespace GraphIt.wasm.Pages
             {
                 Listener.OnResized += WindowResized;
             }
+            if (Choice != NavChoice.Insert && (GraphMode == GraphMode.InsertNode || GraphMode == GraphMode.InsertEdge))
+            {
+                GraphMode = GraphMode.Default;
+                NewEdge = new NewEdge();
+                StateHasChanged();
+            }
         }
 
         public void UpdateChoice(NavChoice? choice)

@@ -2,7 +2,6 @@
 using GraphIt.wasm.Models;
 using GraphIt.wasm.Services;
 using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,10 +22,12 @@ namespace GraphIt.wasm.Pages
         public IList<Node> FilterNodes { get; set; } = new List<Node>();
         public string Filter { get; set; } = "";
         public int Counter { get; set; }
+        public int PercentageZoom { get; set; }
         public BoolButton MatchExact { get; set; } = new BoolButton();
         public BoolButton MatchCase { get; set; } = new BoolButton();
         protected override void OnParametersSet()
         {
+            PercentageZoom = ZoomService.GetPercentage(SVGControl.Scale);
             if (Filter == "")
             {
                 FilterNodes.Clear();
@@ -41,13 +42,15 @@ namespace GraphIt.wasm.Pages
                 if (!Nodes.Contains(FilterNodes[i])) FilterNodes.RemoveAt(i);
             }
         }
-        public async Task OnScaleClick(bool zoomOut)
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (zoomOut)
+            var x = Math.Round(ZoomService.GetMaxScale() - (PercentageZoom / 100.0), 2);
+            if (SVGControl.Scale != x)
             {
-                if (ZoomService.ZoomOut(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
+                SVGControl.Scale = x;
+                await SVGControlChanged.InvokeAsync(SVGControl);
             }
-            else if (ZoomService.ZoomIn(SVGControl)) await SVGControlChanged.InvokeAsync(SVGControl);
         }
 
         public async Task SelectionZoom(double i)

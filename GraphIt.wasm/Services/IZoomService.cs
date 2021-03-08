@@ -9,8 +9,8 @@ namespace GraphIt.wasm.Services
     public interface IZoomService
     {
         string GetPercentageString(double scale);
-        double GetPercentage(double scale);
-        public double GetDefaultScale();
+        int GetPercentage(double scale);
+        double GetDefaultScale();
         double GetMaxScale();
         bool ZoomIn(SVGControl svgControl);
         bool ZoomOut(SVGControl svgControl);

@@ -22,8 +22,8 @@ namespace GraphIt.wasm.Pages
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public NewEdge NewEdge { get; set; }
         [Parameter] public EventCallback<NewEdge> NewEdgeChanged { get; set; }
-        public bool InsertNode { get; set; }
-        public bool InsertEdge { get; set; }
+        public bool InsertNode { get; set; } = false;
+        public bool InsertEdge { get; set; } = false;
         public string NodeCss { get; set; }
         public string EdgeCss { get; set; }
         public bool Loading { get; set; } = false;
@@ -33,11 +33,6 @@ namespace GraphIt.wasm.Pages
         public string ErrorCreatingGraph { get; set; } = "";
 
 
-        protected override void OnParametersSet()
-        {
-            InsertNode = GraphMode == GraphMode.InsertNode;
-            InsertEdge = GraphMode == GraphMode.InsertEdge;
-        }
         public async Task UpdateInsertNode()
         {
             InsertNode = !InsertNode;
@@ -45,6 +40,7 @@ namespace GraphIt.wasm.Pages
             {
                 InsertEdge = false;
                 await GraphModeChanged.InvokeAsync(GraphMode.InsertNode);
+                await NewEdgeChanged.InvokeAsync(new NewEdge());
             }
             else if (!InsertEdge)
             {
@@ -64,6 +60,7 @@ namespace GraphIt.wasm.Pages
             {
                 await GraphModeChanged.InvokeAsync(GraphMode.Default);
             }
+            await NewEdgeChanged.InvokeAsync(new NewEdge());
         }
 
         public async Task CreateGraph()
