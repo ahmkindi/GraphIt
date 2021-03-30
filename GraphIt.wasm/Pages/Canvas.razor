@@ -33,9 +33,17 @@
         <MenuItem Text="Copy" Disabled="true" IconCss="oi oi-layers"></MenuItem>
         <MenuItem Text="Paste" Disabled="@(!CopiedNodes.Any())" IconCss="oi oi-clipboard"></MenuItem>
         <MenuItem Separator="true"></MenuItem>
-        <MenuItem Text="Insert Node" IconCss="oi oi-plus"></MenuItem>
         <MenuItem Text="Zoom In" IconCss="oi oi-zoom-in"></MenuItem>
         <MenuItem Text="Zoom Out" IconCss="oi oi-zoom-out"></MenuItem>
+        <MenuItem Separator="true"></MenuItem>
+        <MenuItem Text="Insert Node" IconCss="oi oi-plus"></MenuItem>
+        <MenuItem Text="Select">
+            <MenuItems>
+                <MenuItem Text="All Nodes" IconCss="oi oi-media-record"></MenuItem>
+                <MenuItem Text="All Edges" IconCss="oi oi-transfer"></MenuItem>
+                <MenuItem Text="Everything"></MenuItem>
+            </MenuItems>
+        </MenuItem>
     </MenuItems>
     <MenuEvents TValue="MenuItem" ItemSelected="@Select"></MenuEvents>
 </SfContextMenu>

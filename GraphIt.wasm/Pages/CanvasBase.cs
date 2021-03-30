@@ -97,8 +97,18 @@ namespace GraphIt.wasm.Pages
                 case "Edges":
                     await ChangeMenu.InvokeAsync(NavChoice.Design);
                     break;
+                case "All Nodes":
+                    await ActiveNodesChanged.InvokeAsync(Nodes);
+                    break;
+                case "All Edges":
+                    await ActiveEdgesChanged.InvokeAsync(Edges);
+                    break;
+                case "Everything":
+                    await ActiveEdgesChanged.InvokeAsync(Edges);
+                    await ActiveNodesChanged.InvokeAsync(Nodes);
+                    break;
                 case "Insert Edge":
-                    InsertEdge();
+                    await InsertEdge();
                     break;
                 case "Insert Node":
                     NodeService.AddNode(Nodes, DefaultOptions, origin[0]*SVGControl.Scale + SVGControl.Xaxis, origin[1]*SVGControl.Scale + SVGControl.Yaxis);

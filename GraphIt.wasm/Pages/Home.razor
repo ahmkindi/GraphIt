@@ -1,6 +1,15 @@
 ﻿@inherits HomeBase
 
-<li class="NavNone p-2 border-right border-dark" @onclick="OnSelectAll">Select All</li>
+<li class="NavNone dropdown border-right border-dark">
+    <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Select
+    </button>
+    <div class="dropdown-menu" aria-labelledby="repre">
+        <a class="dropdown-item" @onclick="async () => await ActiveNodesChanged.InvokeAsync(Nodes)">Nodes</a>
+        <a class="dropdown-item" @onclick="async () => await ActiveEdgesChanged.InvokeAsync(Edges)">Edges</a>
+        <a class="dropdown-item" @onclick="SelectAll">All</a>
+    </div>
+</li>
 <li class="NavNone dropdown border-right border-dark">
     <button class="btn shadow-none dropdown-toggle" id="repre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Representations

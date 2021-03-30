@@ -30,7 +30,6 @@ namespace GraphIt.wasm.Pages
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
 
-        public bool Animate { get; set; } = false;
         public bool GetDegreePref { get; set; } = false;
         public bool[] IsDisabled { get; set; }
 
@@ -84,14 +83,10 @@ namespace GraphIt.wasm.Pages
             await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm(a));
         }
 
-        public async Task OnSelectAll()
+        public async Task SelectAll()
         {
-            ActiveNodes.Clear();
-            ActiveEdges.Clear();
-            foreach (Node node in Nodes) ActiveNodes.Add(node);
-            foreach (Edge edge in Edges) ActiveEdges.Add(edge);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+            await ActiveNodesChanged.InvokeAsync(Nodes);
+            await ActiveEdgesChanged.InvokeAsync(Edges);
         }
     }
 }
