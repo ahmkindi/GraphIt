@@ -1,19 +1,19 @@
 ﻿@inherits NodeCircleBase
 
 <g class="@NodeCss"
-   id="@Node.NodeId"
+   id="@Node.Id"
    @onmousedown="OnMouseDown">
     <circle cx="@Node.Xaxis"
             cy="@Node.Yaxis"
-            r="@Node.Radius"
-            stroke="@Node.NodeColor"
+            r="@Node.Size"
+            stroke="@Node.Color"
             stroke-width="2"
-            fill="@Node.NodeColor" />
+            fill="@Node.Color" />
     <text text-anchor="middle"
           fill="@Node.LabelColor"
-          stroke="@Node.NodeColor"
+          stroke="@Node.Color"
           stroke-width="1"
-          font-size="@(Node.Radius/2)"
+          font-size="@(Node.Size/2)"
           font-family="Verdana"
           x="@Node.Xaxis"
           y="@Node.Yaxis">
@@ -23,10 +23,10 @@
 
 @if (Active)
 {
-    <rect x="@(Node.Xaxis-Node.Radius)"
-          y="@(Node.Yaxis-Node.Radius)"
-          width="@(Node.Radius*2)"
-          height="@(Node.Radius*2)"
+    <rect x="@(Node.Xaxis-Node.Size)"
+          y="@(Node.Yaxis-Node.Size)"
+          width="@(Node.Size*2)"
+          height="@(Node.Size*2)"
           stroke="black"
           stroke-dasharray="5,5"
           fill="none" />

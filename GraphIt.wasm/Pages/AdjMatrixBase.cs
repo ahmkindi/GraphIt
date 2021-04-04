@@ -13,16 +13,13 @@ namespace GraphIt.wasm.Pages
     {
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
-        [Parameter] public Representation Rep { get; set; }
-        [Parameter] public EventCallback<Representation> RepChanged { get; set; }
+        [Parameter] public bool MatrixOpened { get; set; }
+        [Parameter] public EventCallback<bool> MatrixOpenedChanged { get; set; }
         [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public List<Edge> Edges { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
+        [Parameter] public Graph Graph { get; set; }
+        [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
         public bool TextView { get; set; }
         public string ShowText { get; set; } = "";
         public bool ValidInput { get; set; }
@@ -32,21 +29,12 @@ namespace GraphIt.wasm.Pages
             ValidInput = true;
         }
 
-        public async Task CloseMatrix()
-        {
-            Rep = Representation.None;
-            await RepChanged.InvokeAsync(Rep);
-
-            EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
-            await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
-        }
-
         public Edge Adjacent(Node tail, Node head)
         {
-            foreach (Edge edge in Edges)
+            foreach (Edge edge in Graph.Edges)
             {
-                if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
+                if ((edge.Head == head && edge.Tail == tail)
+                    || (edge.Head == tail && edge.Tail == head && !Graph.Directed))
                 {
                     return edge;
                 }
@@ -60,31 +48,31 @@ namespace GraphIt.wasm.Pages
             if (weight > 0)
             {
                 RemoveEdge(tail, head);
-                EdgeService.AddEdge(Edges, DefaultOptions, head.NodeId, tail.NodeId, weight);
+                EdgeService.AddEdge(Graph.Edges, DefaultOptions, head, tail, weight);
             }
             else if (weight == 0)
             {
-                foreach (Edge edge in Edges)
+                foreach (Edge edge in Graph.Edges)
                 {
-                    if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                        || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
+                    if ((edge.Head == head && edge.Tail == tail)
+                        || (edge.Head == tail && edge.Tail == head && !Graph.Directed))
                     {
-                        Edges.Remove(edge);
+                        Graph.Edges.Remove(edge);
                         break;
                     }
                 }
             }
-            await EdgesChanged.InvokeAsync(Edges);
+            await GraphChanged.InvokeAsync(Graph);
         }
 
         public void RemoveEdge(Node tail, Node head)
         {
-            foreach (Edge edge in Edges)
+            foreach (Edge edge in Graph.Edges)
             {
-                if ((edge.HeadNodeId == head.NodeId && edge.TailNodeId == tail.NodeId)
-                    || (edge.HeadNodeId == tail.NodeId && edge.TailNodeId == head.NodeId && !DefaultOptions.Directed))
+                if ((edge.Head == head && edge.Tail == tail)
+                    || (edge.Head == tail && edge.Tail == head && !Graph.Directed))
                 {
-                    Edges.Remove(edge);
+                    Graph.Edges.Remove(edge);
                 }
             }
         }
@@ -95,31 +83,30 @@ namespace GraphIt.wasm.Pages
             double[,] weights = ParseInput(input);
             if (ValidInput)
             {
-                int difference = weights.GetLength(0) - Nodes.Count;
+                int difference = weights.GetLength(0) - Graph.Nodes.Count;
                 if (difference > 0)
                 {
                     for (int i = 1; i <= difference; i++)
                     {
-                        NodeService.AddNode(Nodes, DefaultOptions, GetRandom(true), GetRandom(false));
+                        NodeService.AddNode(Graph.Nodes, DefaultOptions, GetRandom(true), GetRandom(false));
                     }
                 }
                 else if (difference < 0)
                 {
                     for (int i = difference; i < 0; i++)
                     {
-                        Nodes.Remove(Nodes[Nodes.Count + i]);
+                        Graph.Nodes.RemoveAt(Graph.Nodes.Count + i);
                     }
                 }
-                Edges.Clear();
+                Graph.Edges.Clear();
                 for (int i = 0; i < weights.GetLength(0); i++)
                 {
                     for (int j = 0; j < weights.GetLength(1); j++)
                     {
-                        if (weights[i,j] != 0) EdgeService.AddEdge(Edges, DefaultOptions, Nodes[j].NodeId, Nodes[i].NodeId, weights[i,j]);
+                        if (weights[i,j] != 0) EdgeService.AddEdge(Graph.Edges, DefaultOptions, Graph.Nodes[j], Graph.Nodes[i], weights[i,j]);
                     }
                 }
-                await NodesChanged.InvokeAsync(Nodes);
-                await EdgesChanged.InvokeAsync(Edges);
+                await GraphChanged.InvokeAsync(Graph);
                 ShowText = GetText();
             }
         }
@@ -129,7 +116,7 @@ namespace GraphIt.wasm.Pages
             string[] temp = Regex.Split(Regex.Replace(input, @"\n$", ""), "\r\n|\r|\n");
             double[,] result = new double[temp.Length, temp.Length];
             string numRegex;
-            if (Rep == Representation.Matrix)
+            if (!Graph.Weighted)
             {
                 numRegex = "(0|1)";
             }
@@ -157,19 +144,19 @@ namespace GraphIt.wasm.Pages
         public string GetText()
         {
             string value = "";
-            foreach(Node tail in Nodes)
+            foreach(Node tail in Graph.Nodes)
             {
                 var count = 1;
-                foreach (Node head in Nodes)
+                foreach (Node head in Graph.Nodes)
                 {
                     Edge edge = Adjacent(tail, head);
                     if (edge != null) 
                     {
-                        if (Rep == Representation.Matrix) value += "1";
+                        if (!Graph.Weighted) value += "1";
                         else value += edge.Weight.ToString();
                     }
                     else value += "0";
-                    if (count < Nodes.Count) value += ",";
+                    if (count < Graph.Nodes.Count) value += ",";
                     count++;
                 }
                 value += "\n";
@@ -179,9 +166,8 @@ namespace GraphIt.wasm.Pages
 
         public async Task OnTableDelete(Node node)
         {
-            NodeService.DeleteNode(Nodes, Edges, node); 
-            await EdgesChanged.InvokeAsync(Edges); 
-            await NodesChanged.InvokeAsync(Nodes);
+            NodeService.DeleteNode(Graph, node); 
+            await GraphChanged.InvokeAsync(Graph);
         }
 
         public double GetRandom(bool Xaxis)

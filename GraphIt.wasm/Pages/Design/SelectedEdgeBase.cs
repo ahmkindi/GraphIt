@@ -15,7 +15,7 @@ namespace GraphIt.wasm.Pages.Design
             public string Hex { get; set; }
         }
         [Parameter] public HexColorValue ColorValue { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public bool Weighted { get; set; }
         [Parameter] public IList<Edge> ActiveEdges { get; set; }
         [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
         [Parameter] public EventCallback<bool> DeleteActiveEdges { get; set; }
@@ -30,7 +30,7 @@ namespace GraphIt.wasm.Pages.Design
             else if (w > 20) w = 20;
             foreach (Edge edge in ActiveEdges)
             {
-                edge.Width = w;
+                edge.Size = w;
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }
@@ -56,7 +56,7 @@ namespace GraphIt.wasm.Pages.Design
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
             foreach (Edge edge in ActiveEdges)
             {
-                edge.EdgeColor = ColorValue.Hex;
+                edge.Color = ColorValue.Hex;
             }
             await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
         }

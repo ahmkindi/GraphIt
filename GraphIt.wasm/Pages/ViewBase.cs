@@ -15,8 +15,8 @@ namespace GraphIt.wasm.Pages
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
         [Parameter] public BrowserWindowSize Browser { get; set; }
-        [Parameter] public IList<Node> ActiveNodes { get; set; }
-        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
+        [Parameter] public Graph ActiveGraph { get; set; }
+        [Parameter] public EventCallback<Graph> ActiveGraphChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IZoomService ZoomService { get; set; }
         public IList<Node> FilterNodes { get; set; } = new List<Node>();
@@ -33,9 +33,9 @@ namespace GraphIt.wasm.Pages
                 FilterNodes.Clear();
                 foreach (Node node in Nodes) FilterNodes.Add(node);
             }
-            if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0]))
+            if (ActiveGraph.Nodes.Count == 1 && FilterNodes.Contains(ActiveGraph.Nodes[0]))
             {
-                Counter = FilterNodes.IndexOf(ActiveNodes[0]);
+                Counter = FilterNodes.IndexOf(ActiveGraph.Nodes[0]);
             }
             for (int i = FilterNodes.Count - 1; i >= 0; i--)
             {
@@ -61,12 +61,12 @@ namespace GraphIt.wasm.Pages
 
         public async Task Fit()
         {
-            SVGControl.Xaxis = Nodes.Min(n => n.Xaxis - n.Radius);
-            SVGControl.Yaxis = Nodes.Min(n => n.Yaxis - n.Radius) - 105;
+            SVGControl.Xaxis = Nodes.Min(n => n.Xaxis - n.Size);
+            SVGControl.Yaxis = Nodes.Min(n => n.Yaxis - n.Size) - 105;
             SVGControl.OldXaxis = SVGControl.Xaxis;
             SVGControl.OldYaxis = SVGControl.Yaxis;
-            var width = Nodes.Max(n => n.Xaxis + n.Radius) - SVGControl.Xaxis;
-            var height = Nodes.Max(n => n.Yaxis + n.Radius) - SVGControl.Yaxis + 30;
+            var width = Nodes.Max(n => n.Xaxis + n.Size) - SVGControl.Xaxis;
+            var height = Nodes.Max(n => n.Yaxis + n.Size) - SVGControl.Yaxis + 30;
             SVGControl.Scale = Math.Max(width / Browser.Width, height / Browser.Height); 
             await SVGControlChanged.InvokeAsync(SVGControl);
         }
@@ -91,7 +91,7 @@ namespace GraphIt.wasm.Pages
             }
             if (FilterNodes.Any())
             {
-                if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0])) Counter = FilterNodes.IndexOf(ActiveNodes[0]);
+                if (ActiveGraph.Nodes.Count == 1 && FilterNodes.Contains(ActiveGraph.Nodes[0])) Counter = FilterNodes.IndexOf(ActiveGraph.Nodes[0]);
                 else Counter = 0;
                 await IterateNodes(0);
             }
@@ -117,7 +117,7 @@ namespace GraphIt.wasm.Pages
             }
             if (FilterNodes.Any())
             {
-                if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0])) Counter = FilterNodes.IndexOf(ActiveNodes[0]);
+                if (ActiveGraph.Nodes.Count == 1 && FilterNodes.Contains(ActiveGraph.Nodes[0])) Counter = FilterNodes.IndexOf(ActiveGraph.Nodes[0]);
                 else Counter = 0;
                 await IterateNodes(0);
             }
@@ -160,7 +160,7 @@ namespace GraphIt.wasm.Pages
             Filter = e.Value.ToString();
             if (FilterNodes.Any())
             {
-                if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0])) Counter = FilterNodes.IndexOf(ActiveNodes[0]);
+                if (ActiveGraph.Nodes.Count == 1 && FilterNodes.Contains(ActiveGraph.Nodes[0])) Counter = FilterNodes.IndexOf(ActiveGraph.Nodes[0]);
                 else Counter = 0;
                 await IterateNodes(0);
             }
@@ -169,15 +169,15 @@ namespace GraphIt.wasm.Pages
         public async Task IterateNodes(int i)
         {
             Counter = Math.Abs((Counter + i) % FilterNodes.Count);
-            ActiveNodes.Clear();
-            ActiveNodes.Add(FilterNodes[Counter]);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            ActiveGraph.Nodes.Clear();
+            ActiveGraph.Nodes.Add(FilterNodes[Counter]);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
             await OnRecenter();
         }
         public async Task OnRecenter()
         {
-            SVGControl.Xaxis = ActiveNodes[0].Xaxis - (SVGControl.Width / 2);
-            SVGControl.Yaxis = ActiveNodes[0].Yaxis - (SVGControl.Height / 2);
+            SVGControl.Xaxis = ActiveGraph.Nodes[0].Xaxis - (SVGControl.Width / 2);
+            SVGControl.Yaxis = ActiveGraph.Nodes[0].Yaxis - (SVGControl.Height / 2);
             SVGControl.OldXaxis = SVGControl.Xaxis;
             SVGControl.OldYaxis = SVGControl.Yaxis;
             await SVGControlChanged.InvokeAsync(SVGControl);

@@ -9,29 +9,29 @@ namespace GraphIt.wasm.Services
     public class AlgorithmService : IAlgorithmService
     {
         private int MaxId { get; set; }
-        public DefaultOptions DefaultAlgoOptions { get; set; }
-        public DefaultOptions DefaultOptions { get; set; }
+        public Options Options { get; set; }
         public StartAlgorithm StartAlgorithm { get; set; }
-        public IList<AlgorithmNode> AlgorithmNodes { get; set; }
-        public IList<Edge> AlgorithmEdges { get; set; }
-        public IList<Node> Nodes { get; set; }
-        public IList<Edge> Edges { get; set; }
+        public IList<List<GraphObject>> PlayAlgorithm { get; set; }
+        public Graph Graph { get; set; }
+        public AlgoExplain AlgoExplain { get; set; }
         int time = 0;
-        public void RunAlgorithm(DefaultOptions d, DefaultOptions a, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges)
+        public void RunAlgorithm(Options options, StartAlgorithm startAlgorithm, Graph graph, AlgoExplain algoExplain, ref List<List<GraphObject>> playAlgorithm)
         {
-            DefaultAlgoOptions = a;
-            DefaultOptions = d;
+            Options = options;
             StartAlgorithm = startAlgorithm;
-            Nodes = nodes;
-            Edges = edges;
-            AlgorithmNodes = algorithmNodes;
-            AlgorithmEdges = algorithmEdges;
-            AlgorithmNodes.Clear();
-            AlgorithmEdges.Clear();
-            foreach (Node node in nodes) AlgorithmNodes.Add(new AlgorithmNode(node, d));
-            foreach (Edge edge in edges) AlgorithmEdges.Add(new Edge(edge, d));
-            MaxId = nodes.Max(n => n.NodeId);
-            
+            Graph = graph;
+            AlgoExplain = algoExplain;
+            PlayAlgorithm = playAlgorithm;
+            playAlgorithm.Clear();
+            AlgoExplain.Explanations.Clear();
+            AlgoExplain.Counter = 0;
+
+            PlayAlgorithm.Add(new List<GraphObject>());
+            foreach (Node node in Graph.Nodes) PlayAlgorithm[AlgoExplain.Counter].Add(new Node(node, options.Default));
+            foreach (Edge edge in Graph.Edges) PlayAlgorithm[AlgoExplain.Counter].Add(new Edge(edge, options.Default, ""));
+            MaxId = Graph.Nodes.Max(n => n.Id);
+            Increment();
+
             switch (StartAlgorithm.Algorithm)
             {
                 case Algorithm.Kruskal:
@@ -69,96 +69,197 @@ namespace GraphIt.wasm.Services
                     break;
             }
             StartAlgorithm.Done = true;
+            AlgoExplain.MaxCounter = AlgoExplain.Counter;
+            AlgoExplain.Counter = 0;
         }
 
         public void Kruskal()
         {
             double sum = 0;
-            IEnumerable<Edge> sortedEdges = Edges.OrderBy(e => e.Weight);
-            Set set = new Set(Nodes);
+            IEnumerable<Edge> sortedEdges = Graph.Edges.OrderBy(e => e.Weight);
+            Set set = new Set(Graph.Nodes);
             
-            foreach (Node node in Nodes)
-                set.MakeSet(node.NodeId);
+            foreach (Node node in Graph.Nodes)
+            {
+                set.MakeSet(node.Id);
+                EditAlgorithmNodes(node, "set: " + node.Id.ToString());
+            }
+            AlgoExplain.Explanations.AddOrUpdate("Make a set for each node to start off", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+            Increment();
 
+            IList<Edge> changeBack = new List<Edge>();
             foreach (Edge edge in sortedEdges)
             {
-                if (set.FindSet(edge.TailNodeId) != set.FindSet(edge.HeadNodeId))
+                foreach (Edge e in changeBack)
                 {
-                    sum += edge.Weight;
-                    EditAlgorithmEdges(edge);
-                    set.Union(edge.TailNodeId, edge.HeadNodeId);
+                    EditAlgorithmEdges(e, Options.Default);
                 }
+                changeBack.Clear();
+
+                if (set.FindSet(edge.Tail.Id) != set.FindSet(edge.Head.Id))
+                {
+                    EditAlgorithmEdges(edge, Options.Algorithm);
+                    AlgoExplain.Explanations.AddOrUpdate("This is the smallest edge that connects different sets", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                    Increment();
+
+                    sum += edge.Weight;
+                    var x = set.Union(edge.Tail.Id, edge.Head.Id);
+
+                    EditAlgorithmNodes(edge.Tail, "set: " + x);
+                    EditAlgorithmNodes(edge.Head, "set: " + x);
+                    AlgoExplain.Explanations.AddOrUpdate("Union the two sets", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                }
+                else
+                {
+                    AlgoExplain.Explanations.AddOrUpdate("This edge connects the same set so it can't be chosen", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                    EditAlgorithmEdges(edge, Options.Algorithm);
+                    changeBack.Add(edge);
+                }
+                Increment();
             }
-            StartAlgorithm.Output = $"Weight of MST is {sum}";
+            
+            foreach (Edge e in changeBack)
+            {
+                EditAlgorithmEdges(e, Options.Default);
+            }
+
+            int max = 0;
+            int min = int.MaxValue;
+            foreach (Node node in Graph.Nodes)
+            {
+                var x = set.FindSet(node.Id);
+                min = Math.Min(min, x);
+                max = Math.Max(max, x);
+            }
+            if (min == max)
+            {
+                AlgoExplain.Explanations.AddOrUpdate("All Nodes belong to the same set, so MST is complete", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                StartAlgorithm.Output = $"Weight of MST is {sum}";
+            }
+            else
+            {
+                AlgoExplain.Explanations.AddOrUpdate("Not all nodes are in the same set => this graph is disconnected", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                StartAlgorithm.Output = "No tree Found";
+            }
         }
 
         public void BFS()
         {
             Queue<NodeEdge> ToExplore = new Queue<NodeEdge>();
             IList<Node> Explored = new List<Node>();
+            IList<Edge> TreeEdges = new List<Edge>();
             NodeEdge Exploring;
-            int count = 1;
-            EditAlgorithmNodes(StartAlgorithm.StartNode, count.ToString(), "");
+            int count = 0;
+            EditAlgorithmNodes(StartAlgorithm.StartNode, "Source: " + count.ToString());
+            AlgoExplain.Explanations.AddOrUpdate($"Enqueue Discovered Node to the Queue", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+            Increment();
             ToExplore.Enqueue(new NodeEdge(StartAlgorithm.StartNode));
 
             while (ToExplore.Any())
             {
                 Exploring = ToExplore.Dequeue();
+                MakeNodeBlue(Exploring.Node, "Exploring");
+                AlgoExplain.Explanations.AddOrUpdate($"Dequeue a Discovered Node To Explore its Neighbours", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                Increment();
+
                 if (Explored.Contains(Exploring.Node))
+                {
                     continue;
+                }
 
                 Explored.Add(Exploring.Node);
-                
-                if (count > 1)
-                {
-                    EditAlgorithmEdges(Exploring.Edge);
-                    EditAlgorithmNodes(Exploring.Node, count.ToString());
-                }
 
-                count++;
-
-                foreach (NodeEdge neighbor in Adjacent(Exploring.Node.NodeId))
+                foreach (NodeEdge neighbor in Adjacent(Exploring.Node.Id))
                 {
-                    if (!Explored.Contains(neighbor.Node))
+                    if (!Explored.Contains(neighbor.Node)) 
+                    {
+                        count++;
                         ToExplore.Enqueue(neighbor);
+                        EditAlgorithmEdges(neighbor.Edge, Options.Algorithm, "Tree Edge");
+                        EditAlgorithmNodes(neighbor.Node, count.ToString());
+                        AlgoExplain.Explanations.AddOrUpdate("This edge leads to an undiscovered node so its a tree edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                        TreeEdges.Add(neighbor.Edge);
+                        Increment();
+                    }
+                    else if (Graph.Directed || !TreeEdges.Contains(neighbor.Edge))
+                    {
+                        EditAlgorithmEdges(neighbor.Edge, Options.Default, "Non-Tree Edge");
+                        AlgoExplain.Explanations.AddOrUpdate("This edge leads to a discovered node so its a non-tree edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                        Increment();
+                    }
                 }
+                EditAlgorithmNodes(Exploring.Node, Explored.IndexOf(Exploring.Node).ToString());
             }
             TraversalOutput(Explored);
         }
 
         public void DFS()
         {
-            Stack<NodeEdge> ToExplore = new Stack<NodeEdge>();
-            IList<Node> Explored = new List<Node>();
-            NodeEdge Exploring;
-            int count = 1;
-            EditAlgorithmNodes(StartAlgorithm.StartNode, count.ToString(), "");
-            ToExplore.Push(new NodeEdge(StartAlgorithm.StartNode));
+            IList<Node> visited = new List<Node>();
+            Dictionary<Node, int> pre = new Dictionary<Node, int>();
+            Dictionary<Node, int> post = new Dictionary<Node, int>();
+            time = 0;
+            IList<Edge> treeEdges = new List<Edge>();
+            DFSRun(StartAlgorithm.StartNode, pre, post, visited, treeEdges);
+            TraversalOutput(visited);
+        }
 
-            while (ToExplore.Any())
+        public void DFSRun(Node u, Dictionary<Node, int> pre, Dictionary<Node, int> post, IList<Node> visited, IList<Edge> treeEdges)
+        {
+            pre[u] = time;
+            MakeNodeBlue(u, $"[{time},-]");
+            AlgoExplain.Explanations.AddOrUpdate("Preform DFS from this Node", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+            Increment();
+
+            time++;
+            visited.Add(u);
+            foreach (NodeEdge neighbor in Adjacent(u.Id))
             {
-                Exploring = ToExplore.Pop();
-                if (Explored.Contains(Exploring.Node))
-                    continue;
-
-                Explored.Add(Exploring.Node); 
-
-                if (count > 1)
+                if (!visited.Contains(neighbor.Node))
                 {
-                    EditAlgorithmEdges(Exploring.Edge);
-                    EditAlgorithmNodes(Exploring.Node, count.ToString());
+                    EditAlgorithmEdges(neighbor.Edge, Options.Algorithm, "tree edge");
+                    AlgoExplain.Explanations.AddOrUpdate("This Edge Leads to an Undiscovered Node so its a Tree Edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                    Increment();
+                    treeEdges.Add(neighbor.Edge);
+                    DFSRun(neighbor.Node, pre, post, visited, treeEdges);
+                }
+                else if (Graph.Directed)
+                {
+                    
+                    if (pre[u] < pre[neighbor.Node])
+                    {
+                        EditAlgorithmEdges(neighbor.Edge, Options.Default, "forward edge");
+                        AlgoExplain.Explanations.AddOrUpdate("This node is a visited descendant, so forward edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                    }
+                    else
+                    {
+                        if (post.ContainsKey(u) && !post.ContainsKey(neighbor.Node))
+                        {
+                            EditAlgorithmEdges(neighbor.Edge, Options.Default, "back edge");
+                            AlgoExplain.Explanations.AddOrUpdate("This node is a visited ancestor, so back edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                        }
+                        else
+                        {
+                            EditAlgorithmEdges(neighbor.Edge, Options.Default, "cross edge");
+                            AlgoExplain.Explanations.AddOrUpdate("This node is visited and its neither descendant nor ancestor, so cross edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                        }
+                    }
+                    Increment();
+                }
+                else if (!treeEdges.Contains(neighbor.Edge))
+                {
+                    EditAlgorithmEdges(neighbor.Edge, Options.Default, "back edge");
+                    AlgoExplain.Explanations.AddOrUpdate("This node is a visited ancestor, so back edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                    Increment();
                 }
 
-                count++;
-
-                foreach (NodeEdge neighbor in Adjacent(Exploring.Node.NodeId))
-                {
-                    if (!Explored.Contains(neighbor.Node))
-                        ToExplore.Push(neighbor);
-                }
             }
 
-            TraversalOutput(Explored);
+            post[u] = time;
+            EditAlgorithmNodes(u, $"[{pre[u]},{post[u]}]");
+            AlgoExplain.Explanations.AddOrUpdate("This Node has no more edges to check, so backtrack", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+            Increment();
+            time++;
         }
 
         public void Dijkstra()
@@ -166,19 +267,19 @@ namespace GraphIt.wasm.Services
             IList<Node> Explored = new List<Node>();
             Dictionary<Node, double> Distances = new Dictionary<Node, double>();
             Node Exploring;
-            foreach(Node node in Nodes)
+            foreach (Node node in Graph.Nodes)
             {
                 if (node == StartAlgorithm.StartNode) Distances[node] = 0;
                 else Distances[node] = double.MaxValue;
             }
 
-            foreach (Node _ in Nodes)
+            foreach (Node _ in Graph.Nodes)
             {
                 Exploring = ShortestDistance(Distances, Explored);
                 Explored.Add(Exploring);
-                foreach(KeyValuePair<Node, double> kvp in Distances)
+                foreach (KeyValuePair<Node, double> kvp in Distances)
                 {
-                    Edge connector = ConnectingEdge(Exploring.NodeId, kvp.Key.NodeId);
+                    Edge connector = ConnectingEdge(Exploring, kvp.Key);
                     double exploringDis = Distances[Exploring];
                     if (!Explored.Contains(kvp.Key) && connector != null
                         && exploringDis != double.MaxValue && exploringDis + connector.Weight < kvp.Value)
@@ -188,9 +289,9 @@ namespace GraphIt.wasm.Services
                 }
             }
 
-            foreach(KeyValuePair<Node, double> kvp in Distances)
+            foreach (KeyValuePair<Node, double> kvp in Distances)
             {
-                if (kvp.Key.NodeId == StartAlgorithm.StartNode.NodeId) EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}", "");
+                if (kvp.Key.Id == StartAlgorithm.StartNode.Id) MakeNodeBlue(kvp.Key, $"Distance: {kvp.Value}");
                 else EditAlgorithmNodes(kvp.Key, $"Distance: {kvp.Value}");
             }
         }
@@ -201,19 +302,19 @@ namespace GraphIt.wasm.Services
             Dictionary<Node, double> Distances = new Dictionary<Node, double>();
             Dictionary<Node, Edge> Path = new Dictionary<Node, Edge>();
             Node Exploring;
-            foreach (Node node in Nodes)
+            foreach (Node node in Graph.Nodes)
             {
                 if (node == StartAlgorithm.StartNode) Distances[node] = 0;
                 else Distances[node] = double.MaxValue;
             }
 
-            foreach (Node _ in Nodes)
+            foreach (Node _ in Graph.Nodes)
             {
                 Exploring = ShortestDistance(Distances, Explored);
                 Explored.Add(Exploring);
                 foreach (KeyValuePair<Node, double> kvp in Distances)
                 {
-                    Edge connector = ConnectingEdge(Exploring.NodeId, kvp.Key.NodeId);
+                    Edge connector = ConnectingEdge(Exploring, kvp.Key);
                     double exploringDis = Distances[Exploring];
                     if (!Explored.Contains(kvp.Key) && connector != null
                         && exploringDis != double.MaxValue && exploringDis + connector.Weight < kvp.Value)
@@ -233,106 +334,113 @@ namespace GraphIt.wasm.Services
                 while (nodeInPath != StartAlgorithm.StartNode)
                 {
                     if (nodeInPath == StartAlgorithm.EndNode)
-                        EditAlgorithmNodes(nodeInPath, "", "");
+                        MakeNodeBlue(nodeInPath, "");
                     else EditAlgorithmNodes(nodeInPath, "");
                     Edge edgeInPath = Path[nodeInPath];
                     totalLength += edgeInPath.Weight;
-                    EditAlgorithmEdges(edgeInPath);
-                    Node prev = Path[nodeInPath].TailNode(Nodes);
-                    if (prev == nodeInPath && !DefaultOptions.Directed) prev = Path[nodeInPath].HeadNode(Nodes);
+                    EditAlgorithmEdges(edgeInPath, Options.Algorithm);
+                    Node prev = Path[nodeInPath].Tail;
+                    if (prev == nodeInPath && !Graph.Directed) prev = Path[nodeInPath].Head;
                     nodeInPath = prev;
                     StartAlgorithm.Output = $"{nodeInPath.Label}=>{StartAlgorithm.Output}";
                 }
-                EditAlgorithmNodes(nodeInPath, "", "");
+                EditAlgorithmNodes(nodeInPath, "");
                 StartAlgorithm.Output = $"Path length is {totalLength}: {StartAlgorithm.Output}";
             }
         }
 
         public void Degree()
         {
-            Dictionary<int, int> InDegreeCount = new Dictionary<int, int>();
-            Dictionary<int, int> OutDegreeCount = new Dictionary<int, int>();
-            foreach (AlgorithmNode an in AlgorithmNodes) 
+            int[] InDegreeCount = new int[MaxId + 1];
+            int[] OutDegreeCount = new int[MaxId + 1];
+            foreach (Node node in Graph.Nodes)
             {
-                InDegreeCount[an.Node.NodeId] = 0;
-                OutDegreeCount[an.Node.NodeId] = 0;
-            } 
-            foreach (Edge edge in AlgorithmEdges)
-            {
-                OutDegreeCount[edge.TailNodeId]++;
-                InDegreeCount[edge.HeadNodeId]++;
+                InDegreeCount[node.Id] = 0;
+                OutDegreeCount[node.Id] = 0;
+                if (Graph.Directed) EditAlgorithmNodes(node, $"Degree:{InDegreeCount[node.Id] + OutDegreeCount[node.Id]}");
+                else EditAlgorithmNodes(node, $"In:{InDegreeCount[node.Id]}, Out:{OutDegreeCount[node.Id]}");
+                AlgoExplain.Explanations.AddOrUpdate("Initialize all degrees to 0", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                Increment();
             }
-            if (DefaultOptions.Directed)
-                foreach (AlgorithmNode an in AlgorithmNodes)
-                    an.Header = $"In-Degree:{InDegreeCount[an.Node.NodeId]}\nOut-Degree:{OutDegreeCount[an.Node.NodeId]}";
-            else
-                foreach (AlgorithmNode an in AlgorithmNodes)
-                    an.Header = $"Degree:{InDegreeCount[an.Node.NodeId]+OutDegreeCount[an.Node.NodeId]}";
+            foreach (Edge edge in Graph.Edges)
+            {
+                OutDegreeCount[edge.Tail.Id]++;
+                InDegreeCount[edge.Head.Id]++;
+                EditAlgorithmEdges(edge, Options.Algorithm);
+                if (Graph.Directed)
+                {
+                    EditAlgorithmNodes(edge.Tail, $"Degree:{InDegreeCount[edge.Tail.Id] + OutDegreeCount[edge.Tail.Id]}");
+                    EditAlgorithmNodes(edge.Head, $"Degree:{InDegreeCount[edge.Head.Id] + OutDegreeCount[edge.Head.Id]}");
+                }
+                else 
+                {
+                    EditAlgorithmNodes(edge.Tail, $"In:{InDegreeCount[edge.Tail.Id]}, Out:{OutDegreeCount[edge.Tail.Id]}");
+                    EditAlgorithmNodes(edge.Head, $"In:{InDegreeCount[edge.Head.Id]}, Out:{OutDegreeCount[edge.Head.Id]}");
+                } 
+                AlgoExplain.Explanations.AddOrUpdate("Increment the degree of the nodes incident to this edge", new List<int> { AlgoExplain.Counter }, (key, list) => Update(list));
+                Increment();
+                EditAlgorithmEdges(edge, Options.Default);
+            }
         }
 
         public void DegreeCentrality(string pref)
         {
-            Dictionary<int, int> DegreeCount = new Dictionary<int, int>();
-            double maxWeight = 0;
-            double minWeight = -1;
-            foreach (AlgorithmNode an in AlgorithmNodes) DegreeCount[an.Node.NodeId] = 0;
-            foreach (Edge edge in AlgorithmEdges)
+            int[] DegreeCount = new int[MaxId+1];
+            foreach (Node node in Graph.Nodes) DegreeCount[node.Id] = 0;
+            foreach (Edge edge in Graph.Edges)
             {
                 if (pref == "in")
-                    DegreeCount[edge.HeadNodeId]++;
+                    DegreeCount[edge.Head.Id]++;
                 else if (pref == "out")
-                    DegreeCount[edge.TailNodeId]++;
+                    DegreeCount[edge.Tail.Id]++;
                 else if (pref == "both")
                 {
-                    DegreeCount[edge.TailNodeId]++;
-                    DegreeCount[edge.HeadNodeId]++;
+                    DegreeCount[edge.Tail.Id]++;
+                    DegreeCount[edge.Head.Id]++;
                 }
             }
-            foreach (KeyValuePair<int, int> kvp in DegreeCount) 
+
+            double maxWeight = DegreeCount.Max();
+            double minWeight = DegreeCount.Min();
+            foreach (Node node in Graph.Nodes)
             {
-                maxWeight = Math.Max(kvp.Value, maxWeight);
-                if (minWeight == -1) minWeight = kvp.Value;
-                else minWeight = Math.Min(minWeight, kvp.Value);
-            }
-            foreach (AlgorithmNode an in AlgorithmNodes)
-            {
-                double normalizedWeight = (DegreeCount[an.Node.NodeId] - minWeight) / (maxWeight - minWeight);
-                an.Node.Radius = (int) (normalizedWeight * (150 - 25) + 25);
+                double normalizedWeight = (DegreeCount[node.Id] - minWeight) / (maxWeight - minWeight);
+                EditAlgorithmNodes(node, (int)(normalizedWeight * (150 - 25) + 25));
             }
         }
 
         public void FordFulkerson()
         {
             int u, v;
-            double[,] rGraph = new double[MaxId+1, MaxId+1];
-            HashSet<int> nodesUsed = new HashSet<int>();
-            
+            double[,] rGraph = new double[MaxId + 1, MaxId + 1];
+            HashSet<Node> nodesUsed = new HashSet<Node>();
 
-            foreach (AlgorithmNode a1 in AlgorithmNodes)
+
+            foreach (Node n1 in Graph.Nodes)
             {
-                foreach (AlgorithmNode a2 in AlgorithmNodes)
+                foreach (Node n2 in Graph.Nodes)
                 {
-                    Edge adj = ConnectingEdge(a1.Node.NodeId, a2.Node.NodeId);
+                    Edge adj = ConnectingEdge(n1, n2);
                     if (adj == null)
-                        rGraph[a1.Node.NodeId, a2.Node.NodeId] = 0;
-                    else rGraph[a1.Node.NodeId, a2.Node.NodeId] = adj.Weight;
+                        rGraph[n1.Id, n2.Id] = 0;
+                    else rGraph[n1.Id, n2.Id] = adj.Weight;
                 }
             }
 
-            int[] parent = new int[MaxId+1];
+            int[] parent = new int[MaxId + 1];
 
             double max_flow = 0;
 
-            while (Boolbfs(rGraph, StartAlgorithm.StartNode.NodeId, StartAlgorithm.EndNode.NodeId, parent))
+            while (Boolbfs(rGraph, StartAlgorithm.StartNode.Id, StartAlgorithm.EndNode.Id, parent))
             {
                 double path_flow = double.MaxValue;
-                for (v = StartAlgorithm.EndNode.NodeId; v != StartAlgorithm.StartNode.NodeId; v = parent[v])
+                for (v = StartAlgorithm.EndNode.Id; v != StartAlgorithm.StartNode.Id; v = parent[v])
                 {
                     u = parent[v];
                     path_flow = Math.Min(path_flow, rGraph[u, v]);
                 }
 
-                for (v = StartAlgorithm.EndNode.NodeId; v != StartAlgorithm.StartNode.NodeId; v = parent[v])
+                for (v = StartAlgorithm.EndNode.Id; v != StartAlgorithm.StartNode.Id; v = parent[v])
                 {
                     u = parent[v];
                     rGraph[u, v] -= path_flow;
@@ -341,39 +449,37 @@ namespace GraphIt.wasm.Services
 
                 max_flow += path_flow;
             }
-            if (DefaultOptions.Directed)
+            if (Graph.Directed)
             {
-                foreach (Edge edge in AlgorithmEdges)
+                foreach (Edge edge in Graph.Edges)
                 {
-                    double flow = rGraph[edge.HeadNodeId, edge.TailNodeId];
+                    double flow = rGraph[edge.Head.Id, edge.Tail.Id];
                     if (flow > 0)
                     {
-                        edge.Label = $"{flow}/{edge.Weight}";
-                        edge.EdgeColor = DefaultAlgoOptions.EdgeColor;
-                        nodesUsed.Add(edge.HeadNodeId);
-                        nodesUsed.Add(edge.TailNodeId);
+                        EditAlgorithmEdges(edge, Options.Algorithm, $"{flow}/{edge.Weight}");
+                        nodesUsed.Add(edge.Head);
+                        nodesUsed.Add(edge.Tail);
                     }
                 }
             }
             else
             {
-                foreach (Edge edge in AlgorithmEdges)
+                foreach (Edge edge in Graph.Edges)
                 {
-                    double flow = rGraph[edge.HeadNodeId, edge.TailNodeId];
-                    double flow2 = rGraph[edge.TailNodeId, edge.HeadNodeId];
+                    double flow = rGraph[edge.Head.Id, edge.Tail.Id];
+                    double flow2 = rGraph[edge.Tail.Id, edge.Head.Id];
                     if (Math.Abs(flow - flow2) > 0)
                     {
-                        edge.Label = $"{Math.Round(Math.Abs(flow - flow2) / 2, 2)}/{edge.Weight}";
-                        edge.EdgeColor = DefaultAlgoOptions.EdgeColor;
-                        nodesUsed.Add(edge.HeadNodeId);
-                        nodesUsed.Add(edge.TailNodeId);
+                        EditAlgorithmEdges(edge, Options.Algorithm, $"{Math.Round(Math.Abs(flow - flow2) / 2, 2)}/{edge.Weight}");
+                        nodesUsed.Add(edge.Head);
+                        nodesUsed.Add(edge.Tail);
                     }
                 }
             }
-            foreach (int i in nodesUsed)
-                EditAlgorithmNodes(i, "");
-            EditAlgorithmNodes(StartAlgorithm.StartNode, "Source", "");
-            EditAlgorithmNodes(StartAlgorithm.EndNode, "Sink", "");
+            foreach (Node node in nodesUsed)
+                EditAlgorithmNodes(node, "");
+            MakeNodeBlue(StartAlgorithm.StartNode, "Source");
+            MakeNodeBlue(StartAlgorithm.EndNode, "Sink");
 
             StartAlgorithm.Output = $"Maximum Flow = {Math.Round(max_flow, 2)}";
         }
@@ -381,31 +487,31 @@ namespace GraphIt.wasm.Services
         public void Articulation()
         {
             // Mark all the vertices as not visited 
-            bool[] visited = new bool[MaxId+1];
-            int[] disc = new int[MaxId+1];
-            int[] low = new int[MaxId+1];
-            int[] parent = new int[MaxId+1];
-            bool[] ap = new bool[MaxId+1]; // To store articulation points 
+            bool[] visited = new bool[MaxId + 1];
+            int[] disc = new int[MaxId + 1];
+            int[] low = new int[MaxId + 1];
+            int[] parent = new int[MaxId + 1];
+            bool[] ap = new bool[MaxId + 1]; // To store articulation points 
 
             // Initialize parent and visited, and  
             // ap(articulation point) arrays 
-            foreach (Node node in Nodes)
+            foreach (Node node in Graph.Nodes)
             {
-                parent[node.NodeId] = -1;
-                visited[node.NodeId] = false;
-                ap[node.NodeId] = false;
+                parent[node.Id] = -1;
+                visited[node.Id] = false;
+                ap[node.Id] = false;
             }
 
             // Call the recursive helper function to find articulation 
             // points in DFS tree rooted with vertex 'i' 
-            foreach (Node node in Nodes)
-                if (!visited[node.NodeId])
-                    APUtil(node.NodeId, visited, disc, low, parent, ap);
+            foreach (Node node in Graph.Nodes)
+                if (!visited[node.Id])
+                    APUtil(node.Id, visited, disc, low, parent, ap);
 
             // Now ap[] contains articulation points, print them
             int count = 0;
-            foreach (Node node in Nodes)
-                if (ap[node.NodeId])
+            foreach (Node node in Graph.Nodes)
+                if (ap[node.Id])
                 {
                     EditAlgorithmNodes(node, "");
                     count++;
@@ -432,10 +538,10 @@ namespace GraphIt.wasm.Services
             // Initialize discovery time and low value 
             disc[u] = low[u] = ++time;
 
-            // Go through all vertices aadjacent to this 
+            // Go through all vertices adjacent to this 
             foreach (NodeEdge nodeEdge in Adjacent(u))
             {
-                int v = nodeEdge.Node.NodeId; // v is current adjacent of u 
+                int v = nodeEdge.Node.Id; // v is current adjacent of u 
 
                 // If v is not visited yet, then make it a child of u 
                 // in DFS tree and recur for it 
@@ -469,57 +575,60 @@ namespace GraphIt.wasm.Services
 
         public void EditAlgorithmNodes(Node node, string header)
         {
-            AlgorithmNode nodeEditing = AlgorithmNodes.First(n => n.Node.NodeId == node.NodeId);
-            nodeEditing.Header = header;
-            nodeEditing.Node.NodeColor = DefaultAlgoOptions.NodeColor;
-            nodeEditing.Node.LabelColor = DefaultAlgoOptions.NodeLabelColor;
+            Node newNode = new Node(node, Options.Algorithm, header);
+            PlayAlgorithm[AlgoExplain.Counter].Add(newNode);
+        }
+        public void EditAlgorithmNodes(Node node, int size)
+        {
+            Node newNode = new Node(node, Options.Algorithm);
+            newNode.Size = size;
+            PlayAlgorithm[AlgoExplain.Counter].Add(newNode);
         }
 
-        public void EditAlgorithmNodes(int id, string header)
+        public void MakeNodeBlue(Node node, string header)
         {
-            AlgorithmNode nodeEditing = AlgorithmNodes.First(n => n.Node.NodeId == id);
-            nodeEditing.Header = header;
-            nodeEditing.Node.NodeColor = DefaultAlgoOptions.NodeColor;
-            nodeEditing.Node.LabelColor = DefaultAlgoOptions.NodeLabelColor;
+            Node newNode = new Node(node);
+            newNode.Header = header;
+            newNode.Color = "#0000ff";
+            newNode.LabelColor = "#ffffff";
+            PlayAlgorithm[AlgoExplain.Counter].Add(newNode);
         }
 
-        public void EditAlgorithmNodes(Node node, string header, string _)
+        public void EditAlgorithmEdges(Edge edge, DefaultOptions d)
         {
-            AlgorithmNode nodeEditing = AlgorithmNodes.First(n => n.Node.NodeId == node.NodeId);
-            nodeEditing.Header = header;
-            nodeEditing.Node.NodeColor = "#0000ff";
-            nodeEditing.Node.LabelColor = "#ffffff";
+            Edge newEdge = new Edge(edge, d);
+            PlayAlgorithm[AlgoExplain.Counter].Add(newEdge);
         }
 
-        public void EditAlgorithmEdges(Edge edge)
+        public void EditAlgorithmEdges(Edge edge, DefaultOptions d, string label)
         {
-            Edge edgeEditing = AlgorithmEdges.First(e => e.EdgeId == edge.EdgeId);
-            edgeEditing.EdgeColor = DefaultAlgoOptions.EdgeColor;
-            edgeEditing.LabelColor = DefaultAlgoOptions.EdgeLabelColor;
+            Edge newEdge = new Edge(edge, d);
+            newEdge.Label = label;
+            PlayAlgorithm[AlgoExplain.Counter].Add(newEdge);
         }
 
         public bool Boolbfs(double[,] rGraph, int s, int t, int[] parent)
         {
-            bool[] visited = new bool[MaxId+1];
-            foreach (AlgorithmNode a in AlgorithmNodes)
-                visited[a.Node.NodeId] = false;
+            bool[] visited = new bool[MaxId + 1];
+            foreach (Node node in Graph.Nodes)
+                visited[node.Id] = false;
 
             Queue<int> queue = new Queue<int>();
             queue.Enqueue(s);
             visited[s] = true;
             parent[s] = -1;
- 
+
             while (queue.Any())
             {
                 int u = queue.Dequeue();
 
-                foreach (AlgorithmNode a in AlgorithmNodes)
+                foreach (Node node in Graph.Nodes)
                 {
-                    if (visited[a.Node.NodeId] == false && rGraph[u, a.Node.NodeId] > 0)
+                    if (visited[node.Id] == false && rGraph[u, node.Id] > 0)
                     {
-                        queue.Enqueue(a.Node.NodeId);
-                        parent[a.Node.NodeId] = u;
-                        visited[a.Node.NodeId] = true;
+                        queue.Enqueue(node.Id);
+                        parent[node.Id] = u;
+                        visited[node.Id] = true;
                     }
                 }
             }
@@ -529,26 +638,26 @@ namespace GraphIt.wasm.Services
         public IList<NodeEdge> Adjacent(int id)
         {
             var adj = new List<NodeEdge>();
-            foreach(Edge edge in Edges.Where(e => e.TailNodeId == id)) 
+            foreach (Edge edge in Graph.Edges.Where(e => e.Tail.Id == id))
             {
-                adj.Add(new NodeEdge(Nodes.First(n => n.NodeId == edge.HeadNodeId), edge));
+                adj.Add(new NodeEdge(Graph.Nodes.First(n => n == edge.Head), edge));
             }
-            if (!DefaultOptions.Directed)
+            if (!Graph.Directed)
             {
-                foreach (Edge edge in Edges.Where(e => e.HeadNodeId == id))
+                foreach (Edge edge in Graph.Edges.Where(e => e.Head.Id == id))
                 {
-                    adj.Add(new NodeEdge(Nodes.First(n => n.NodeId == edge.TailNodeId), edge));
+                    adj.Add(new NodeEdge(Graph.Nodes.First(n => n == edge.Tail), edge));
                 }
             }
-            return adj;
+            return adj.OrderBy(n => n.Node.Id).ToList();
         }
 
-        public Edge ConnectingEdge(int tailId, int headId)
+        public Edge ConnectingEdge(Node tail, Node head)
         {
-            foreach (Edge edge in Edges)
+            foreach (Edge edge in Graph.Edges)
             {
-                if ((edge.HeadNodeId == headId && edge.TailNodeId == tailId)
-                    || (edge.HeadNodeId == tailId && edge.TailNodeId == headId && !DefaultOptions.Directed))
+                if ((edge.Head == head && edge.Tail == tail)
+                    || (edge.Head == tail && edge.Tail == head && !Graph.Directed))
                 {
                     return edge;
                 }
@@ -559,7 +668,7 @@ namespace GraphIt.wasm.Services
         public Node ShortestDistance(Dictionary<Node, double> distances, IList<Node> explored)
         {
             Node closest = null;
-            foreach(KeyValuePair<Node, double> kvp in distances)
+            foreach (KeyValuePair<Node, double> kvp in distances)
             {
                 if (!explored.Contains(kvp.Key))
                 {
@@ -584,6 +693,18 @@ namespace GraphIt.wasm.Services
                 StartAlgorithm.Output += " ";
                 labelsUsed.Add(node.Label);
             }
+        }
+
+        public List<int> Update(List<int> list)
+        {
+            list.Add(AlgoExplain.Counter);
+            return list;
+        }
+
+        public void Increment()
+        {
+            PlayAlgorithm.Add(new List<GraphObject>());
+            AlgoExplain.Counter++;
         }
 
     }

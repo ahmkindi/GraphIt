@@ -14,10 +14,10 @@ else
 
 <li class="dropdown border-dark border-right @OpenCss @NavCss" data-toggle="tooltip" data-placement="bottom" title="Color">
     <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="mnodecolor" aria-haspopup="true" aria-expanded="@Open">
-        <span class="oi oi-brush" style="color:@ActiveNodes[0].NodeColor"></span><span class="oi oi-text" style="color:@ActiveNodes[0].LabelColor"></span>
+        <span class="oi oi-brush" style="color:@ActiveNodes[0].Color"></span><span class="oi oi-text" style="color:@ActiveNodes[0].LabelColor"></span>
     </button>
     <div class="dropdown-menu @OpenCss" aria-labelledby="mnodecolor">
-        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveNodes[0].NodeColor" ValueChange="OnNodeColorChange"></SfColorPicker></span>
+        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveNodes[0].Color" ValueChange="OnNodeColorChange"></SfColorPicker></span>
         <span class="dropdown-item">Label <SfColorPicker Value="@ActiveNodes[0].LabelColor" ValueChange="OnNodeLabelColorChange"></SfColorPicker></span>
     </div>
 </li>
@@ -28,7 +28,7 @@ else
             Radius
         </div>
         <div class="p-custom">
-            <input class="shortInput" type="number" Min=25 Max=150 step=1 value="@ActiveNodes[0].Radius" @onchange="OnRadiusChange" />
+            <input class="shortInput" type="number" Min=25 Max=150 step=1 value="@ActiveNodes[0].Size" @onchange="OnRadiusChange" />
         </div>
     </li>
     <li class="d-flex flex-row px-2 border-dark border-right">

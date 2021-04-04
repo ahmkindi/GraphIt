@@ -63,41 +63,41 @@ else
             <span class="oi oi-arrow-thick-top"></span>
         </div>
     }
-    @if (ActiveNodes.Count == 1 && FilterNodes.Contains(ActiveNodes[0]))
+    @if (ActiveGraph.Nodes.Count == 1 && FilterNodes.Contains(ActiveGraph.Nodes[0]))
     {
         <div class="py-2">
             @($"{Counter+1}/{FilterNodes.Count}")
         </div>
     }
 </li>
-@if (ActiveNodes.Count == 1)
+@if (ActiveGraph.Nodes.Count == 1)
 {
     <li class="NavNone p-2 border-dark border-left" @onclick="OnRecenter">Re-Center</li>
 }
-else if (ActiveNodes.Count > 1)
+else if (ActiveGraph.Nodes.Count > 1)
 {
     <li class="NavNone dropdown border-dark border-left">
         <button class="btn shadow-none dropdown-toggle" id="align" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Align Nodes
         </button>
         <div class="dropdown-menu" aria-labelledby="align">
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Left"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Left"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-align-left"></span>Left
             </a>
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Center"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Center"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-align-center"></span>Center
             </a>
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Right"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Right"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-align-right"></span>Right
             </a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Top"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Top"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-vertical-align-top"></span>Top
             </a>
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Middle"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Middle"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-vertical-align-center"></span>Middle
             </a>
-            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveNodes, "Bottom"); await ActiveNodesChanged.InvokeAsync(ActiveNodes); }'>
+            <a class="dropdown-item" @onclick='async () => { NodeService.Align(ActiveGraph.Nodes, "Bottom"); await ActiveGraphChanged.InvokeAsync(ActiveGraph); }'>
                 <span class="pr-1 oi oi-vertical-align-bottom"></span>Bottom
             </a>
         </div>

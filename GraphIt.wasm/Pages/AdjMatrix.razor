@@ -3,7 +3,7 @@
 <SfDialog Width="400px" Height="400px" AllowDragging="true">
     <DialogTemplates>
         <Header>
-            @if (Rep == Representation.Matrix)
+            @if (!Graph.Weighted)
             {
                 @("Adjacency Matrix")
             }
@@ -13,7 +13,7 @@
             }
         </Header>
         <Content>
-            @if (Nodes == null || Edges == null)
+            @if (Graph.Nodes == null || Graph.Edges == null)
             {
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
@@ -25,7 +25,7 @@
                 </SfTextBox>
                 @if (!ValidInput)
                 {
-                    if (Rep == Representation.Matrix)
+                    if (!Graph.Weighted)
                     {
                         <div class="text-danger">There was formatting error: please input only a sqaure matrix of either 0, 1 comma seperated</div>
                     }
@@ -44,28 +44,28 @@
                             <tr>
                                 <th scope="col">Node 
                                 <button class="btn btn-sm font-small p-1 shadow-none btn-success oi oi-plus" 
-                                        @onclick="(async() => { NodeService.AddNode(Nodes, DefaultOptions, GetRandom(true), GetRandom(false)); await NodesChanged.InvokeAsync(Nodes); })"></button></th>
-                                @foreach (Node node in Nodes)
+                                        @onclick="(async() => { NodeService.AddNode(Graph.Nodes, DefaultOptions, GetRandom(true), GetRandom(false)); await GraphChanged.InvokeAsync(Graph); })"></button></th>
+                                @foreach (Node node in Graph.Nodes)
                                 {
                                     <th scope="col">@node.Label</th>
                                 }
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Node tail in Nodes)
+                            @foreach (Node tail in Graph.Nodes)
                             {
                             <tr>
                                 <th scope="row">
                                     @tail.Label
                                     <button class="btn btn-sm font-small p-1 btn-danger shadow-none oi oi-trash" @onclick="() => OnTableDelete(tail)"></button>
                                 </th>
-                                @foreach (Node head in Nodes)
+                                @foreach (Node head in Graph.Nodes)
                                 {
                                     Edge edge = Adjacent(tail, head);
                             <td class="p-0 m-0">
                                 @if (edge != null)
                                 {
-                                    if (Rep == Representation.Matrix)
+                                    if (!Graph.Weighted)
                                     {
                                         <SfNumericTextBox TValue="int?" Value="1" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
                                                           Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
@@ -78,7 +78,7 @@
                                 }
                                 else
                                 {
-                                    if (Rep == Representation.Matrix)
+                                    if (!Graph.Weighted)
                                     {
                                         <SfNumericTextBox TValue="int?" Value="0" Min=0 Max=1 ShowSpinButton=false CssClass="shortInput"
                                                           Placeholder="Adjacent" @onchange="((e) => OnChangeTable(e, tail, head))"></SfNumericTextBox>
@@ -105,12 +105,12 @@
         @if (TextView)
         {
             <DialogButton Content="Table View" OnClick="(() => TextView = !TextView)" />
-            <DialogButton Content="Close" OnClick="@CloseMatrix" />
+            <DialogButton Content="Close" OnClick="async () => await MatrixOpenedChanged.InvokeAsync(false)" />
         }
         else
         {
             <DialogButton Content="Text View" OnClick="() => { TextView = !TextView; ShowText = GetText(); }" />
-            <DialogButton Content="Close" OnClick="@CloseMatrix" />
+            <DialogButton Content="Close" OnClick="async () => await MatrixOpenedChanged.InvokeAsync(false)" />
         }
     </DialogButtons>
 </SfDialog>

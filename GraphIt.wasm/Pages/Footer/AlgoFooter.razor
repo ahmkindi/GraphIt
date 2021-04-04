@@ -1,0 +1,107 @@
+﻿@namespace GraphIt.wasm.Pages.Footer
+
+<div class="footer d-flex flex-row py-0 my-0 align-items-center">
+    <button class="NavNone px-2" @onclick="SkipB" disabled="@(AlgoExplain.Counter==0)"><span class="oi oi-media-step-backward"></span></button>
+    <button class="NavNone px-2" @onclick="StepB" disabled="@(AlgoExplain.Counter==0)"><span class="oi oi-media-skip-backward"></span></button>
+    @if (is_playing)
+    {
+        <button class="NavNone px-2" @onclick="@(() => is_playing = false)"><span class="oi oi-media-pause"></span></button>
+    }
+    else
+    {
+        if (AlgoExplain.Counter == AlgoExplain.MaxCounter)
+        {
+            <button class="NavNone px-2" @onclick="Play"><span class="oi oi-reload"></span></button>
+        }
+        else
+        {
+            <button class="NavNone px-2" @onclick="Play"><span class="oi oi-media-play"></span></button>
+        }
+    }
+    <button class="NavNone px-2" @onclick="StepF" disabled="@(AlgoExplain.Counter==AlgoExplain.MaxCounter)"><span class="oi oi-media-skip-forward"></span></button>
+    <button class="NavNone px-2" @onclick="SkipF" disabled="@(AlgoExplain.Counter==AlgoExplain.MaxCounter)"><span class="oi oi-media-step-forward"></span></button>
+    <select class="mr-2" @bind="AlgoExplain.Speed">
+        <option value="@PlaySpeed.Slow" selected="@(AlgoExplain.Speed == PlaySpeed.Slow)">Slow</option>
+        <option value="@PlaySpeed.Normal" selected="@(AlgoExplain.Speed == PlaySpeed.Normal)">Normal</option>
+        <option value="@PlaySpeed.Fast" selected="@(AlgoExplain.Speed == PlaySpeed.Fast)">Fast</option>
+    </select>
+    <span>@GetText()</span>
+</div>
+
+
+@code {
+    [Parameter] public AlgoExplain AlgoExplain { get; set; }
+    [Parameter] public EventCallback<AlgoExplain> AlgoExplainChanged { get; set; }
+    bool is_playing = false;
+
+    public string GetText()
+    {
+        foreach (KeyValuePair<string, List<int>> kv in AlgoExplain.Explanations)
+        {
+            if (kv.Value.Contains(AlgoExplain.Counter)) return kv.Key;
+        }
+        return "";
+    }
+
+    public async Task SkipB()
+    {
+        AlgoExplain.Counter = 0;
+        is_playing = false;
+        await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+    }
+
+    public async Task StepB()
+    {
+        AlgoExplain.Counter--;
+        is_playing = false;
+        await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+    }
+
+    public async Task Play()
+    {
+        is_playing = true;
+        int delay = 1900;
+        if (AlgoExplain.Counter == AlgoExplain.MaxCounter)
+        {
+            AlgoExplain.Counter = 0;
+            await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+            await Task.Delay(400);
+        }
+        while (is_playing)
+        {
+            if (AlgoExplain.Counter == AlgoExplain.MaxCounter)
+            {
+                is_playing = false;
+                break;
+            }
+            if (AlgoExplain.Speed == PlaySpeed.Slow) delay = 2800;
+            else if (AlgoExplain.Speed == PlaySpeed.Fast) delay = 1000;
+            else delay = 1900;
+            AlgoExplain.Counter++;
+            await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+            await Task.Delay(delay);
+        }
+
+    }
+
+    public async Task StepF()
+    {
+        AlgoExplain.Counter++;
+        is_playing = false;
+        await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+    }
+
+    public async Task SkipF()
+    {
+        AlgoExplain.Counter = AlgoExplain.MaxCounter;
+        is_playing = false;
+        await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+    }
+
+    //public async Task UpdateSpeed(EventArgs args)
+    //{
+    //    AlgoExplain.Speed = speed.;
+    //    await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+    //}
+
+}

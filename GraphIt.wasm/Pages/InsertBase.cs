@@ -12,13 +12,11 @@ namespace GraphIt.wasm.Pages
     {
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public EventCallback<GraphMode> GraphModeChanged { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public List<Edge> Edges { get; set; }
-        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
+        [Parameter] public Graph Graph { get; set; }
+        [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
+        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public NewEdge NewEdge { get; set; }
         [Parameter] public EventCallback<NewEdge> NewEdgeChanged { get; set; }
@@ -40,7 +38,6 @@ namespace GraphIt.wasm.Pages
             {
                 InsertEdge = false;
                 await GraphModeChanged.InvokeAsync(GraphMode.InsertNode);
-                await NewEdgeChanged.InvokeAsync(new NewEdge());
             }
             else if (!InsertEdge)
             {
@@ -60,7 +57,6 @@ namespace GraphIt.wasm.Pages
             {
                 await GraphModeChanged.InvokeAsync(GraphMode.Default);
             }
-            await NewEdgeChanged.InvokeAsync(new NewEdge());
         }
 
         public async Task CreateGraph()
@@ -92,33 +88,35 @@ namespace GraphIt.wasm.Pages
             }
             WantedGraph = null;
             Loading = false;
-            await NodesChanged.InvokeAsync(Nodes);
-            await EdgesChanged.InvokeAsync(Edges);
+            await GraphChanged.InvokeAsync(Graph);
         }
 
         private void CreateComplete()
         {
             IList<Node> addedNodes = new List<Node>();
             CreateCircle(addedNodes);
-            if (DefaultOptions.Directed)
+            if (Graph.Directed)
             {
                 foreach (Node node1 in addedNodes)
                 {
                     foreach (Node node2 in addedNodes)
                     {
-                        if (node1.NodeId != node2.NodeId) EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
+                        if (node1 != node2) EdgeService.AddEdge(Graph.Edges, DefaultOptions, node1, node2);
                     }
                 }
             }
             else
             {
-                List<Node> notConnected = addedNodes.Select(n => new Node(n.NodeId, n.Xaxis, n.Yaxis)).ToList();
+                IList<Node> Connected = new List<Node>();
                 foreach (Node node1 in addedNodes)
                 {
-                    notConnected.Remove(node1);
-                    foreach (Node node2 in notConnected)
+                    Connected.Add(node1);
+                    foreach (Node node2 in addedNodes)
                     {
-                        EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
+                        if (!Connected.Contains(node2)) 
+                        {
+                            EdgeService.AddEdge(Graph.Edges, DefaultOptions, node1, node2);
+                        }
                     }
                 }
             }
@@ -133,22 +131,22 @@ namespace GraphIt.wasm.Pages
             for (int i=0; i<numNodes; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
-                addedNodes1.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes1.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             y = (SVGControl.Yaxis + SVGControl.Height / 2) - DefaultOptions.NodeRadius * 3;
             for (int i = 0; i < KValue; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
-                addedNodes2.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes2.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
-            if (DefaultOptions.Directed)
+            if (Graph.Directed)
             {
                 foreach (Node node1 in addedNodes1)
                 {
                     foreach (Node node2 in addedNodes2)
                     {
-                        EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
-                        EdgeService.AddEdge(Edges, DefaultOptions, node2.NodeId, node1.NodeId);
+                        EdgeService.AddEdge(Graph.Edges, DefaultOptions, node1, node2);
+                        EdgeService.AddEdge(Graph.Edges, DefaultOptions, node2, node1);
                     }
                 }
             }
@@ -158,7 +156,7 @@ namespace GraphIt.wasm.Pages
                 {
                     foreach (Node node2 in addedNodes2)
                     {
-                        EdgeService.AddEdge(Edges, DefaultOptions, node1.NodeId, node2.NodeId);
+                        EdgeService.AddEdge(Graph.Edges, DefaultOptions, node1, node2);
                     }
                 }
             }
@@ -172,14 +170,14 @@ namespace GraphIt.wasm.Pages
             double radius = DefaultOptions.NodeRadius / 2 * (double)numNodes;
             double theta = (360.0 / (double)numNodes) * Math.PI / 180;
             IList<Node> addedNodes = new List<Node>();
-            Node root = NodeService.AddNode(Nodes, DefaultOptions, midX, midY, "1");
+            Node root = NodeService.AddNode(Graph.Nodes, DefaultOptions, midX, midY, "1");
             for (int i = 1; i < numNodes; i++)
             {
                 x = midX + radius * Math.Cos(theta * i);
                 y = midY + radius * Math.Sin(theta * i);
-                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
-            foreach (Node node in addedNodes) EdgeService.AddEdge(Edges, DefaultOptions, node.NodeId, root.NodeId);
+            foreach (Node node in addedNodes) EdgeService.AddEdge(Graph.Edges, DefaultOptions, node, root);
         }
 
         private void CreateRBipartite()
@@ -191,21 +189,21 @@ namespace GraphIt.wasm.Pages
             for (int i = 0; i < numNodes / 2; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
-                addedNodes1.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes1.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             y = (SVGControl.Yaxis + SVGControl.Height / 2) - DefaultOptions.NodeRadius * 3;
             for (int i = 0; i < numNodes / 2; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes / 2 - i);
-                addedNodes2.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes2.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             for (int i = 0; i < numNodes / 2; i++)
             {
                 for (int k = 0; k < KValue; k++)
                 {
                     var xx = (i + k) % addedNodes2.Count;
-                    EdgeService.AddEdge(Edges, DefaultOptions, addedNodes1[i].NodeId, addedNodes2[xx].NodeId);
-                    if (DefaultOptions.Directed) EdgeService.AddEdge(Edges, DefaultOptions, addedNodes2[i].NodeId, addedNodes1[xx].NodeId);
+                    EdgeService.AddEdge(Graph.Edges, DefaultOptions, addedNodes1[i], addedNodes2[xx]);
+                    if (Graph.Directed) EdgeService.AddEdge(Graph.Edges, DefaultOptions, addedNodes2[i], addedNodes1[xx]);
                 }
             }
         }
@@ -216,9 +214,9 @@ namespace GraphIt.wasm.Pages
             CreateCircle(addedNodes);
             for (int i =0; i < numNodes-1; i++)
             {
-                EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[i].NodeId, addedNodes[i+1].NodeId);
+                EdgeService.AddEdge(Graph.Edges, DefaultOptions, addedNodes[i], addedNodes[i+1]);
             }
-            EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[(int)numNodes - 1].NodeId, addedNodes[0].NodeId);
+            EdgeService.AddEdge(Graph.Edges, DefaultOptions, addedNodes[(int)numNodes - 1], addedNodes[0]);
         }
 
         private void CreateTree()
@@ -229,11 +227,11 @@ namespace GraphIt.wasm.Pages
             for (int i = 0; i < numNodes; i++)
             {
                 x = (SVGControl.Xaxis + SVGControl.Width / 2) + DefaultOptions.NodeRadius * 3 * (double)(numNodes/2 - i);
-                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
             for (int i = 0; i < numNodes-1; i++)
             {
-                EdgeService.AddEdge(Edges, DefaultOptions, addedNodes[i].NodeId, addedNodes[i + 1].NodeId);
+                EdgeService.AddEdge(Graph.Edges, DefaultOptions, addedNodes[i], addedNodes[i + 1]);
             }
         }
 
@@ -246,7 +244,7 @@ namespace GraphIt.wasm.Pages
             {
                 x = SVGControl.Xaxis + SVGControl.Width / 2 + radius * Math.Cos(theta * i);
                 y = SVGControl.Yaxis + SVGControl.Height / 2 + radius * Math.Sin(theta * i);
-                addedNodes.Add(NodeService.AddNode(Nodes, DefaultOptions, x, y, (i + 1).ToString()));
+                addedNodes.Add(NodeService.AddNode(Graph.Nodes, DefaultOptions, x, y, (i + 1).ToString()));
             }
         }
     }

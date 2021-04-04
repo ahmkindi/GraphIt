@@ -16,19 +16,15 @@ namespace GraphIt.wasm.Pages
 {
     public class HomeBase : ComponentBase
     {
-        [Parameter] public Representation Rep { get; set; }
-        [Parameter] public EventCallback<Representation> RepChanged { get; set; }
+        [Parameter] public bool MatrixOpened { get; set; }
+        [Parameter] public EventCallback<bool> MatrixOpenedChanged { get; set; }
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public EventCallback<GraphMode> GraphModeChanged { get; set; }
         [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
         [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
-        [Parameter] public IList<Node> ActiveNodes { get; set; }
-        [Parameter] public IList<Edge> ActiveEdges { get; set; }
-        [Parameter] public IList<Node> Nodes { get; set; }
-        [Parameter] public IList<Edge> Edges { get; set; }
-        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
-        [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
+        [Parameter] public Graph Graph { get; set; }
+        [Parameter] public Graph ActiveGraph { get; set; }
+        [Parameter] public EventCallback<Graph> ActiveGraphChanged { get; set; }
 
         public bool GetDegreePref { get; set; } = false;
         public bool[] IsDisabled { get; set; }
@@ -42,20 +38,20 @@ namespace GraphIt.wasm.Pages
             for (int i = 0; i < IsDisabled.Length; i++)
                 IsDisabled[i] = false;
 
-            if (!Nodes.Any())
+            if (!Graph.Nodes.Any())
                 for (int i = 0; i < IsDisabled.Length; i++)
                     IsDisabled[i] = true;
             else 
             {
-                if (DefaultOptions.MultiGraph) IsDisabled[(int)Algorithm.MaxFlow] = true;
-                if (!DefaultOptions.Weighted) 
+                if (Graph.MultiGraph) IsDisabled[(int)Algorithm.MaxFlow] = true;
+                if (!Graph.Weighted) 
                 {
                     IsDisabled[(int)Algorithm.MaxFlow] = true;
                     IsDisabled[(int)Algorithm.Dijkstra] = true;
                     IsDisabled[(int)Algorithm.DijkstraPath] = true;
                     IsDisabled[(int)Algorithm.Kruskal] = true;
                 }
-                if (DefaultOptions.Directed)
+                if (Graph.Directed)
                 {
                     IsDisabled[(int)Algorithm.Articulation] = true;
                 }
@@ -67,26 +63,22 @@ namespace GraphIt.wasm.Pages
             }
 
         }
-        public async Task OnMatrixClick()
-        {
-            Rep = Representation.Matrix;
-            await RepChanged.InvokeAsync(Rep);
-        }
-        public async Task OnWeightMatrixClick()
-        {
-            Rep = Representation.WeightedMatrix;
-            await RepChanged.InvokeAsync(Rep);
-        }
         public async Task OnAlgoChanged(Algorithm a)
         {
             await GraphModeChanged.InvokeAsync(GraphMode.Algorithm);
             await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm(a));
         }
 
-        public async Task SelectAll()
+        public async Task SelectNodes()
         {
-            await ActiveNodesChanged.InvokeAsync(Nodes);
-            await ActiveEdgesChanged.InvokeAsync(Edges);
+            ActiveGraph.Nodes = Graph.Nodes;
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
+        }
+
+        public async Task SelectEdges()
+        {
+            ActiveGraph.Edges = Graph.Edges;
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
     }
 }

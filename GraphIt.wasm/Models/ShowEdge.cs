@@ -16,23 +16,21 @@ namespace GraphIt.wasm.Models
         public string Path { get; set; }
         public double[] CurvePoint { get; set; } = new double[2];
         public EdgeArrow EdgeArrow { get; set; }
-        public Node Head { get; set; }
-        public Node Tail { get; set; }
+
+        public ShowEdge(Edge edge) : this(edge, edge.Head, edge.Tail) { }
 
         public ShowEdge(Edge edge, Node head, Node tail)
         {
             EdgeArrow = new EdgeArrow();
-            FontSize = 15 + (edge.Width * 1.5);
-            Yoffset = 10 + edge.Width * 2;
+            FontSize = 15 + (edge.Size * 1.5);
+            Yoffset = 10 + edge.Size * 2;
             Rotate = 0;
             Label = edge.Label;
             Weight = edge.Weight.ToString();
-            Head = head;
-            Tail = tail;
-            var theta = Math.Atan2(Head.Yaxis - Tail.Yaxis, Head.Xaxis - Tail.Xaxis) - Math.PI / 2;
-            CurvePoint[0] = ((Head.Xaxis + Tail.Xaxis) / 2) + (250 * edge.Curve) * Math.Cos(theta);
-            CurvePoint[1] = ((Head.Yaxis + Tail.Yaxis) / 2) + (250 * edge.Curve) * Math.Sin(theta);
-            if (Head.Xaxis < Tail.Xaxis)
+            var theta = Math.Atan2(head.Yaxis - tail.Yaxis, head.Xaxis - tail.Xaxis) - Math.PI / 2;
+            CurvePoint[0] = ((head.Xaxis + tail.Xaxis) / 2) + (250 * edge.Curve) * Math.Cos(theta);
+            CurvePoint[1] = ((head.Yaxis + tail.Yaxis) / 2) + (250 * edge.Curve) * Math.Sin(theta);
+            if (head.Xaxis < tail.Xaxis)
             {
                 Rotate = 180;
                 char[] temp = edge.Weight.ToString().ToCharArray();
@@ -45,15 +43,15 @@ namespace GraphIt.wasm.Models
                     Label = new string(temp);
                 }
             }
-            if (edge.HeadNodeId != edge.TailNodeId)
+            if (head.Id != tail.Id)
             {
-                EdgeArrow.ArrowOffset[0] += Convert.ToDouble(Head.Radius) / edge.Width;
-                Path = $"M {Tail.Xaxis} {Tail.Yaxis} Q {CurvePoint[0]} {CurvePoint[1]} {Head.Xaxis} {Head.Yaxis}";
+                EdgeArrow.ArrowOffset[0] += Convert.ToDouble(head.Size) / edge.Size;
+                Path = $"M {tail.Xaxis} {tail.Yaxis} Q {CurvePoint[0]} {CurvePoint[1]} {head.Xaxis} {head.Yaxis}";
             }
             else
             {
-                Path = $"M {Head.Xaxis} {Head.Yaxis + Head.Radius} " +
-                    $"A {Head.Radius} {Head.Radius} 0 1 0 {Head.Xaxis + Head.Radius} {Head.Yaxis}";
+                Path = $"M {head.Xaxis} {head.Yaxis + head.Size} " +
+                    $"A {head.Size} {head.Size} 0 1 0 {head.Xaxis + head.Size} {head.Yaxis}";
             }
         }
     }

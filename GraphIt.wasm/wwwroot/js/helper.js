@@ -6,6 +6,10 @@ function getWidth(el) {
     return el.getBoundingClientRect().width;
 }
 
+function getText(el) {
+    return el.innerHTML;
+}
+
 function BlazorDownloadFile(filename, contentType, content) {
     // Blazor marshall byte[] to a base64 string, so we first need to convert the string (content) to a Uint8Array to create the File
     const data = base64DecToArr(content);

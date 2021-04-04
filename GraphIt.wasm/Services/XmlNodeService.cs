@@ -1,5 +1,4 @@
 ﻿using GraphIt.wasm.Models;
-using GraphIt.wasm.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace GraphIt.wasm.Services
         {
             writer.WriteStartElement("Node");
             writer.WriteStartElement("NodeId");
-            writer.WriteString(node.NodeId.ToString());
+            writer.WriteString(node.Id.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Label");
             writer.WriteString(node.Label);
@@ -23,10 +22,10 @@ namespace GraphIt.wasm.Services
             writer.WriteString(node.LabelColor);
             writer.WriteEndElement();
             writer.WriteStartElement("NodeColor");
-            writer.WriteString(node.NodeColor);
+            writer.WriteString(node.Color);
             writer.WriteEndElement();
             writer.WriteStartElement("Radius");
-            writer.WriteString(node.Radius.ToString());
+            writer.WriteString(node.Size.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Xaxis");
             writer.WriteString(node.Xaxis.ToString());
@@ -41,7 +40,7 @@ namespace GraphIt.wasm.Services
         {
             writer.WriteStartElement("Edge");
             writer.WriteStartElement("EdgeId");
-            writer.WriteString(edge.EdgeId.ToString());
+            writer.WriteString(edge.Id.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Label");
             writer.WriteString(edge.Label);
@@ -50,55 +49,83 @@ namespace GraphIt.wasm.Services
             writer.WriteString(edge.LabelColor);
             writer.WriteEndElement();
             writer.WriteStartElement("EdgeColor");
-            writer.WriteString(edge.EdgeColor);
+            writer.WriteString(edge.Color);
             writer.WriteEndElement();
             writer.WriteStartElement("Curve");
             writer.WriteString(edge.Curve.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("HeadNodeId");
-            writer.WriteString(edge.HeadNodeId.ToString());
+            writer.WriteString(edge.Head.Id.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("TailNodeId");
-            writer.WriteString(edge.TailNodeId.ToString());
+            writer.WriteString(edge.Tail.Id.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Weight");
             writer.WriteString(edge.Weight.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Width");
-            writer.WriteString(edge.Width.ToString());
+            writer.WriteString(edge.Size.ToString());
             writer.WriteEndElement();
             writer.WriteEndElement();
         }
 
-        public void CreateNode(DefaultOptions d, XmlTextWriter writer)
+        public void CreateNode(Graph graph, XmlTextWriter writer)
         {
-            writer.WriteStartElement("DefaultOptions");
-            writer.WriteStartElement("NodeColor");
-            writer.WriteString(d.NodeColor);
-            writer.WriteEndElement();
+            foreach (Node node in graph.Nodes) CreateNode(node, writer);
+            foreach (Edge edge in graph.Edges) CreateNode(edge, writer);
+            writer.WriteStartElement("Settings");
             writer.WriteStartElement("MultiGraph");
-            writer.WriteString(d.MultiGraph.ToString());
-            writer.WriteEndElement();
-            writer.WriteStartElement("NodeLabelCOlor");
-            writer.WriteString(d.NodeLabelColor);
-            writer.WriteEndElement();
-            writer.WriteStartElement("NodeRadius");
-            writer.WriteString(d.NodeRadius.ToString());
+            writer.WriteString(graph.MultiGraph.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Weighted");
-            writer.WriteString(d.Weighted.ToString());
+            writer.WriteString(graph.Weighted.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("Directed");
-            writer.WriteString(d.Directed.ToString());
+            writer.WriteString(graph.Directed.ToString());
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        public void CreateNode(Options o, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("Default");
+            writer.WriteStartElement("NodeColor");
+            writer.WriteString(o.Default.NodeColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("NodeLabelCOlor");
+            writer.WriteString(o.Default.NodeLabelColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("NodeRadius");
+            writer.WriteString(o.Default.NodeRadius.ToString());
             writer.WriteEndElement();
             writer.WriteStartElement("EdgeColor");
-            writer.WriteString(d.EdgeColor);
+            writer.WriteString(o.Default.EdgeColor);
             writer.WriteEndElement();
             writer.WriteStartElement("EdgeLabelColor");
-            writer.WriteString(d.EdgeLabelColor);
+            writer.WriteString(o.Default.EdgeLabelColor);
             writer.WriteEndElement();
             writer.WriteStartElement("EdgeWidth");
-            writer.WriteString(d.EdgeWidth.ToString());
+            writer.WriteString(o.Default.EdgeWidth.ToString());
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.WriteStartElement("Algorithm");
+            writer.WriteStartElement("NodeColor");
+            writer.WriteString(o.Algorithm.NodeColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("NodeLabelCOlor");
+            writer.WriteString(o.Algorithm.NodeLabelColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("NodeRadius");
+            writer.WriteString(o.Algorithm.NodeRadius.ToString());
+            writer.WriteEndElement();
+            writer.WriteStartElement("EdgeColor");
+            writer.WriteString(o.Algorithm.EdgeColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("EdgeLabelColor");
+            writer.WriteString(o.Algorithm.EdgeLabelColor);
+            writer.WriteEndElement();
+            writer.WriteStartElement("EdgeWidth");
+            writer.WriteString(o.Algorithm.EdgeWidth.ToString());
             writer.WriteEndElement();
             writer.WriteEndElement();
         }
@@ -110,20 +137,20 @@ namespace GraphIt.wasm.Services
             writer.WriteStartElement("circle");
             writer.WriteAttributeString("cx", node.Xaxis.ToString());
             writer.WriteAttributeString("cy", node.Yaxis.ToString());
-            writer.WriteAttributeString("r", node.Radius.ToString());
-            writer.WriteAttributeString("stroke", node.NodeColor);
+            writer.WriteAttributeString("r", node.Size.ToString());
+            writer.WriteAttributeString("stroke", node.Color);
             writer.WriteAttributeString("stroke-width", "2");
-            writer.WriteAttributeString("fill", node.NodeColor);
+            writer.WriteAttributeString("fill", node.Color);
             writer.WriteEndElement();
 
             writer.WriteStartElement("text");
             writer.WriteAttributeString("text-anchor", "middle");
             writer.WriteAttributeString("x", node.Xaxis.ToString());
             writer.WriteAttributeString("y", node.Yaxis.ToString());
-            writer.WriteAttributeString("stroke", node.NodeColor);
+            writer.WriteAttributeString("stroke", node.Color);
             writer.WriteAttributeString("stroke-width", "1");
             writer.WriteAttributeString("fill", node.LabelColor);
-            writer.WriteAttributeString("font-size", (node.Radius/2).ToString());
+            writer.WriteAttributeString("font-size", (node.Size/2).ToString());
             writer.WriteAttributeString("font-family", "Verdana");
             writer.WriteString(node.Label);
             writer.WriteEndElement();
@@ -131,17 +158,17 @@ namespace GraphIt.wasm.Services
             writer.WriteEndElement();
         }
 
-        public void Draw(Edge edge, Node head, Node tail, XmlTextWriter writer, bool weighted, bool directed)
+        public void Draw(Edge edge, XmlTextWriter writer, bool weighted, bool directed)
         {
-            var showEdge = new ShowEdge(edge, head, tail);
+            var showEdge = new ShowEdge(edge);
             writer.WriteStartElement("g");
 
             writer.WriteStartElement("path");
-            writer.WriteAttributeString("id", edge.EdgeId.ToString());
-            writer.WriteAttributeString("stroke", edge.EdgeColor);
-            writer.WriteAttributeString("stroke-width", edge.Width.ToString());
+            writer.WriteAttributeString("id", edge.Id.ToString());
+            writer.WriteAttributeString("stroke", edge.Color);
+            writer.WriteAttributeString("stroke-width", edge.Size.ToString());
             writer.WriteAttributeString("fill", "none");
-            if (edge.HeadNodeId == edge.TailNodeId)
+            if (edge.Head == edge.Tail)
             {
                 writer.WriteAttributeString("d", showEdge.Path);
             }
@@ -149,16 +176,16 @@ namespace GraphIt.wasm.Services
             {
                 writer.WriteAttributeString("d", showEdge.Path);
             }
-            if (directed) writer.WriteAttributeString("marker-end", $"url(#arrowhead{edge.EdgeId})");
+            if (directed) writer.WriteAttributeString("marker-end", $"url(#arrowhead{edge.Id})");
             writer.WriteEndElement();
 
             writer.WriteStartElement("text");
             writer.WriteAttributeString("text-anchor", "middle");
             writer.WriteAttributeString("dy", (showEdge.Yoffset).ToString());
-            writer.WriteAttributeString("fill", edge.EdgeColor);
+            writer.WriteAttributeString("fill", edge.Color);
             writer.WriteAttributeString("font-size", (showEdge.FontSize).ToString());
             writer.WriteStartElement("textPath");
-            writer.WriteAttributeString("href", $"#{edge.EdgeId}");
+            writer.WriteAttributeString("href", $"#{edge.Id}");
             writer.WriteAttributeString("startOffset", "50%");
             writer.WriteString(showEdge.Label);
             writer.WriteEndElement();
@@ -168,11 +195,11 @@ namespace GraphIt.wasm.Services
             {
                 writer.WriteStartElement("text");
                 writer.WriteAttributeString("text-anchor", "middle");
-                writer.WriteAttributeString("dy", (-edge.Width).ToString());
-                writer.WriteAttributeString("fill", edge.EdgeColor);
+                writer.WriteAttributeString("dy", (-edge.Size).ToString());
+                writer.WriteAttributeString("fill", edge.Color);
                 writer.WriteAttributeString("font-size", (showEdge.FontSize).ToString());
                 writer.WriteStartElement("textPath");
-                writer.WriteAttributeString("href", $"#{edge.EdgeId}");
+                writer.WriteAttributeString("href", $"#{edge.Id}");
                 writer.WriteAttributeString("startOffset", "50%");
                 writer.WriteString(showEdge.Weight);
                 writer.WriteEndElement();
@@ -181,7 +208,7 @@ namespace GraphIt.wasm.Services
 
             writer.WriteStartElement("defs");
             writer.WriteStartElement("marker");
-            writer.WriteAttributeString("id", $"arrowhead{edge.EdgeId}");
+            writer.WriteAttributeString("id", $"arrowhead{edge.Id}");
             writer.WriteAttributeString("markerWidth", showEdge.EdgeArrow.Width.ToString());
             writer.WriteAttributeString("markerHeight", showEdge.EdgeArrow.Height.ToString());
             writer.WriteAttributeString("refX", showEdge.EdgeArrow.ArrowOffset[0].ToString());
@@ -191,7 +218,7 @@ namespace GraphIt.wasm.Services
             writer.WriteAttributeString("points", $"{showEdge.EdgeArrow.Points[0]} {showEdge.EdgeArrow.Points[1]}, " +
                                         $"{showEdge.EdgeArrow.Points[2]} {showEdge.EdgeArrow.Points[3]}, " +
                                         $"{showEdge.EdgeArrow.Points[4]} {showEdge.EdgeArrow.Points[5]}");
-            writer.WriteAttributeString("fill", edge.EdgeColor);
+            writer.WriteAttributeString("fill", edge.Color);
             writer.WriteEndElement();
             writer.WriteEndElement();
             writer.WriteEndElement();

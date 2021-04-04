@@ -16,12 +16,12 @@ namespace GraphIt.wasm.Services
         {
             Node node = new Node
             {
-                NodeId = NextId(nodes),
+                Id = NextId(nodes),
                 LabelColor = d.NodeLabelColor,
-                NodeColor = d.NodeColor,
+                Color = d.NodeColor,
                 Xaxis = x,
                 Yaxis = y,
-                Radius = d.NodeRadius,
+                Size = d.NodeRadius,
                 Label = label
             };
             nodes.Add(node);
@@ -32,12 +32,12 @@ namespace GraphIt.wasm.Services
         {
             Node node = new Node
             {
-                NodeId = NextId(nodes),
+                Id = NextId(nodes),
                 LabelColor = d.NodeLabelColor,
-                NodeColor = d.NodeColor,
+                Color = d.NodeColor,
                 Xaxis = x,
                 Yaxis = y,
-                Radius = d.NodeRadius,
+                Size = d.NodeRadius,
                 Label = (nodes.Count + 1).ToString()
             };
             nodes.Add(node);
@@ -48,12 +48,12 @@ namespace GraphIt.wasm.Services
         {
             Node node = new Node
             {
-                NodeId = n.NodeId,
+                Id = n.Id,
                 LabelColor = n.LabelColor,
-                NodeColor = n.NodeColor,
+                Color = n.Color,
                 Xaxis = n.Xaxis,
                 Yaxis = n.Yaxis,
-                Radius = n.Radius,
+                Size = n.Size,
                 Label = n.Label
             };
             nodes.Add(node);
@@ -64,30 +64,31 @@ namespace GraphIt.wasm.Services
         {
             Node node = new Node
             {
-                NodeId = n.NodeId + nextNodeId,
+                Id = n.Id + nextNodeId,
                 LabelColor = n.LabelColor,
-                NodeColor = n.NodeColor,
+                Color = n.Color,
                 Xaxis = n.Xaxis + offset,
                 Yaxis = n.Yaxis + offset,
-                Radius = n.Radius,
+                Size = n.Size,
                 Label = n.Label
             };
             nodes.Add(node);
             return node;
         }
 
-        public void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node)
+        public void DeleteNode(Graph graph, Node node)
         {
-            nodes.Remove(node);
-            for (int i = edges.Count - 1; i >= 0; i--)
+            graph.Nodes.Remove(node);
+            for (int i = graph.Edges.Count - 1; i >= 0; i--)
             {
-                if (edges[i].TailNodeId == node.NodeId || edges[i].HeadNodeId == node.NodeId) edges.RemoveAt(i);
+                if (graph.Edges[i].Tail == node || graph.Edges[i].Head == node) graph.Edges.RemoveAt(i);
             }
         }
 
-        public void DeleteNodes(IList<Node> nodes, IList<Edge> edges, IList<Node> nodesToDel)
+        public void DeleteNodes(Graph graph, IList<Node> nodesToDel)
         {
-            foreach (Node node in nodesToDel) DeleteNode(nodes, edges, node);
+            for (int i = nodesToDel.Count-1; i>=0; i--)
+                DeleteNode(graph, nodesToDel[i]);
         }
 
         public void Align(IList<Node> nodes, string pos)
@@ -131,7 +132,7 @@ namespace GraphIt.wasm.Services
         {
             if (nodes.Any())
             {
-                return nodes.Max(n => n.NodeId) + 1;
+                return nodes.Max(n => n.Id) + 1;
             }
             return 0;
         }

@@ -1,26 +1,26 @@
-﻿<text x="@AlgorithmNode.Node.Xaxis" 
-      y="@(AlgorithmNode.Node.Yaxis-AlgorithmNode.Node.Radius-10)"
-      font-size="@(AlgorithmNode.Node.Radius/2)"
-      text-anchor="middle">@AlgorithmNode.Header</text>
-<g id="@AlgorithmNode.Node.NodeId">
-    <circle cx="@AlgorithmNode.Node.Xaxis"
-            cy="@AlgorithmNode.Node.Yaxis"
-            r="@AlgorithmNode.Node.Radius"
-            stroke="@AlgorithmNode.Node.NodeColor"
+﻿<text x="@Node.Xaxis" 
+      y="@(Node.Yaxis-Node.Size-10)"
+      font-size="@(Node.Size/2)"
+      text-anchor="middle">@Node.Header</text>
+<g id="@Node.Id">
+    <circle cx="@Node.Xaxis"
+            cy="@Node.Yaxis"
+            r="@Node.Size"
+            stroke="@Node.Color"
             stroke-width="2"
-            fill="@AlgorithmNode.Node.NodeColor" />
+            fill="@Node.Color" />
     <text text-anchor="middle"
-          fill="@AlgorithmNode.Node.LabelColor"
-          stroke="@AlgorithmNode.Node.NodeColor"
+          fill="@Node.LabelColor"
+          stroke="@Node.Color"
           stroke-width="1"
-          font-size="@(AlgorithmNode.Node.Radius/2)"
+          font-size="@(Node.Size/2)"
           font-family="Verdana"
-          x="@AlgorithmNode.Node.Xaxis"
-          y="@AlgorithmNode.Node.Yaxis">
-        @AlgorithmNode.Node.Label
+          x="@Node.Xaxis"
+          y="@Node.Yaxis">
+        @Node.Label
     </text>
 </g>
 
 @code{
-    [Parameter] public AlgorithmNode AlgorithmNode { get; set; }
+    [Parameter] public Node Node { get; set; }
 }

@@ -10,31 +10,31 @@ namespace GraphIt.wasm.Services
 {
     public class EdgeService : IEdgeService
     {
-        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail, double weight)
+        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, Node head, Node tail, double weight)
         {
             Edge edge = new Edge
             {
-                EdgeId = NextId(edges),
+                Id = NextId(edges),
                 LabelColor = d.EdgeLabelColor,
-                EdgeColor = d.EdgeColor,
-                HeadNodeId = head,
-                TailNodeId = tail,
-                Width = d.EdgeWidth,
+                Color = d.EdgeColor,
+                Head = head,
+                Tail = tail,
+                Size = d.EdgeWidth,
                 Weight = weight
             };
             edges.Add(edge);
             return edge;
         }
-        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, int head, int tail)
+        public Edge AddEdge(IList<Edge> edges, DefaultOptions d, Node head, Node tail)
         {
             Edge edge = new Edge
             {
-                EdgeId = NextId(edges),
+                Id = NextId(edges),
                 LabelColor = d.EdgeLabelColor,
-                EdgeColor = d.EdgeColor,
-                HeadNodeId = head,
-                TailNodeId = tail,
-                Width = d.EdgeWidth,
+                Color = d.EdgeColor,
+                Head = head,
+                Tail = tail,
+                Size = d.EdgeWidth,
             };
             edges.Add(edge);
             return edge;
@@ -44,12 +44,12 @@ namespace GraphIt.wasm.Services
         {
             Edge edge = new Edge
             {
-                EdgeId = NextId(edges),
+                Id = NextId(edges),
                 LabelColor = e.LabelColor,
-                EdgeColor = e.EdgeColor,
-                HeadNodeId = e.HeadNodeId,
-                TailNodeId = e.TailNodeId,
-                Width = e.Width,
+                Color = e.Color,
+                Head = e.Head,
+                Tail = e.Tail,
+                Size = e.Size,
                 Curve = e.Curve,
                 Weight = e.Weight
             };
@@ -57,20 +57,20 @@ namespace GraphIt.wasm.Services
             return edge;
         }
 
-        public Edge AddEdge(IList<Edge> edges, Edge e, int id)
+        public Edge AddEdge(Graph graph, Edge e, int id)
         {
             Edge edge = new Edge
             {
-                EdgeId = NextId(edges),
+                Id = NextId(graph.Edges),
                 LabelColor = e.LabelColor,
-                EdgeColor = e.EdgeColor,
-                HeadNodeId = id + e.HeadNodeId,
-                TailNodeId = id + e.TailNodeId,
-                Width = e.Width,
+                Color = e.Color,
+                Head = graph.Nodes.First(n => n.Id == (id + e.Head.Id)),
+                Tail = graph.Nodes.First(n => n.Id == (id + e.Tail.Id)),
+                Size = e.Size,
                 Curve = e.Curve,
                 Weight = e.Weight
             };
-            edges.Add(edge);
+            graph.Edges.Add(edge);
             return edge;
         }
 
@@ -79,46 +79,46 @@ namespace GraphIt.wasm.Services
             edges.RemoveAll(e => edgesToDel.Contains(e));
         }
 
-        public void UpdateMultiGraph(DefaultOptions d, List<Edge> edges)
+        public void UpdateMultiGraph(Graph graph)
         {
 
-            foreach (Edge e1 in edges)
+            foreach (Edge e1 in graph.Edges)
             {
-                if (e1.HeadNodeId == e1.TailNodeId)
+                if (e1.Head == e1.Tail)
                 {
-                    d.MultiGraph = true;
+                    graph.MultiGraph = true;
                     return;
                 }
-                foreach (Edge e2 in edges)
+                foreach (Edge e2 in graph.Edges)
                 {
-                    if (e1.EdgeId != e2.EdgeId 
-                        && (e1.HeadNodeId == e2.HeadNodeId && e1.TailNodeId == e2.TailNodeId
-                            || (!d.Directed && e1.TailNodeId == e2.HeadNodeId && e1.HeadNodeId == e2.TailNodeId)))
+                    if (e1.Id != e2.Id 
+                        && (e1.Head == e2.Head && e1.Tail == e2.Tail
+                            || (!graph.Directed && e1.Tail == e2.Head && e1.Head == e2.Tail)))
                     {
-                        d.MultiGraph = true;
+                        graph.MultiGraph = true;
                         return;
                     }
                 }
             }
-            d.MultiGraph = false;
+            graph.MultiGraph = false;
         }
 
-        public IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, int head, int tail, bool directed)
+        public IEnumerable<Edge> MultiGraphEdges(IEnumerable<Edge> edges, Node head, Node tail, bool directed)
         {
             IList<Edge> MultiEdges = new List<Edge>();
             if (directed)
             {
                 foreach (Edge edge in edges)
                 {
-                    if (edge.HeadNodeId == head && edge.TailNodeId == tail) MultiEdges.Add(edge);
+                    if (edge.Head == head && edge.Tail == tail) MultiEdges.Add(edge);
                 }
             }
             else
             {
                 foreach (Edge edge in edges)
                 {
-                    if (edge.HeadNodeId == head && edge.TailNodeId == tail
-                        || (edge.HeadNodeId == tail && edge.TailNodeId == head)) MultiEdges.Add(edge);
+                    if (edge.Head == head && edge.Tail == tail
+                        || (edge.Head == tail && edge.Tail == head)) MultiEdges.Add(edge);
                 }
             }
             return MultiEdges;
@@ -128,7 +128,7 @@ namespace GraphIt.wasm.Services
         {
             if (edges.Any())
             {
-                return edges.Max(n => n.EdgeId) + 1;
+                return edges.Max(n => n.Id) + 1;
             }
             return 0;
         }

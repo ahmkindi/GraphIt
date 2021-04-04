@@ -14,10 +14,10 @@ else
 
 <li class="dropdown border-dark border-right @NavCss @OpenCss" data-toggle="tooltip" data-placement="bottom" title="Color">
     <button class="btn shadow-none" @onclick="(() => Open = !Open)" id="medgecolor" aria-haspopup="true" aria-expanded="@Open">
-        <span class="oi oi-brush" style="color:@ActiveEdges[0].EdgeColor"></span><span class="oi oi-text" style="color:@ActiveEdges[0].LabelColor"></span>
+        <span class="oi oi-brush" style="color:@ActiveEdges[0].Color"></span><span class="oi oi-text" style="color:@ActiveEdges[0].LabelColor"></span>
     </button>
     <div class="dropdown-menu @OpenCss" aria-labelledby="medgecolor">
-        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].EdgeColor" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
+        <span class="dropdown-item">Fill <SfColorPicker Value="@ActiveEdges[0].Color" ValueChange="OnEdgeColorChange"></SfColorPicker></span>
         <span class="dropdown-item">Label <SfColorPicker Value="@ActiveEdges[0].LabelColor" ValueChange="OnEdgeLabelColorChange"></SfColorPicker></span>
     </div>
 </li>
@@ -28,7 +28,7 @@ else
             Width
         </div>
         <div class="p-custom">
-            <input class="shortInput" type="number" Min=2 Max=20 step=1 value="@ActiveEdges[0].Width" @onchange="OnWidthChange" />
+            <input class="shortInput" type="number" Min=2 Max=20 step=1 value="@ActiveEdges[0].Size" @onchange="OnWidthChange" />
         </div>
     </li>
     <li class="d-flex flex-row px-2 border-dark border-right">
@@ -39,7 +39,7 @@ else
             <input class="shortInput" value="@ActiveEdges[0].Label" @onchange="OnEdgeLabelChange" />
         </div>
     </li>
-    if (DefaultOptions.Weighted)
+    if (Weighted)
     {
         <li class="d-flex flex-row px-2 border-dark border-right">
             <div class="py-2">
@@ -69,7 +69,7 @@ else
             <input class="shortInput" @onchange="OnEdgeLabelChange" />
         </div>
     </li>
-    if (DefaultOptions.Weighted)
+    if (Weighted)
     {
         <li class="d-flex flex-row px-2 border-dark border-right">
             <div class="py-2">

@@ -12,16 +12,16 @@ namespace GraphIt.wasm.Pages
     public class EdgeLineBase : ComponentBase
     {
         [Parameter] public Edge Edge { get; set; }
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
         [Parameter] public ObjectClicked ObjectClicked { get; set; }
         [Parameter] public EventCallback<ObjectClicked> ObjectClickedChanged { get; set; }
         [Parameter] public IList<Node> ActiveNodes { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeClick { get; set; }
         [Parameter] public EventCallback<Edge> AddActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> RemoveActiveEdge { get; set; }
         [Parameter] public EventCallback<Edge> OnEdgeRightClick { get; set; }
         [Parameter] public bool Active { get; set; }
+        [Parameter] public bool Weighted { get; set; }
+        [Parameter] public bool Directed { get; set; }
         public string ActiveEdgeCss { get; set; }
         public ShowEdge ShowEdge { get; set; }
         protected override void OnParametersSet()
@@ -31,16 +31,16 @@ namespace GraphIt.wasm.Pages
             if (Active) ActiveEdgeCss = "activeEdge";
             foreach (Node node in ActiveNodes)
             {
-                if (Edge.HeadNodeId == node.NodeId)
+                if (Edge.Head == node)
                 {
-                    ShowEdge = new ShowEdge(Edge, node, Edge.TailNode(Nodes));
+                    ShowEdge = new ShowEdge(Edge, node, Edge.Tail);
                 }
-                else if (Edge.TailNodeId == node.NodeId)
+                else if (Edge.Tail == node)
                 {
-                    ShowEdge = new ShowEdge(Edge, Edge.HeadNode(Nodes), node);
+                    ShowEdge = new ShowEdge(Edge, Edge.Head, node);
                 }
             }
-            if (ShowEdge == null) ShowEdge = new ShowEdge(Edge, Edge.HeadNode(Nodes), Edge.TailNode(Nodes));
+            if (ShowEdge == null) ShowEdge = new ShowEdge(Edge);
         }
         public async Task OnMouseDown(MouseEventArgs e)
         {

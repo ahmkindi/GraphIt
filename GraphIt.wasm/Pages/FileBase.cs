@@ -17,14 +17,12 @@ namespace GraphIt.wasm.Pages
 {
     public class FileBase : ComponentBase
     {
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
+        [Parameter] public Options Options { get; set; }
+        [Parameter] public EventCallback<Options> OptionsChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
-        [Parameter] public EventCallback<bool> UpdateCanvas { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public List<Edge> Edges { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
+        [Parameter] public Graph Graph { get; set; }
+        [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
+        [Parameter] public EventCallback<SVGSaveAs> SVGSaveAsChanged { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
@@ -33,42 +31,8 @@ namespace GraphIt.wasm.Pages
         public bool ErrorOpening { get; set; } = false;
         public bool OpenPreference { get; set; } = false;
         public bool NewGraphCheck { get; set; } = false;
-        public async Task SaveSVGFile(bool screenView)
-        {
-            string result;
-            MemoryStream stream = new MemoryStream();
-            using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
-            {
-                writer.Formatting = Formatting.Indented;
-                writer.WriteStartDocument(false);
-                writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
-                writer.WriteAttributeString("version", "1.1");
-                if (screenView) writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
-                else writer.WriteAttributeString("viewBox", FullView(Nodes));
-                foreach (Edge edge in Edges) XmlNodeService.Draw(edge, edge.HeadNode(Nodes), edge.TailNode(Nodes), writer, DefaultOptions.Weighted, DefaultOptions.Directed);
-                foreach (Node node in Nodes) XmlNodeService.Draw(node, writer);
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Flush();
-                StreamReader reader = new StreamReader(stream, Encoding.UTF8, true);
-                stream.Seek(0, SeekOrigin.Begin);
-                result = reader.ReadToEnd();
-            }
-            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.svg", "image/svg+xml", Encoding.UTF8.GetBytes(result));
-        }
+        public bool Overwrite { get; set; } = false;
 
-        public string FullView(IEnumerable<Node> nodes)
-        {
-            if (nodes.Any())
-            {
-                var x = nodes.Min(n => n.Xaxis - n.Radius);
-                var y = nodes.Min(n => n.Yaxis - n.Radius);
-                var width = nodes.Max(n => n.Xaxis + n.Radius) - x;
-                var height = nodes.Max(n => n.Yaxis + n.Radius) - y;
-                return $"{x} {y} {width} {height}";
-            }
-            return "0 0 0 0";
-        }
         public async Task SaveGraphItFile()
         {
             string result;
@@ -77,9 +41,8 @@ namespace GraphIt.wasm.Pages
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Graph");
-                foreach (Node node in Nodes) XmlNodeService.CreateNode(node, writer);
-                foreach (Edge edge in Edges) XmlNodeService.CreateNode(edge, writer);
-                XmlNodeService.CreateNode(DefaultOptions, writer);
+                XmlNodeService.CreateNode(Graph, writer);
+                XmlNodeService.CreateNode(Options, writer);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -92,11 +55,11 @@ namespace GraphIt.wasm.Pages
 
         public async Task OpenGraphItFile(InputFileChangeEventArgs e, bool overwrite)
         {
+            Overwrite = overwrite;
             try
             {
-                await JSRuntime.InvokeAsync<string>("console.log", e.File.OpenReadStream().Length);
                 byte[] temp;
-                DefaultOptions newDefOptions = new DefaultOptions();
+                Options newOptions = new Options();
                 using (var streamReader = new MemoryStream())
                 {
                     await e.File.OpenReadStream().CopyToAsync(streamReader);
@@ -106,25 +69,18 @@ namespace GraphIt.wasm.Pages
                 string graph = DecodeAndInflate(temp);
                 XmlDocument xmlData = new XmlDocument();
                 xmlData.LoadXml(graph);
-                if (overwrite)
+                if (Overwrite)
                 {
-                    Nodes.Clear();
-                    Edges.Clear();
+                    Graph = new Graph();
                 }
-                Traverse(xmlData, NodeService.NextId(Nodes), EdgeService.NextId(Edges), newDefOptions);
-                if (overwrite) await DefaultOptionsChanged.InvokeAsync(newDefOptions);
-                else if (!DefaultOptions.MultiGraph && newDefOptions.MultiGraph)
-                {
-                    DefaultOptions.MultiGraph = true;
-                    await DefaultOptionsChanged.InvokeAsync(newDefOptions);
-                }
+                Traverse(xmlData, NodeService.NextId(Graph.Nodes), EdgeService.NextId(Graph.Edges));
+                await GraphChanged.InvokeAsync(Graph);
+                if (Overwrite) await OptionsChanged.InvokeAsync(Options);
             }
             catch (ObjectDisposedException)
             {
                 ErrorOpening = true;
             }
-            await NodesChanged.InvokeAsync(Nodes);
-            await EdgesChanged.InvokeAsync(Edges);
         }
 
         private byte[] DeflateAndEncode(string str)
@@ -157,7 +113,7 @@ namespace GraphIt.wasm.Pages
             }
         }
 
-        private void Traverse(XmlDocument xmlData, int nextNodeId, int nextEdgeId, DefaultOptions newD)
+        private void Traverse(XmlDocument xmlData, int nextNodeId, int nextEdgeId)
         {
             foreach (XmlNode i in xmlData.DocumentElement.ChildNodes)
             {
@@ -169,10 +125,10 @@ namespace GraphIt.wasm.Pages
                         switch (node.Name)
                         {
                             case "NodeId":
-                                newNode.NodeId = int.Parse(node.InnerText) + nextNodeId;
+                                newNode.Id = int.Parse(node.InnerText) + nextNodeId;
                                 break;
                             case "NodeColor":
-                                newNode.NodeColor = node.InnerText;
+                                newNode.Color = node.InnerText;
                                 break;
                             case "Label":
                                 newNode.Label = node.InnerText;
@@ -181,7 +137,7 @@ namespace GraphIt.wasm.Pages
                                 newNode.LabelColor = node.InnerText;
                                 break;
                             case "Radius":
-                                newNode.Radius = int.Parse(node.InnerText);
+                                newNode.Size = int.Parse(node.InnerText);
                                 break;
                             case "Xaxis":
                                 newNode.Xaxis = double.Parse(node.InnerText);
@@ -191,7 +147,7 @@ namespace GraphIt.wasm.Pages
                                 break;
                         }
                     }
-                    Nodes.Add(newNode);
+                    Graph.Nodes.Add(newNode);
                 }
                 else if (i.Name == "Edge")
                 {
@@ -201,7 +157,7 @@ namespace GraphIt.wasm.Pages
                         switch (edge.Name)
                         {
                             case "EdgeId":
-                                newEdge.EdgeId = int.Parse(edge.InnerText) + nextEdgeId;
+                                newEdge.Id = int.Parse(edge.InnerText) + nextEdgeId;
                                 break;
                             case "Label":
                                 newEdge.Label = edge.InnerText;
@@ -210,59 +166,99 @@ namespace GraphIt.wasm.Pages
                                 newEdge.LabelColor = edge.InnerText;
                                 break;
                             case "Width":
-                                newEdge.Width = int.Parse(edge.InnerText);
+                                newEdge.Size = int.Parse(edge.InnerText);
                                 break;
                             case "HeadNodeId":
-                                newEdge.HeadNodeId = int.Parse(edge.InnerText) + nextNodeId;
+                                newEdge.Head = Graph.Nodes.First(n => n.Id == int.Parse(edge.InnerText) + nextNodeId);
                                 break;
                             case "TailNodeId":
-                                newEdge.TailNodeId = int.Parse(edge.InnerText) + nextNodeId;
+                                newEdge.Tail = Graph.Nodes.First(n => n.Id == int.Parse(edge.InnerText) + nextNodeId);
                                 break;
                             case "Curve":
                                 newEdge.Curve = double.Parse(edge.InnerText);
                                 break;
                             case "EdgeColor":
-                                newEdge.EdgeColor = edge.InnerText;
+                                newEdge.Color = edge.InnerText;
                                 break;
                             case "Weight":
                                 newEdge.Weight = double.Parse(edge.InnerText);
                                 break;
                         }
                     }
-                    Edges.Add(newEdge);
+                    Graph.Edges.Add(newEdge);
                 }
-                else if (i.Name == "DefaultOptions")
+                else if (i.Name == "Settings")
+                {
+                    foreach (XmlNode option in i.ChildNodes)
+                    {
+                        switch (option.Name)
+                        {
+                            case "MultiGraph":
+                                Graph.MultiGraph = bool.Parse(option.InnerText);
+                                break;
+                            case "Weighted":
+                                if (!Overwrite) break;
+                                Graph.Weighted = bool.Parse(option.InnerText);
+                                break;
+                            case "Directed":
+                                if (!Overwrite) break;
+                                Graph.Directed = bool.Parse(option.InnerText);
+                                break;
+                        }
+                    }
+                }
+
+                else if (i.Name == "Default")
+                {
+                    if (!Overwrite) break;
+                    foreach (XmlNode option in i.ChildNodes)
+                    {
+                        switch (option.Name)
+                        {
+                            case "NodeColor":
+                                Options.Default.NodeColor = option.InnerText;
+                                break;
+                            case "NodeLabelColor":
+                                Options.Default.NodeColor = option.InnerText;
+                                break;
+                            case "NodeRadius":
+                                Options.Default.NodeRadius = int.Parse(option.InnerText);
+                                break;
+                            case "EdgeColor":
+                                Options.Default.EdgeColor = option.InnerText;
+                                break;
+                            case "EdgeLabelColor":
+                                Options.Default.EdgeLabelColor = option.InnerText;
+                                break;
+                            case "EdgeWidth":
+                                Options.Default.EdgeWidth = int.Parse(option.InnerText);
+                                break;
+                        }
+                    }
+                }
+                else if (i.Name == "Algorithm")
                 {
                     foreach (XmlNode option in i.ChildNodes)
                     {
                         switch (option.Name)
                         {
                             case "NodeColor":
-                                newD.NodeColor = option.InnerText;
-                                break;
-                            case "MultiGraph":
-                                newD.MultiGraph = bool.Parse(option.InnerText);
+                                Options.Algorithm.NodeColor = option.InnerText;
                                 break;
                             case "NodeLabelColor":
-                                newD.NodeColor = option.InnerText;
+                                Options.Algorithm.NodeColor = option.InnerText;
                                 break;
                             case "NodeRadius":
-                                newD.NodeRadius = int.Parse(option.InnerText);
-                                break;
-                            case "Weighted":
-                                newD.Weighted = bool.Parse(option.InnerText);
-                                break;
-                            case "Directed":
-                                newD.Directed = bool.Parse(option.InnerText);
+                                Options.Algorithm.NodeRadius = int.Parse(option.InnerText);
                                 break;
                             case "EdgeColor":
-                                newD.EdgeColor = option.InnerText;
+                                Options.Algorithm.EdgeColor = option.InnerText;
                                 break;
                             case "EdgeLabelColor":
-                                newD.EdgeLabelColor = option.InnerText;
+                                Options.Algorithm.EdgeLabelColor = option.InnerText;
                                 break;
                             case "EdgeWidth":
-                                newD.EdgeWidth = int.Parse(option.InnerText);
+                                Options.Algorithm.EdgeWidth = int.Parse(option.InnerText);
                                 break;
                         }
                     }

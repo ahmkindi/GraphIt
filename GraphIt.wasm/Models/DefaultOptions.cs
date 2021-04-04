@@ -12,9 +12,6 @@ namespace GraphIt.wasm.Models
         public string EdgeLabelColor { get; set; }
         public int NodeRadius { get; set; } = 75;
         public int EdgeWidth { get; set; } = 10;
-        public bool Weighted { get; set; } = true;
-        public bool Directed { get; set; } = true;
-        public bool MultiGraph { get; set; } = false;
 
         public DefaultOptions()
         {

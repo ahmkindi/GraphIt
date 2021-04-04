@@ -12,8 +12,8 @@ namespace GraphIt.wasm.Services
         Node AddNode(IList<Node> nodes, DefaultOptions d, double x, double y);
         Node AddNode(IList<Node> nodes, Node n);
         Node AddNode(IList<Node> nodes, Node n, int nextNodeId, double offset);
-        void DeleteNodes(IList<Node> nodes, IList<Edge> edges, IList<Node> nodesToDel);
-        void DeleteNode(IList<Node> nodes, IList<Edge> edges, Node node);
+        void DeleteNodes(Graph graph, IList<Node> nodesToDel);
+        void DeleteNode(Graph graph, Node node);
         void Align(IList<Node> nodes, string pos);
         int NextId(IList<Node> nodes);
 

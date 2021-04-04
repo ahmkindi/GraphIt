@@ -8,15 +8,15 @@ namespace GraphIt.wasm.Services
 {
     public interface IAlgorithmService
     {
-        void RunAlgorithm(DefaultOptions d, DefaultOptions a, StartAlgorithm startAlgorithm, IList<Node> nodes, ref IList<AlgorithmNode> algorithmNodes, IList<Edge> edges, ref IList<Edge> algorithmEdges);
+        void RunAlgorithm(Options options, StartAlgorithm startAlgorithm, Graph graph, AlgoExplain algoExplain, ref List<List<GraphObject>> playAlgorithm);
         void Kruskal();
-        void BFS();
-        void DFS();
-        void Dijkstra();
-        void DijkstraPath();
-        void Degree();
-        void DegreeCentrality(string pref);
-        void FordFulkerson();
-        void Articulation();
+        //void BFS();
+        //void DFS();
+        //void Dijkstra();
+        //void DijkstraPath();
+        //void Degree();
+        //void DegreeCentrality(string pref);
+        //void FordFulkerson();
+        //void Articulation();
     }
 }

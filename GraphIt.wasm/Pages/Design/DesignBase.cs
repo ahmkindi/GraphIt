@@ -10,26 +10,21 @@ namespace GraphIt.wasm.Pages.Design
 {
     public class DesignBase : ComponentBase
     {
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Parameter] public IList<Edge> ActiveEdges { get; set; }
-        [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
-        [Parameter] public EventCallback<bool> DeleteActiveEdges { get; set; }
-        [Parameter] public IList<Node> ActiveNodes { get; set; }
-        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public EventCallback<bool> DeleteActiveNodes { get; set; }
-        [Parameter] public DefaultOptions DefaultAlgoOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultAlgoOptionsChanged { get; set; }
+        [Parameter] public Options Options { get; set; }
+        [Parameter] public EventCallback<Options> OptionsChanged { get; set; }
+        [Parameter] public Graph ActiveGraph { get; set; }
+        [Parameter] public EventCallback<Graph> ActiveGraphChanged { get; set; }
+        [Parameter] public bool Weighted { get; set; }
+        [Parameter] public EventCallback<bool> Relabel { get; set; }
+        [Parameter] public EventCallback<string> DeleteActive { get; set; }
         public SelectDesign SelectDesign { get; set; }
 
         protected override void OnParametersSet()
         {
-            if (ActiveNodes.Any() && !ActiveEdges.Any()) SelectDesign = SelectDesign.SelectedNode;
-            else if (ActiveEdges.Any() && !ActiveNodes.Any()) SelectDesign = SelectDesign.SelectedEdge;
-            else if (SelectDesign == SelectDesign.SelectedNode && ActiveNodes.Any()) return;
-            else if (SelectDesign == SelectDesign.SelectedEdge && ActiveEdges.Any()) return;
+            if (ActiveGraph.Nodes.Any() && !ActiveGraph.Edges.Any()) SelectDesign = SelectDesign.SelectedNode;
+            else if (ActiveGraph.Edges.Any() && !ActiveGraph.Nodes.Any()) SelectDesign = SelectDesign.SelectedEdge;
+            else if (SelectDesign == SelectDesign.SelectedNode && ActiveGraph.Nodes.Any()) return;
+            else if (SelectDesign == SelectDesign.SelectedEdge && ActiveGraph.Edges.Any()) return;
             else SelectDesign = SelectDesign.DefaultNode;
         }
 
@@ -62,26 +57,22 @@ namespace GraphIt.wasm.Pages.Design
 
         public async Task GoDeleteActiveNodes()
         {
-            await DeleteActiveNodes.InvokeAsync(true);
+            await DeleteActive.InvokeAsync("node");
         }
 
         public async Task GoDeleteActiveEdges()
         {
-            await DeleteActiveEdges.InvokeAsync(true);
-        }
-        public async Task GoUpdateActiveNodes()
-        {
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            await DeleteActive.InvokeAsync("edge");
         }
 
-        public async Task GoUpdateNodes()
+        public async Task GoUpdateActiveNodes()
         {
-            await NodesChanged.InvokeAsync(Nodes);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
 
         public async Task GoUpdateActiveEdges()
         {
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
     }
 }

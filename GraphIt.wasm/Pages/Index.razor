@@ -20,21 +20,19 @@ else
         @switch (Choice)
         {
             case NavChoice.File:
-                <File @bind-DefaultOptions="DefaultOptions" SVGControl="SVGControl" @bind-Nodes="Nodes" @bind-Edges="Edges"></File>
+                <File @bind-Options="Options" SVGControl="SVGControl" @bind-Graph="Graph" SVGSaveAsChanged="(x) => SVGSaveAs = x"></File>
                 break;
             case NavChoice.Home:
-                <Home @bind-Rep="Rep" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveNodes="ActiveNodes" DefaultOptions="DefaultOptions"
-                      @bind-ActiveEdges="ActiveEdges" Nodes="Nodes" Edges="Edges" @bind-GraphMode="GraphMode"></Home>
+                <Home @bind-MatrixOpened="MatrixOpened" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveGraph="ActiveGraph" Graph="Graph" @bind-GraphMode="GraphMode"></Home>
                 break;
             case NavChoice.Insert:
-                <Insert @bind-GraphMode="GraphMode" @bind-NewEdge="NewEdge" DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></Insert>
+                <Insert @bind-Graph="Graph" @bind-GraphMode="GraphMode" @bind-NewEdge="NewEdge" DefaultOptions="Options.Default" SVGControl="SVGControl"></Insert>
                 break;
             case NavChoice.View:
-                <View @bind-SVGControl="SVGControl" @bind-ActiveNodes="ActiveNodes" Nodes="Nodes" Browser="Browser"></View>
+                <View @bind-SVGControl="SVGControl" @bind-ActiveGraph="ActiveGraph" Nodes="Graph.Nodes" Browser="Browser"></View>
                 break;
             case NavChoice.Design:
-                <Design @bind-ActiveNodes="ActiveNodes" @bind-DefaultOptions="DefaultOptions" @bind-DefaultAlgoOptions="DefaultAlgoOptions" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" 
-                        DeleteActiveNodes="DeleteActiveNodes" DeleteActiveEdges="DeleteActiveEdges"></Design>
+                <Design @bind-ActiveGraph="ActiveGraph" @bind-Options="Options" Weighted="Graph.Weighted" Relabel="Relabel" DeleteActive="DeleteActive"></Design>
                 break;
             case NavChoice.About:
                 <About></About>
@@ -46,10 +44,18 @@ else
     </ul>
 </nav>
 }
-@if (Rep == Representation.Matrix || Rep == Representation.WeightedMatrix)
+@if (MatrixOpened)
 {
-    <AdjMatrix @bind-Rep="Rep" @bind-DefaultOptions="DefaultOptions" @bind-Nodes="Nodes" @bind-Edges="Edges" SVGControl="SVGControl"></AdjMatrix>
+    <AdjMatrix @bind-MatrixOpened="MatrixOpened" @bind-Graph="Graph" DefaultOptions="Options.Default" SVGControl="SVGControl"></AdjMatrix>
 }
-<Canvas @bind-ActiveNodes="ActiveNodes" @bind-Nodes="Nodes" @bind-ActiveEdges="ActiveEdges" @bind-Edges="Edges" ChangeMenu="UpdateChoice" @bind-NewEdge="NewEdge"
-        @bind-DefaultOptions="DefaultOptions" @bind-GraphMode="GraphMode" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" DefaultAlgoOptions="DefaultAlgoOptions"></Canvas>
-<Footer GraphMode="GraphMode" @bind-DefaultOptions="DefaultOptions" Nodes="Nodes" Edges="Edges"></Footer>
+<Canvas @bind-ActiveGraph="ActiveGraph" @bind-Graph="Graph" ChangeMenu="UpdateChoice" @bind-NewEdge="NewEdge" @bind-AlgoExplain="AlgoExplain" DeleteActive="DeleteActive"
+        Options="Options" GraphMode="GraphMode" GraphModeChanged="GraphModeChanged" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" @bind-SVGSaveAs="SVGSaveAs"></Canvas>
+
+@if (StartAlgorithm.Done)
+{
+    <AlgoFooter @bind-AlgoExplain="AlgoExplain"></AlgoFooter>
+}
+else
+{
+    <Footer @bind-Graph="Graph" GraphMode="GraphMode"></Footer>
+}

@@ -5,11 +5,11 @@
     <select class="form-control shadow-none scrollable-menu p-0" @onchange="(args) => SelectDesign = (SelectDesign) Enum.Parse(typeof(SelectDesign), args.Value.ToString())">
         @foreach (SelectDesign sd in Enum.GetValues(typeof(SelectDesign)))
         {
-            if (sd == SelectDesign.SelectedNode && !ActiveNodes.Any())
+            if (sd == SelectDesign.SelectedNode && !ActiveGraph.Nodes.Any())
             {
                 continue;
             }
-            if (sd == SelectDesign.SelectedEdge && !ActiveEdges.Any())
+            if (sd == SelectDesign.SelectedEdge && !ActiveGraph.Edges.Any())
             {
                 continue;
             }
@@ -28,21 +28,21 @@
 @switch (SelectDesign)
 {
     case SelectDesign.DefaultNode:
-        <DefaultNode @bind-DefaultOptions="DefaultOptions" Nodes="Nodes" NodesChanged="GoUpdateNodes"></DefaultNode>
+        <DefaultNode @bind-DefaultOptions="Options.Default" Relabel="Relabel"></DefaultNode>
         break;
     case SelectDesign.DefaultEdge:
-        <DefaultEdge @bind-DefaultOptions="DefaultOptions"></DefaultEdge>
+        <DefaultEdge @bind-DefaultOptions="Options.Default"></DefaultEdge>
         break;
     case SelectDesign.AlgorithmNode:
-        <DefaultNode @bind-DefaultOptions="DefaultAlgoOptions"></DefaultNode>
+        <DefaultNode @bind-DefaultOptions="Options.Algorithm"></DefaultNode>
         break;
     case SelectDesign.AlgorithmEdge:
-        <DefaultEdge @bind-DefaultOptions="DefaultAlgoOptions"></DefaultEdge>
+        <DefaultEdge @bind-DefaultOptions="Options.Algorithm"></DefaultEdge>
         break;
     case SelectDesign.SelectedNode:
-        <SelectedNode ActiveNodes="ActiveNodes" ActiveNodesChanged="GoUpdateActiveNodes" DeleteActiveNodes="GoDeleteActiveNodes"></SelectedNode>
+        <SelectedNode ActiveNodes="ActiveGraph.Nodes" ActiveNodesChanged="GoUpdateActiveNodes" DeleteActiveNodes="GoDeleteActiveNodes"></SelectedNode>
         break;
     case SelectDesign.SelectedEdge:
-        <SelectedEdge ActiveEdges="ActiveEdges" ActiveEdgesChanged="GoUpdateActiveEdges" DefaultOptions="DefaultOptions" DeleteActiveEdges="GoDeleteActiveEdges"></SelectedEdge>
+        <SelectedEdge ActiveEdges="ActiveGraph.Edges" Weighted="Weighted" ActiveEdgesChanged="GoUpdateActiveEdges" DeleteActiveEdges="GoDeleteActiveEdges"></SelectedEdge>
         break;
 }

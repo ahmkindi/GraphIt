@@ -8,40 +8,44 @@ using Syncfusion.Blazor.Navigations;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace GraphIt.wasm.Pages
 {
     public class CanvasBase : ComponentBase
     {
-        [Parameter] public DefaultOptions DefaultOptions { get; set; }
-        [Parameter] public EventCallback<DefaultOptions> DefaultOptionsChanged { get; set; }
-        [Parameter] public DefaultOptions DefaultAlgoOptions { get; set; }
-        [Parameter] public EventCallback<IList<Node>> ActiveNodesChanged { get; set; }
-        [Parameter] public EventCallback<IList<Edge>> ActiveEdgesChanged { get; set; }
+        [Parameter] public Options Options { get; set; }
         [Parameter] public EventCallback<NavChoice?> ChangeMenu { get; set; }
         [Parameter] public GraphMode GraphMode { get; set; }
         [Parameter] public EventCallback<GraphMode> GraphModeChanged { get; set; }
-        [Parameter] public IList<Node> ActiveNodes { get; set; }
-        [Parameter] public IList<Edge> ActiveEdges { get; set; }
+        [Parameter] public Graph ActiveGraph { get; set; }
+        [Parameter] public EventCallback<Graph> ActiveGraphChanged { get; set; }
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public EventCallback<SVGControl> SVGControlChanged { get; set; }
-        [Parameter] public List<Node> Nodes { get; set; }
-        [Parameter] public List<Edge> Edges { get; set; }
-        [Parameter] public EventCallback<List<Node>> NodesChanged { get; set; }
-        [Parameter] public EventCallback<List<Edge>> EdgesChanged { get; set; }
+        [Parameter] public Graph Graph { get; set; }
+        [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
         [Parameter] public StartAlgorithm StartAlgorithm { get; set; }
         [Parameter] public EventCallback<StartAlgorithm> StartAlgorithmChanged { get; set; }
         [Parameter] public NewEdge NewEdge { get; set; }
         [Parameter] public EventCallback<NewEdge> NewEdgeChanged { get; set; }
+        [Parameter] public EventCallback<string> DeleteActive { get; set; }
+        [Parameter] public AlgoExplain AlgoExplain { get; set; }
+        [Parameter] public EventCallback<AlgoExplain> AlgoExplainChanged { get; set; }
+        [Parameter] public SVGSaveAs SVGSaveAs { get; set; }
+        [Parameter] public EventCallback<SVGSaveAs> SVGSaveAsChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IZoomService ZoomService { get; set; }
         [Inject] public IAlgorithmService AlgorithmService { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
         public string SvgClass { get; set; }
-        public IList<Node> CopiedNodes { get; set; } = new List<Node>();
-        public IList<Edge> CopiedEdges { get; set; } = new List<Edge>();
+        public List<List<GraphObject>> PlayAlgorithm = new List<List<GraphObject>>();
+        public Graph CopiedGraph { get; set; } = new Graph();
+        public ElementReference SVGComponent { get; set; }
         public double PasteOffset { get; set; } = 0;
         private IList<Node> oldNodes { get; set; }
         public SfContextMenu<MenuItem> ObjectContextMenu { get; set; }
@@ -50,12 +54,15 @@ namespace GraphIt.wasm.Pages
         public ObjectClicked ObjectClicked { get; set; } = new ObjectClicked();
         private double[] origin = new double[2];
         public RectSelection RectSelection { get; set; } = new RectSelection();
-        public IList<AlgorithmNode> AlgorithmNodes = new List<AlgorithmNode>();
-        public IList<Edge> AlgorithmEdges = new List<Edge>();
         public bool MouseDown { get; set; } = false;
+        public Graph AlgorithmGraph { get; set; } 
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
+            if (SVGSaveAs != SVGSaveAs.None)
+            {
+                await SaveAsSVG();
+            }
             if (GraphMode == GraphMode.Default)
             {
                 SvgClass = "grab";
@@ -66,8 +73,20 @@ namespace GraphIt.wasm.Pages
             }
             else if (GraphMode == GraphMode.Algorithm)
             {
-                if (StartAlgorithm.Ready && !StartAlgorithm.Done)
-                    AlgorithmService.RunAlgorithm(DefaultOptions, DefaultAlgoOptions, StartAlgorithm, Nodes, ref AlgorithmNodes, Edges, ref AlgorithmEdges);
+                if (StartAlgorithm.Ready)
+                {
+                    if (!StartAlgorithm.Done)
+                    {
+                        AlgorithmService.RunAlgorithm(Options, StartAlgorithm, Graph, AlgoExplain, ref PlayAlgorithm);
+                        await AlgoExplainChanged.InvokeAsync(AlgoExplain);
+                        await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
+                    }
+                    else
+                    {
+                        UpdateAlgoGraph();
+                    }
+                }
+
             }
         }
 
@@ -87,10 +106,10 @@ namespace GraphIt.wasm.Pages
                 case "Top":
                 case "Middle":
                 case "Bottom":
-                    NodeService.Align(ActiveNodes, e.Item.Text);
+                    NodeService.Align(ActiveGraph.Nodes, e.Item.Text);
                     break;
                 case "Delete":
-                    await OnDelete();
+                    await DeleteActive.InvokeAsync("all");
                     break;
                 case "Edit":
                 case "Nodes":
@@ -98,21 +117,22 @@ namespace GraphIt.wasm.Pages
                     await ChangeMenu.InvokeAsync(NavChoice.Design);
                     break;
                 case "All Nodes":
-                    await ActiveNodesChanged.InvokeAsync(Nodes);
+                    ActiveGraph.Nodes = Graph.Nodes;
+                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
                     break;
                 case "All Edges":
-                    await ActiveEdgesChanged.InvokeAsync(Edges);
+                    ActiveGraph.Edges = Graph.Edges;
+                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
                     break;
                 case "Everything":
-                    await ActiveEdgesChanged.InvokeAsync(Edges);
-                    await ActiveNodesChanged.InvokeAsync(Nodes);
+                    await ActiveGraphChanged.InvokeAsync(Graph);
                     break;
                 case "Insert Edge":
                     await InsertEdge();
                     break;
                 case "Insert Node":
-                    NodeService.AddNode(Nodes, DefaultOptions, origin[0]*SVGControl.Scale + SVGControl.Xaxis, origin[1]*SVGControl.Scale + SVGControl.Yaxis);
-                    await NodesChanged.InvokeAsync(Nodes);
+                    NodeService.AddNode(Graph.Nodes, Options.Default, origin[0]*SVGControl.Scale + SVGControl.Xaxis, origin[1]*SVGControl.Scale + SVGControl.Yaxis);
+                    await GraphChanged.InvokeAsync(Graph);
                     break;
                 case "Stop Algorithm":
                     if (StartAlgorithm.Done) StartAlgorithm.Clear = true;
@@ -129,24 +149,12 @@ namespace GraphIt.wasm.Pages
 
         public async Task InsertEdge()
         {
-            if (ActiveNodes.Count == 1)
+            if (ActiveGraph.Nodes.Count == 1)
             {
-                NewEdge.Tail = ActiveNodes[0];
+                NewEdge.Tail = ActiveGraph.Nodes[0];
                 NewEdge.WaitingForNode = true;
                 SvgClass = "ClickNext";
                 await NewEdgeChanged.InvokeAsync(NewEdge);
-            }
-        }
-        public async Task OnDelete()
-        {
-            EdgeService.DeleteEdges(Edges, ActiveEdges);
-            NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
-            await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
-            await ActiveNodesChanged.InvokeAsync(new List<Node>());
-            if (DefaultOptions.MultiGraph)
-            {
-                EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
-                if (!DefaultOptions.MultiGraph) await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
             }
         }
 
@@ -179,8 +187,7 @@ namespace GraphIt.wasm.Pages
                             CanvasContextMenu.Open(e.ClientX, e.ClientY);
                             origin[0] = e.ClientX;
                             origin[1] = e.ClientY;
-                            if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
-                            if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                            if (ActiveGraph.Nodes.Any() || ActiveGraph.Edges.Any()) await ActiveGraphChanged.InvokeAsync(new Graph());
                         }
                     }
                 }
@@ -188,41 +195,40 @@ namespace GraphIt.wasm.Pages
                 {
                     bool aNodesChanged = false;
                     bool aEdgesChanged = false;
-                    foreach (Node node in Nodes)
+                    foreach (Node node in Graph.Nodes)
                     {
                         if (node.Xaxis <= RectSelection.X + RectSelection.Width
                             && node.Xaxis >= RectSelection.X
                             && node.Yaxis <= RectSelection.Y + RectSelection.Height
                             && node.Yaxis >= RectSelection.Y)
                         {
-                            if (!ActiveNodes.Contains(node))
+                            if (!ActiveGraph.Nodes.Contains(node))
                             {
-                                ActiveNodes.Add(node);
+                                ActiveGraph.Nodes.Add(node);
                                 aNodesChanged = true;
                             }
                         }
-                        else if (ActiveNodes.Remove(node)) aNodesChanged = true;
+                        else if (ActiveGraph.Nodes.Remove(node)) aNodesChanged = true;
                     }
-                    foreach (Edge edge in Edges)
+                    foreach (Edge edge in Graph.Edges)
                     {
-                        ShowEdge showEdge = new ShowEdge(edge, edge.HeadNode(Nodes), edge.TailNode(Nodes));
-                        var x = 0.25 * showEdge.Head.Xaxis + 0.5 * showEdge.CurvePoint[0] + 0.25 * showEdge.Tail.Xaxis;
-                        var y = 0.25 * showEdge.Head.Yaxis + 0.5 * showEdge.CurvePoint[1] + 0.25 * showEdge.Tail.Yaxis;
+                        ShowEdge showEdge = new ShowEdge(edge);
+                        var x = 0.25 * edge.Head.Xaxis + 0.5 * showEdge.CurvePoint[0] + 0.25 * edge.Tail.Xaxis;
+                        var y = 0.25 * edge.Head.Yaxis + 0.5 * showEdge.CurvePoint[1] + 0.25 * edge.Tail.Yaxis;
                         if (x <= RectSelection.X + RectSelection.Width
                             && x >= RectSelection.X
                             && y <= RectSelection.Y + RectSelection.Height
                             && y >= RectSelection.Y)
                         {
-                            if (!ActiveEdges.Contains(edge))
+                            if (!ActiveGraph.Edges.Contains(edge))
                             {
-                                ActiveEdges.Add(edge);
+                                ActiveGraph.Edges.Add(edge);
                                 aEdgesChanged = true;
                             }
                         }
-                        else if (ActiveEdges.Remove(edge)) aEdgesChanged = true;
+                        else if (ActiveGraph.Edges.Remove(edge)) aEdgesChanged = true;
                     }
-                    if (aNodesChanged) await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-                    if (aEdgesChanged) await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+                    if (aNodesChanged || aEdgesChanged) await ActiveGraphChanged.InvokeAsync(ActiveGraph);
                 }
                 RectSelection = new RectSelection();
                 return;
@@ -233,14 +239,13 @@ namespace GraphIt.wasm.Pages
                 if (GraphMode == GraphMode.InsertNode) SvgClass = "pointer";
                 else SvgClass = "grab";
             }
-            else if (!e.CtrlKey && !ActiveNodes.Any() && !ActiveEdges.Any() && GraphMode == GraphMode.InsertNode)
+            else if (!e.CtrlKey && !ActiveGraph.Nodes.Any() && !ActiveGraph.Nodes.Any() && GraphMode == GraphMode.InsertNode)
             {
-                NodeService.AddNode(Nodes, DefaultOptions, e.ClientX*SVGControl.Scale+SVGControl.Xaxis, e.ClientY*SVGControl.Scale+SVGControl.Yaxis);
+                NodeService.AddNode(Graph.Nodes, Options.Default, e.ClientX*SVGControl.Scale+SVGControl.Xaxis, e.ClientY*SVGControl.Scale+SVGControl.Yaxis);
             }
-            else
+            else if (ActiveGraph.Nodes.Any() || ActiveGraph.Edges.Any())
             {
-                if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
-                if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                 await ActiveGraphChanged.InvokeAsync(new Graph());
             }
             if (SVGControl.Pan)
             {
@@ -256,7 +261,7 @@ namespace GraphIt.wasm.Pages
             MouseDown = true;
             origin[0] = e.ClientX;
             origin[1] = e.ClientY;
-            oldNodes = ActiveNodes.Select(n => new Node(n.NodeId, n.Xaxis, n.Yaxis)).ToList();
+            oldNodes = ActiveGraph.Nodes.Select(n => new Node(n.Id, n.Xaxis, n.Yaxis)).ToList();
             if (!ObjectClicked.Left)
             {
                 if (e.Button != 2 && GraphMode != GraphMode.InsertNode)
@@ -271,21 +276,20 @@ namespace GraphIt.wasm.Pages
                 }
             }
         }
-        public async Task OnMove(MouseEventArgs e)
+        public void OnMove(MouseEventArgs e)
         {
             if (MouseDown)
             {
-                if (ObjectClicked.Left && ActiveNodes.Any())
+                if (ObjectClicked.Left && ActiveGraph.Nodes.Any())
                 {
                     Node oldNode;
                     SvgClass = "moveNode";
-                    foreach (Node node in ActiveNodes)
+                    foreach (Node node in ActiveGraph.Nodes)
                     {
                         oldNode = oldNodes[oldNodes.IndexOf(node)];
                         node.Xaxis = (e.ClientX - origin[0]) * SVGControl.Scale + oldNode.Xaxis;
                         node.Yaxis = (e.ClientY - origin[1]) * SVGControl.Scale + oldNode.Yaxis;
                     }
-                    if (ActiveNodes.Count == 1) await ActiveNodesChanged.InvokeAsync(ActiveNodes);
                 }
                 else if (SVGControl.Pan)
                 {
@@ -305,29 +309,25 @@ namespace GraphIt.wasm.Pages
         }
         public async Task OnEdgeClick(Edge edge)
         {
-            ActiveEdges.Clear();
-            ActiveEdges.Add(edge);
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
-            if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
+            ActiveGraph = new Graph();
+            ActiveGraph.Edges.Add(edge);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
         public async Task AddActiveEdge(Edge edge)
         {
-            ActiveEdges.Add(edge);
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+            ActiveGraph.Edges.Add(edge);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
         public async Task RemoveActiveEdge(Edge edge)
         {
-            ActiveEdges.Remove(edge);
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+            ActiveGraph.Edges.Remove(edge);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
         public async Task OnEdgeRightClick(Edge edge)
         {
-            if (!(ActiveEdges.Count + ActiveNodes.Count > 1 && ActiveEdges.Contains(edge)))
+            if (!(ActiveGraph.Edges.Count + ActiveGraph.Nodes.Count > 1 && ActiveGraph.Edges.Contains(edge)))
             {
-                ActiveEdges.Clear();
-                ActiveEdges.Add(edge);
-                await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
-                if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
+                await OnEdgeClick(edge);
             }
         }
         public async Task OnNodeClick(Node node)
@@ -347,17 +347,14 @@ namespace GraphIt.wasm.Pages
                     await StartAlgorithmChanged.InvokeAsync(StartAlgorithm);
                 }
             }
-            ActiveNodes.Clear();
-            ActiveNodes.Add(node);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-            if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+            await JustThisNodeActive(node);
             if (NewEdge.WaitingForNode)
             {
                 NewEdge.WaitingForNode = false;
                 await NewEdgeChanged.InvokeAsync(NewEdge);
-                NewEdge.Head = ActiveNodes[0];
-                NewEdge.MultiEdges = EdgeService.MultiGraphEdges(Edges, NewEdge.Head.NodeId, NewEdge.Tail.NodeId, DefaultOptions.Directed);
-                if (DefaultOptions.Weighted == true)
+                NewEdge.Head = ActiveGraph.Nodes[0];
+                NewEdge.MultiEdges = EdgeService.MultiGraphEdges(Graph.Edges, NewEdge.Head, NewEdge.Tail, Graph.Directed);
+                if (Graph.Weighted == true)
                 {
                     NewEdge.GetEdgeWeight = true;
                 }
@@ -374,49 +371,50 @@ namespace GraphIt.wasm.Pages
 
         public async Task AddActiveNode(Node node)
         {
-            ActiveNodes.Add(node);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            ActiveGraph.Nodes.Add(node);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
         public async Task RemoveActiveNode(Node node)
         {
-            ActiveNodes.Remove(node);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
+            ActiveGraph.Nodes.Remove(node);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
         public async Task OnNodeRightClick(Node node)
         {
-            if (!(ActiveEdges.Count + ActiveNodes.Count > 1 && ActiveNodes.Contains(node)))
+            if (!(ActiveGraph.Edges.Count + ActiveGraph.Nodes.Count > 1 && ActiveGraph.Nodes.Contains(node)))
             {
-                ActiveNodes.Clear();
-                ActiveNodes.Add(node);
-                await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-                if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+                await JustThisNodeActive(node);
             }
+        }
+
+        public async Task JustThisNodeActive(Node node)
+        {
+            ActiveGraph = new Graph();
+            ActiveGraph.Nodes.Add(node);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
 
         public async Task AddNewEdge(bool done)
         {
             if (done && NewEdge.Head != null && NewEdge.Tail != null)
             {
-                if (!DefaultOptions.MultiGraph && NewEdge.Head.NodeId == NewEdge.Tail.NodeId)
+                if (!Graph.MultiGraph && NewEdge.Head == NewEdge.Tail)
                 {
-                    DefaultOptions.MultiGraph = true;
-                    await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
+                    Graph.MultiGraph = true;
                 }
                 else if (NewEdge.MultiGraph == false && NewEdge.MultiEdges != null)
                 {
-                    foreach (Edge edge in NewEdge.MultiEdges) Edges.Remove(edge);
+                    foreach (Edge edge in NewEdge.MultiEdges) Graph.Edges.Remove(edge);
                 }
-                else if (!DefaultOptions.MultiGraph)
+                else if (!Graph.MultiGraph)
                 {
-                    DefaultOptions.MultiGraph = true;
-                    await DefaultOptionsChanged.InvokeAsync(DefaultOptions);
+                    Graph.MultiGraph = true;
                 }
-                if (DefaultOptions.Weighted) EdgeService.AddEdge(Edges, DefaultOptions, NewEdge.Head.NodeId, NewEdge.Tail.NodeId, Math.Round(NewEdge.Weight, 2));
-                else EdgeService.AddEdge(Edges, DefaultOptions, NewEdge.Head.NodeId, NewEdge.Tail.NodeId);
+                if (Graph.Weighted) EdgeService.AddEdge(Graph.Edges, Options.Default, NewEdge.Head, NewEdge.Tail, Math.Round(NewEdge.Weight, 2));
+                else EdgeService.AddEdge(Graph.Edges, Options.Default, NewEdge.Head, NewEdge.Tail);
             }
             await NewEdgeChanged.InvokeAsync(new NewEdge());
-            if (ActiveNodes.Any()) await ActiveNodesChanged.InvokeAsync(new List<Node>());
-            if (ActiveEdges.Any()) await ActiveEdgesChanged.InvokeAsync(new List<Edge>());
+            await ActiveGraphChanged.InvokeAsync(new Graph());
         }
 
         public async Task OnScroll(WheelEventArgs e)
@@ -435,7 +433,7 @@ namespace GraphIt.wasm.Pages
         {
             if (e.Key == "Delete" || e.Key == "Backspace")
             {
-                await OnDelete();
+                await DeleteActive.InvokeAsync("all");
             }
         }
 
@@ -444,89 +442,147 @@ namespace GraphIt.wasm.Pages
 
             if (e.Key == "ArrowRight")
             {
-                foreach (Node node in ActiveNodes) node.Xaxis+=5*SVGControl.Scale;
+                foreach (Node node in ActiveGraph.Nodes) node.Xaxis+=5*SVGControl.Scale;
             }
             else if (e.Key == "ArrowLeft")
             {
-                foreach (Node node in ActiveNodes) node.Xaxis -= 5 * SVGControl.Scale;
+                foreach (Node node in ActiveGraph.Nodes) node.Xaxis -= 5 * SVGControl.Scale;
             }
             else if (e.Key == "ArrowUp")
             {
-                foreach (Node node in ActiveNodes) node.Yaxis -= 5 * SVGControl.Scale;
+                foreach (Node node in ActiveGraph.Nodes) node.Yaxis -= 5 * SVGControl.Scale;
             }
             else if (e.Key == "ArrowDown")
             {
-                foreach (Node node in ActiveNodes) node.Yaxis += 5 * SVGControl.Scale;
+                foreach (Node node in ActiveGraph.Nodes) node.Yaxis += 5 * SVGControl.Scale;
             }
             else if (e.CtrlKey) 
             {
                 if (e.Key == "c") Copy();
-                if (e.Key == "v" && CopiedNodes.Any()) await Paste();
+                if (e.Key == "v" && CopiedGraph.Nodes.Any()) await Paste();
              
             } 
         }
 
         public void Copy()
         {
-            CopiedNodes.Clear();
-            CopiedEdges.Clear();
+            CopiedGraph = new Graph();
             PasteOffset = 0;
-            foreach (Node node in ActiveNodes)
+            foreach (Node node in ActiveGraph.Nodes)
             {
-                NodeService.AddNode(CopiedNodes, node);
+                NodeService.AddNode(CopiedGraph.Nodes, node);
             }
-            foreach (Edge edge in ActiveEdges)
+            foreach (Edge edge in ActiveGraph.Edges)
             {
-                if (ActiveNodes.Where(n => n.NodeId == edge.HeadNodeId || n.NodeId == edge.TailNodeId).Count() == 2)
+                if (ActiveGraph.Nodes.Where(n => n == edge.Head || n == edge.Tail).Count() == 2)
                 {
-                    EdgeService.AddEdge(CopiedEdges, edge);
+                    EdgeService.AddEdge(CopiedGraph.Edges, edge);
                 }
             }
         }
 
         public async Task Paste()
         {
-            int nextNodeId = NodeService.NextId(Nodes);
+            int nextNodeId = NodeService.NextId(Graph.Nodes);
             PasteOffset += 5 * SVGControl.Scale;
-            ActiveNodes.Clear();
-            ActiveEdges.Clear();
-            foreach (Node node in CopiedNodes) ActiveNodes.Add(NodeService.AddNode(Nodes, node, nextNodeId, PasteOffset));
-            foreach (Edge edge in CopiedEdges) ActiveEdges.Add(EdgeService.AddEdge(Edges, edge, nextNodeId));
-            await NodesChanged.InvokeAsync(Nodes);
-            await EdgesChanged.InvokeAsync(Edges);
-            await ActiveNodesChanged.InvokeAsync(ActiveNodes);
-            await ActiveEdgesChanged.InvokeAsync(ActiveEdges);
+            ActiveGraph = new Graph();
+            foreach (Node node in CopiedGraph.Nodes) ActiveGraph.Nodes.Add(NodeService.AddNode(Graph.Nodes, node, nextNodeId, PasteOffset));
+            foreach (Edge edge in CopiedGraph.Edges) ActiveGraph.Edges.Add(EdgeService.AddEdge(Graph, edge, nextNodeId));
+            await GraphChanged.InvokeAsync(Graph);
+            await ActiveGraphChanged.InvokeAsync(ActiveGraph);
         }
 
         public async Task Save()
         {
-            foreach (Node node in Nodes)
+            Graph.Nodes.Clear();
+            Graph.Edges.Clear();
+            for (int i = PlayAlgorithm.Count-1; i >= 0; i--)
             {
-                Node newNode = AlgorithmNodes.First(an => an.Node.NodeId == node.NodeId).Node;
-                node.LabelColor = newNode.LabelColor;
-                node.NodeColor = newNode.NodeColor;
-                node.Radius = newNode.Radius;
-            }
-            for (int i = Edges.Count - 1; i >= 0; i--)
-            {
-                Edge newEdge = AlgorithmEdges.FirstOrDefault(e => e.EdgeId == Edges[i].EdgeId);
-                if (newEdge == null)
-                    Edges.RemoveAt(i);
-                else
+                foreach (GraphObject obj in PlayAlgorithm[i])
                 {
-                    Edges[i].LabelColor = newEdge.LabelColor;
-                    Edges[i].Label = newEdge.Label;
-                    Edges[i].EdgeColor = newEdge.EdgeColor;
-                    Edges[i].Width = newEdge.Width;
+                    if (obj is Node)
+                    {
+                        Node newNode = new Node(obj as Node);
+                        if (!Graph.Nodes.Contains(newNode)) Graph.Nodes.Add(newNode);
+                    }
+                    else
+                    {
+                        Edge newEdge = new Edge(obj as Edge);
+                        if (!Graph.Edges.Contains(newEdge)) Graph.Edges.Add(newEdge);
+                    }
                 }
             }
+            foreach (Edge edge in Graph.Edges)
+            {
+                edge.Head = Graph.Nodes.First(n => edge.Head == n);
+                edge.Tail = Graph.Nodes.First(n => edge.Tail == n);
+            }
+            await GraphChanged.InvokeAsync(Graph);
             await Reset();
+        }
+
+        public void UpdateAlgoGraph()
+        {
+            AlgorithmGraph = new Graph();
+            for (int i = AlgoExplain.Counter; i >= 0; i--)
+            {
+                foreach (GraphObject obj in PlayAlgorithm[i])
+                {
+                    if (obj is Node)
+                    {
+                        Node newNode = new Node(obj as Node);
+                        if (!AlgorithmGraph.Nodes.Contains(newNode)) AlgorithmGraph.Nodes.Add(newNode);
+                    }
+                    else
+                    {
+                        Edge newEdge = new Edge(obj as Edge);
+                        if (!AlgorithmGraph.Edges.Contains(newEdge)) AlgorithmGraph.Edges.Add(newEdge);
+                    }
+                }
+            }
         }
 
         public async Task Reset()
         {
             await GraphModeChanged.InvokeAsync(GraphMode.Default);
-            await StartAlgorithmChanged.InvokeAsync(new StartAlgorithm());
+        }
+
+        public async Task SaveAsSVG()
+        {
+            string result;
+            MemoryStream stream = new MemoryStream();
+            using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
+            {
+                writer.Formatting = Formatting.Indented;
+                writer.WriteStartDocument(false);
+                writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
+                writer.WriteAttributeString("version", "1.1");
+                if (SVGSaveAs == SVGSaveAs.Page) writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
+                else writer.WriteAttributeString("viewBox", FullView());
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Flush();
+                StreamReader reader = new StreamReader(stream, Encoding.UTF8, true);
+                stream.Seek(0, SeekOrigin.Begin);
+                result = reader.ReadToEnd();
+            }
+            string innerText = await JSRuntime.InvokeAsync<string>("getText", SVGComponent);
+            result = result.Insert(result.IndexOf("/>"), $">{innerText}") + "</svg>";
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.svg", "image/svg+xml", Encoding.UTF8.GetBytes(result));
+            await SVGSaveAsChanged.InvokeAsync(SVGSaveAs.None);
+        }
+
+        public string FullView()
+        {
+            if (Graph.Nodes.Any())
+            {
+                var x = Graph.Nodes.Min(n => n.Xaxis - n.Size);
+                var y = Graph.Nodes.Min(n => n.Yaxis - n.Size);
+                var width = Graph.Nodes.Max(n => n.Xaxis + n.Size) - x;
+                var height = Graph.Nodes.Max(n => n.Yaxis + n.Size) - y;
+                return $"{x} {y} {width} {height}";
+            }
+            return "0 0 0 0";
         }
     }
 }

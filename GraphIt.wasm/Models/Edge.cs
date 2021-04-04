@@ -6,59 +6,91 @@ using System.Text;
 
 namespace GraphIt.wasm.Models
 {
-    public class Edge : IEquatable<Edge>
+    public class Edge : GraphObject, IEquatable<Edge>
     {
 
         public Edge(Edge edge, DefaultOptions d)
         {
-            EdgeId = edge.EdgeId;
-            HeadNodeId = edge.HeadNodeId;
-            TailNodeId = edge.TailNodeId;
+            Id = edge.Id;
+            Head = edge.Head;
+            Tail = edge.Tail;
             Curve = edge.Curve;
             Weight = edge.Weight;
             Label = edge.Label;
-            Width = edge.Width;
+            Size = edge.Size;
             LabelColor = d.EdgeLabelColor;
-            EdgeColor = d.EdgeColor;
+            Color = d.EdgeColor;
         }
+
+        public Edge(Edge edge, DefaultOptions d, string label)
+        {
+            Id = edge.Id;
+            Head = edge.Head;
+            Tail = edge.Tail;
+            Curve = edge.Curve;
+            Weight = edge.Weight;
+            Label = label;
+            Size = edge.Size;
+            LabelColor = d.EdgeLabelColor;
+            Color = d.EdgeColor;
+        }
+
+        public Edge(Edge edge)
+        {
+            Id = edge.Id;
+            Head = edge.Head;
+            Tail = edge.Tail;
+            Curve = edge.Curve;
+            Weight = edge.Weight;
+            Label = edge.Label;
+            Size = edge.Size;
+            LabelColor = edge.LabelColor;
+            Color = edge.Color;
+        }
+
         public Edge()
         {
 
         }
-        public int EdgeId { get; set; }
-        public int HeadNodeId { get; set; }
-        public int TailNodeId { get; set; }
+        public Node Head { get; set; }
+        public Node Tail { get; set; }
         public double Curve { get; set; }
         public double Weight { get; set; } = 1;
-        public string Label { get; set; }
-        public int Width { get; set; }
-        [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
-        public string LabelColor { get; set; }
-        [RegularExpression(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")]
-        public string EdgeColor { get; set; }
 
         public bool Equals(Edge other)
         {
-            if (this.EdgeId == other.EdgeId) return true;
+            if (this.Id == other.Id) return true;
             return false;
         }
 
-        public Node HeadNode(IEnumerable<Node> nodes)
+        public override bool Equals(object obj)
         {
-            foreach (Node n in nodes)
-            {
-                if (n.NodeId == HeadNodeId) return n;
-            }
-            return null;
+            return Equals(obj as Edge);
         }
 
-        public Node TailNode(IEnumerable<Node> nodes)
+        public static bool operator ==(Edge a, Edge b)
         {
-            foreach (Node n in nodes)
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
             {
-                if (n.NodeId == TailNodeId) return n;
+                return true;
             }
-            return null;
+
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+            {
+                return false;
+            }
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Edge a, Edge b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
         }
     }
 }

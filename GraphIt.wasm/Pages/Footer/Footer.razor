@@ -1,0 +1,42 @@
+﻿@namespace GraphIt.wasm.Pages.Footer
+<div class="footer d-flex flex-row py-0 my-0 align-items-center">
+    <div class="px-2 border-right border-dark">
+        <span class="pr-1">Nodes: @Graph.Nodes.Count</span>
+        <span class="pl-1">Edges: @Graph.Edges.Count</span>
+    </div>
+    <div class="px-2 border-right border-dark">
+        Mode: @GraphMode
+    </div>
+    <div class="px-2">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" checked="@Graph.Weighted" id="wcheck" @onchange="OnWeightedChange">
+            <label class="form-check-label" for="wcheck">Weighted</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" checked="@Graph.Directed" id="dcheck" @onchange="OnDirectedChange">
+            <label class="form-check-label" for="dcheck">Directed</label>
+        </div>
+    </div>
+    @if (Graph.MultiGraph)
+    {
+        <span class="px-2 text-danger">
+            @("MultiGraph")
+        </span>
+    }
+</div>
+
+@code {
+    [Parameter] public GraphMode GraphMode { get; set; }
+    [Parameter] public Graph Graph { get; set; }
+    [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
+    public async Task OnWeightedChange()
+    {
+        Graph.Weighted = !Graph.Weighted;
+        await GraphChanged.InvokeAsync(Graph);
+    }
+    public async Task OnDirectedChange()
+    {
+        Graph.Directed = !Graph.Directed;
+        await GraphChanged.InvokeAsync(Graph);
+    }
+}

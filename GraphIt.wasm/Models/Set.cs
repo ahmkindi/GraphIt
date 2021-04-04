@@ -16,7 +16,7 @@ namespace GraphIt.wasm.Models
             rank = new Dictionary<int, int>();
 
             foreach (Node node in nodes)
-                parent[node.NodeId] = node.NodeId;
+                parent[node.Id] = node.Id;
         }
 
         public void MakeSet(int x)
@@ -25,7 +25,7 @@ namespace GraphIt.wasm.Models
             rank[x] = 0;
         }
 
-        public void Union(int x, int y)
+        public int Union(int x, int y)
         {
             int representativeX = FindSet(x);
             int representativeY = FindSet(y);
@@ -37,9 +37,12 @@ namespace GraphIt.wasm.Models
             }
 
             else if (rank[representativeX] > rank[representativeY])
-            { parent[representativeY] = representativeX; }
-            else
-            { parent[representativeX] = representativeY; }
+            { 
+                parent[representativeY] = representativeX;
+                return representativeX;
+            }
+            parent[representativeX] = representativeY;
+            return representativeY;
         }
 
         public int FindSet(int nodeid)

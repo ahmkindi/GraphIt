@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphIt.web", "GarphIt.web\GraphIt.web.csproj", "{E34F703E-42BD-4ACC-9E11-BC86CE457570}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphIt.wasm", "GraphIt.wasm\GraphIt.wasm.csproj", "{6DDE492E-D5E5-431C-ACEE-DA5BBE67A43E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphIt.wasm", "GraphIt.wasm\GraphIt.wasm.csproj", "{6DDE492E-D5E5-431C-ACEE-DA5BBE67A43E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

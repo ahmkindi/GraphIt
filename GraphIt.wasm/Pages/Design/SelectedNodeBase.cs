@@ -30,7 +30,7 @@ namespace GraphIt.wasm.Pages.Design
             else if (r > 150) r = 150;
             foreach (Node node in ActiveNodes)
             {
-                node.Radius = r;
+                node.Size = r;
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }
@@ -67,7 +67,7 @@ namespace GraphIt.wasm.Pages.Design
             ColorValue = ((JObject)e.CurrentValue).ToObject<HexColorValue>();
             foreach (Node node in ActiveNodes)
             {
-                node.NodeColor = ColorValue.Hex;
+                node.Color = ColorValue.Hex;
             }
             await ActiveNodesChanged.InvokeAsync(ActiveNodes);
         }

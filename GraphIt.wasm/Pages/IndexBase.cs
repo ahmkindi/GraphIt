@@ -18,16 +18,15 @@ namespace GraphIt.wasm.Pages
         public BrowserWindowSize Browser { get; set; } = new BrowserWindowSize();
         public NavChoice? Choice { get; set; }
         public StartAlgorithm StartAlgorithm { get; set; } = new StartAlgorithm();
-        public DefaultOptions DefaultOptions { get; set; } = new DefaultOptions();
-        public DefaultOptions DefaultAlgoOptions { get; set; } = new DefaultOptions("#ffc400", "#000000", "#ff0000", "#000000");
-        public IList<Node> ActiveNodes { get; set; } = new List<Node>();
-        public IList<Edge> ActiveEdges { get; set; } = new List<Edge>();
-        public List<Node> Nodes { get; set; } = new List<Node>();
-        public List<Edge> Edges { get; set; } = new List<Edge>();
+        public Options Options { get; set; } = new Options("#ffc400", "#000000", "#ff0000", "#000000");
+        public Graph ActiveGraph { get; set; } = new Graph();
+        public Graph Graph { get; set; } = new Graph();
         public GraphMode GraphMode { get; set; } = GraphMode.Default;
-        public Representation Rep { get; set; } = Representation.None;
+        public bool MatrixOpened { get; set; } = false;
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public SVGControl SVGControl { get; set; } = new SVGControl();
+        public AlgoExplain AlgoExplain { get; set; } = new AlgoExplain();
+        public SVGSaveAs SVGSaveAs { get; set; } = SVGSaveAs.None;
 
         protected override void OnAfterRender(bool firstRender)
         {
@@ -48,18 +47,36 @@ namespace GraphIt.wasm.Pages
             Choice = choice;
         }
 
-        public void DeleteActiveNodes(bool _)
+        public void DeleteActive(string t)
         {
-            NodeService.DeleteNodes(Nodes, Edges, ActiveNodes);
-            ActiveNodes.Clear();
-            if (DefaultOptions.MultiGraph) EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
+            if (t == "edge" || t == "all") 
+            {
+                EdgeService.DeleteEdges(Graph.Edges, ActiveGraph.Edges);
+                ActiveGraph.Edges.Clear();
+            }
+            if (t == "node" || t == "all") 
+            {
+                NodeService.DeleteNodes(Graph, ActiveGraph.Nodes);
+                ActiveGraph.Nodes.Clear();
+            } 
+            if (Graph.MultiGraph) EdgeService.UpdateMultiGraph(Graph);
         }
 
-        public void DeleteActiveEdges(bool _)
+        public void GraphModeChanged(GraphMode mode)
         {
-            EdgeService.DeleteEdges(Edges, ActiveEdges);
-            ActiveEdges.Clear();
-            if (DefaultOptions.MultiGraph) EdgeService.UpdateMultiGraph(DefaultOptions, Edges);
+            GraphMode = mode;
+            NewEdge = new NewEdge();
+            StartAlgorithm = new StartAlgorithm();
+        }
+
+        public void Relabel(bool _)
+        {
+            int count = 1;
+            foreach (Node node in Graph.Nodes)
+            {
+                node.Label = count.ToString();
+                count++;
+            }
         }
 
         public void Dispose()
