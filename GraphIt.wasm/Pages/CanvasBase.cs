@@ -35,8 +35,8 @@ namespace GraphIt.wasm.Pages
         [Parameter] public EventCallback<string> DeleteActive { get; set; }
         [Parameter] public AlgoExplain AlgoExplain { get; set; }
         [Parameter] public EventCallback<AlgoExplain> AlgoExplainChanged { get; set; }
-        [Parameter] public SVGSaveAs SVGSaveAs { get; set; }
-        [Parameter] public EventCallback<SVGSaveAs> SVGSaveAsChanged { get; set; }
+        [Parameter] public SaveAs SaveAs { get; set; }
+        [Parameter] public EventCallback<SaveAs> SaveAsChanged { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public IZoomService ZoomService { get; set; }
@@ -59,7 +59,7 @@ namespace GraphIt.wasm.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            if (SVGSaveAs != SVGSaveAs.None)
+            if (SaveAs == SaveAs.Full || SaveAs == SaveAs.Page)
             {
                 await SaveAsSVG();
             }
@@ -117,15 +117,13 @@ namespace GraphIt.wasm.Pages
                     await ChangeMenu.InvokeAsync(NavChoice.Design);
                     break;
                 case "All Nodes":
-                    ActiveGraph.Nodes = Graph.Nodes;
-                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
+                    await Activate("nodes");
                     break;
                 case "All Edges":
-                    ActiveGraph.Edges = Graph.Edges;
-                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
+                    await Activate("edges");
                     break;
                 case "Everything":
-                    await ActiveGraphChanged.InvokeAsync(Graph);
+                    await Activate("all");
                     break;
                 case "Insert Edge":
                     await InsertEdge();
@@ -431,37 +429,72 @@ namespace GraphIt.wasm.Pages
 
         public async Task OnKeyUp(KeyboardEventArgs e)
         {
-            if (e.Key == "Delete" || e.Key == "Backspace")
+            string value = e.Key.ToLower();
+            if (value == "delete" || value == "backspace")
             {
                 await DeleteActive.InvokeAsync("all");
+            }
+            if (e.CtrlKey)
+            {
+                if (e.ShiftKey)
+                {
+                    if (value == "i") await Activate("nodes");
+                    else if (value == "e") await Activate("edges");
+                    else if (value == "s") await SaveAsSVG();
+                }
+                else
+                {
+                    if (value == "c") Copy();
+                    else if (value == "a") await Activate("all");
+                }
+            }
+            else
+            {
+                if (value == "f") await ChangeMenu.InvokeAsync(NavChoice.File);
+                else if (value == "h") await ChangeMenu.InvokeAsync(NavChoice.Home);
+                else if (value == "i") await ChangeMenu.InvokeAsync(NavChoice.Insert);
+                else if (value == "v") await ChangeMenu.InvokeAsync(NavChoice.View);
+                else if (value == "d") await ChangeMenu.InvokeAsync(NavChoice.Design);
+                else if (value == "?") await ChangeMenu.InvokeAsync(NavChoice.About);
+                else if (value == "x") await ChangeMenu.InvokeAsync(null);
+                else if (ActiveGraph.Nodes.Count == 2 && !ActiveGraph.Edges.Any() && value == "c") 
+                {
+                    NewEdge.Tail = ActiveGraph.Nodes[0];
+                    NewEdge.Head = ActiveGraph.Nodes[1];
+                    NewEdge.MultiEdges = EdgeService.MultiGraphEdges(Graph.Edges, NewEdge.Head, NewEdge.Tail, Graph.Directed);
+                    if (Graph.Weighted)
+                    {
+                        NewEdge.GetEdgeWeight = true;
+                    }
+                    else if (!NewEdge.MultiEdges.Any())
+                    {
+                        await AddNewEdge(true);
+                    }
+                }
             }
         }
 
         public async Task OnKeyDown(KeyboardEventArgs e)
         {
-
-            if (e.Key == "ArrowRight")
+            string value = e.Key.ToLower();
+            if (!e.ShiftKey)
             {
-                foreach (Node node in ActiveGraph.Nodes) node.Xaxis+=5*SVGControl.Scale;
+                if (e.CtrlKey)
+                {
+                    if (value == "v" && CopiedGraph.Nodes.Any()) await Paste();
+                    else if (value == "arrowright") foreach (Edge edge in ActiveGraph.Edges) edge.Curve += 1;
+                    else if (value == "arrowleft") foreach (Edge edge in ActiveGraph.Edges) edge.Curve -= 1;
+                    else if (value == "arrowup" && Graph.Weighted) foreach (Edge edge in ActiveGraph.Edges) edge.Weight += 1;
+                    else if (value == "arrowdown" && Graph.Weighted) foreach (Edge edge in ActiveGraph.Edges) edge.Weight -= 1;
+                }
+                else
+                {
+                    if (value == "arrowright") foreach (Node node in ActiveGraph.Nodes) node.Xaxis += 5 * SVGControl.Scale;
+                    else if (value == "arrowleft") foreach (Node node in ActiveGraph.Nodes) node.Xaxis -= 5 * SVGControl.Scale;
+                    else if (value == "arrowup") foreach (Node node in ActiveGraph.Nodes) node.Yaxis -= 5 * SVGControl.Scale;
+                    else if (value == "arrowdown") foreach (Node node in ActiveGraph.Nodes) node.Yaxis += 5 * SVGControl.Scale;
+                }
             }
-            else if (e.Key == "ArrowLeft")
-            {
-                foreach (Node node in ActiveGraph.Nodes) node.Xaxis -= 5 * SVGControl.Scale;
-            }
-            else if (e.Key == "ArrowUp")
-            {
-                foreach (Node node in ActiveGraph.Nodes) node.Yaxis -= 5 * SVGControl.Scale;
-            }
-            else if (e.Key == "ArrowDown")
-            {
-                foreach (Node node in ActiveGraph.Nodes) node.Yaxis += 5 * SVGControl.Scale;
-            }
-            else if (e.CtrlKey) 
-            {
-                if (e.Key == "c") Copy();
-                if (e.Key == "v" && CopiedGraph.Nodes.Any()) await Paste();
-             
-            } 
         }
 
         public void Copy()
@@ -547,6 +580,24 @@ namespace GraphIt.wasm.Pages
             await GraphModeChanged.InvokeAsync(GraphMode.Default);
         }
 
+        public async Task Activate(string type)
+        {
+            switch (type)
+            {
+                case "nodes":
+                    ActiveGraph.Nodes = Graph.Nodes;
+                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
+                    break;
+                case "edges":
+                    ActiveGraph.Edges = Graph.Edges;
+                    await ActiveGraphChanged.InvokeAsync(ActiveGraph);
+                    break;
+                case "all":
+                    await ActiveGraphChanged.InvokeAsync(Graph);
+                    break;
+            }
+        }
+
         public async Task SaveAsSVG()
         {
             string result;
@@ -557,8 +608,8 @@ namespace GraphIt.wasm.Pages
                 writer.WriteStartDocument(false);
                 writer.WriteStartElement(null, "svg", "http://www.w3.org/2000/svg");
                 writer.WriteAttributeString("version", "1.1");
-                if (SVGSaveAs == SVGSaveAs.Page) writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
-                else writer.WriteAttributeString("viewBox", FullView());
+                if (SaveAs == SaveAs.Full) writer.WriteAttributeString("viewBox", FullView());
+                else writer.WriteAttributeString("viewBox", $"{SVGControl.Xaxis} {SVGControl.Yaxis} {SVGControl.Width} {SVGControl.Height}");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -569,7 +620,7 @@ namespace GraphIt.wasm.Pages
             string innerText = await JSRuntime.InvokeAsync<string>("getText", SVGComponent);
             result = result.Insert(result.IndexOf("/>"), $">{innerText}") + "</svg>";
             await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "MyGraph.svg", "image/svg+xml", Encoding.UTF8.GetBytes(result));
-            await SVGSaveAsChanged.InvokeAsync(SVGSaveAs.None);
+            await SaveAsChanged.InvokeAsync(SaveAs.None);
         }
 
         public string FullView()

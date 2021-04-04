@@ -58,7 +58,7 @@
 </SfContextMenu>
 
 <svg viewBox="@SVGControl.Xaxis @SVGControl.Yaxis @SVGControl.Width @SVGControl.Height" @ref="SVGComponent"
-     tabindex="0" class="@SvgClass" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" @onkeydown="OnKeyDown"
+     tabindex="0" class="@SvgClass" @onmousemove="OnMove" @onmousedown="OnMouseDown" @onkeyup="OnKeyUp" @onkeydown="OnKeyDown" @onkeydown:preventDefault="true"
      @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true" @onmouseup="OnMouseUp" @onmousewheel="OnScroll" @onwheel="OnScroll">
     @if (StartAlgorithm.Done && AlgorithmGraph != null)
     {

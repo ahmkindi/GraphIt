@@ -22,7 +22,8 @@ namespace GraphIt.wasm.Pages
         [Parameter] public SVGControl SVGControl { get; set; }
         [Parameter] public Graph Graph { get; set; }
         [Parameter] public EventCallback<Graph> GraphChanged { get; set; }
-        [Parameter] public EventCallback<SVGSaveAs> SVGSaveAsChanged { get; set; }
+        [Parameter] public SaveAs SaveAs { get; set; }
+        [Parameter] public EventCallback<SaveAs> SaveAsChanged { get; set; }
         [Inject] public IEdgeService EdgeService { get; set; }
         [Inject] public INodeService NodeService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }

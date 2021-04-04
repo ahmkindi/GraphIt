@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace GraphIt.wasm.Models
 {
-    public enum SVGSaveAs
+    public enum SaveAs
     {
         Full,
         Page,
+        Graph,
         None
     }
 }

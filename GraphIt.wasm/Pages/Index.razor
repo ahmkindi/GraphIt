@@ -20,7 +20,7 @@ else
         @switch (Choice)
         {
             case NavChoice.File:
-                <File @bind-Options="Options" SVGControl="SVGControl" @bind-Graph="Graph" SVGSaveAsChanged="(x) => SVGSaveAs = x"></File>
+                <File @bind-Options="Options" SVGControl="SVGControl" @bind-Graph="Graph" @bind-SaveAs="SaveAs"></File>
                 break;
             case NavChoice.Home:
                 <Home @bind-MatrixOpened="MatrixOpened" @bind-StartAlgorithm="StartAlgorithm" @bind-ActiveGraph="ActiveGraph" Graph="Graph" @bind-GraphMode="GraphMode"></Home>
@@ -49,7 +49,7 @@ else
     <AdjMatrix @bind-MatrixOpened="MatrixOpened" @bind-Graph="Graph" DefaultOptions="Options.Default" SVGControl="SVGControl"></AdjMatrix>
 }
 <Canvas @bind-ActiveGraph="ActiveGraph" @bind-Graph="Graph" ChangeMenu="UpdateChoice" @bind-NewEdge="NewEdge" @bind-AlgoExplain="AlgoExplain" DeleteActive="DeleteActive"
-        Options="Options" GraphMode="GraphMode" GraphModeChanged="GraphModeChanged" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" @bind-SVGSaveAs="SVGSaveAs"></Canvas>
+        Options="Options" GraphMode="GraphMode" GraphModeChanged="GraphModeChanged" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" @bind-SaveAs="SaveAs"></Canvas>
 
 @if (StartAlgorithm.Done)
 {

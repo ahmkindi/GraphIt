@@ -7,8 +7,8 @@
     </button>
 
     <div class="dropdown-menu" aria-labelledby="saveas">
-        <a class="dropdown-item" @onclick="async () => await SVGSaveAsChanged.InvokeAsync(SVGSaveAs.Page)">screen view SVG</a>
-        <a class="dropdown-item" @onclick="async () => await SVGSaveAsChanged.InvokeAsync(SVGSaveAs.Full)">full view SVG</a>
+        <a class="dropdown-item" @onclick="async () => await SaveAsChanged.InvokeAsync(SaveAs.Page)">screen view SVG</a>
+        <a class="dropdown-item" @onclick="async () => await SaveAsChanged.InvokeAsync(SaveAs.Full)">full view SVG</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" @onclick="SaveGraphItFile">Graph File</a>
     </div>

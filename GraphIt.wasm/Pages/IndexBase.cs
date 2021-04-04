@@ -26,7 +26,7 @@ namespace GraphIt.wasm.Pages
         public NewEdge NewEdge { get; set; } = new NewEdge();
         public SVGControl SVGControl { get; set; } = new SVGControl();
         public AlgoExplain AlgoExplain { get; set; } = new AlgoExplain();
-        public SVGSaveAs SVGSaveAs { get; set; } = SVGSaveAs.None;
+        public SaveAs SaveAs { get; set; } = SaveAs.None;
 
         protected override void OnAfterRender(bool firstRender)
         {
