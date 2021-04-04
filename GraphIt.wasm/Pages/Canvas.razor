@@ -116,7 +116,7 @@
     <SfDialog Width="300px" IsModal="true">
         <DialogTemplates>
             <Content>
-                <SfNumericTextBox Min=1 Placeholder="Edge Weight" FloatLabelType="@FloatLabelType.Auto" @bind-Value="NewEdge.Weight"></SfNumericTextBox>
+                <SfNumericTextBox Placeholder="Edge Weight" FloatLabelType="@FloatLabelType.Auto" @bind-Value="NewEdge.Weight"></SfNumericTextBox>
                 @if (NewEdge.MultiEdges.Any())
                 {
                     <SfCheckBox @bind-Checked="NewEdge.MultiGraph" Label="Multi-Graph"></SfCheckBox>

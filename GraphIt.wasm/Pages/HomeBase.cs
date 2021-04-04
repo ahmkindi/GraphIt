@@ -51,6 +51,12 @@ namespace GraphIt.wasm.Pages
                     IsDisabled[(int)Algorithm.DijkstraPath] = true;
                     IsDisabled[(int)Algorithm.Kruskal] = true;
                 }
+                else if (Graph.Edges.Any(e => e.Weight <= 0))
+                {
+                    IsDisabled[(int)Algorithm.MaxFlow] = true;
+                    IsDisabled[(int)Algorithm.Dijkstra] = true;
+                    IsDisabled[(int)Algorithm.DijkstraPath] = true;
+                }
                 if (Graph.Directed)
                 {
                     IsDisabled[(int)Algorithm.Articulation] = true;
