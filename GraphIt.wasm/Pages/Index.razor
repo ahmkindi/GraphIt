@@ -48,8 +48,11 @@ else
 {
     <AdjMatrix @bind-MatrixOpened="MatrixOpened" @bind-Graph="Graph" DefaultOptions="Options.Default" SVGControl="SVGControl"></AdjMatrix>
 }
-<Canvas @bind-ActiveGraph="ActiveGraph" @bind-Graph="Graph" ChangeMenu="UpdateChoice" @bind-NewEdge="NewEdge" @bind-AlgoExplain="AlgoExplain" DeleteActive="DeleteActive"
-        Options="Options" GraphMode="GraphMode" GraphModeChanged="GraphModeChanged" @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" @bind-SaveAs="SaveAs"></Canvas>
+<Canvas @bind-ActiveGraph="ActiveGraph" @bind-Graph="Graph" ChangeMenu="UpdateChoice" 
+        @bind-NewEdge="NewEdge" @bind-AlgoExplain="AlgoExplain" DeleteActive="DeleteActive"
+        @bind-SVGControl="SVGControl" @bind-StartAlgorithm="StartAlgorithm" @bind-SaveAs="SaveAs" 
+        Options="Options" GraphMode="GraphMode" GraphModeChanged="GraphModeChanged">
+</Canvas>
 
 @if (StartAlgorithm.Done)
 {

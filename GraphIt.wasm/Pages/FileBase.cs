@@ -34,7 +34,7 @@ namespace GraphIt.wasm.Pages
         public bool NewGraphCheck { get; set; } = false;
         public bool Overwrite { get; set; } = false;
 
-        public async Task SaveGraphItFile()
+        public async Task SaveGraphFile()
         {
             string result;
             MemoryStream stream = new MemoryStream();
