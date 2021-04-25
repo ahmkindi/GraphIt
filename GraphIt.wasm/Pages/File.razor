@@ -10,7 +10,7 @@
         <a class="dropdown-item" @onclick="async () => await SaveAsChanged.InvokeAsync(SaveAs.Page)">screen view SVG</a>
         <a class="dropdown-item" @onclick="async () => await SaveAsChanged.InvokeAsync(SaveAs.Full)">full view SVG</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" @onclick="SaveGraphItFile">Graph File</a>
+        <a class="dropdown-item" @onclick="SaveGraphFile">Graph File</a>
     </div>
 </li>
 <li class="NavNone p-2 border-right border-dark" @onclick="(() => OpenPreference = true)"><span class="pr-1 oi oi-envelope-open"></span>Open</li>
